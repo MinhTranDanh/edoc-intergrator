@@ -23,7 +23,7 @@ public class EdocGetDocumentTask implements Task, ManagedLifecycle {
         LOGGER.info("------------------------ Edoc Get Documents Task Invoke -----------------------");
         if (isTurnOn) {
             LOGGER.info("Start get documents from vpcp at " + DateUtils.format(new Date(), DateUtils.DEFAULT_DATETIME_FORMAT));
-            ServiceVPCP.getInstance().GetDocuments();
+            //ServiceVPCP.getInstance().GetDocuments();
             LOGGER.info("Get documents from vpcp at " + DateUtils.format(new Date()) + " done !!!!!!!!!");
         } else {
             LOGGER.info("------------------------ Get Documents from VPCP turn off -----------------------");

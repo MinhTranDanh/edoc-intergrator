@@ -28,6 +28,7 @@ import com.bkav.edoc.web.util.ValidateUtil;
 import com.google.gson.Gson;
 import com.vpcp.services.model.SendEdocResult;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

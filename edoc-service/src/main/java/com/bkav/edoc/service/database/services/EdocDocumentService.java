@@ -35,6 +35,7 @@ import org.hibernate.query.Query;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -118,8 +119,9 @@ public class EdocDocumentService {
         List<DocumentCacheEntry> entries = new ArrayList<>();
         Session session = documentDaoImpl.openCurrentSession();
         String condition = "and";
-        if (organId != null)
+        if (organId != null) {
             if (organId.equals(PropsUtil.get("edoc.domain.vpubnd.0"))) condition = "or";
+        }
         try {
             String queryDocument = "";
             switch (mode) {
@@ -564,6 +566,19 @@ public class EdocDocumentService {
     public boolean checkExistDocument(String edXmlDocumentId) {
         EdocDocument check = documentDaoImpl.checkExistDocument(edXmlDocumentId);
         return (check != null);
+    }
+
+    public boolean checkExistDocument(String edXmlDocumentId, List<Organization> toOrgans) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        toOrgans.forEach(toOrgan -> {
+            //LOGGER.info("Check exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
+            EdocDocument check = documentDaoImpl.checkExistDocumentVPCP(edXmlDocumentId, toOrgan.getOrganId());
+            if (check != null) {
+                LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
+                flag.set(true);
+            }
+        });
+        return flag.get();
     }
 
     public boolean checkExistDocumentByDocCode(String fromOrgan, String toOrgan, String docCode) {

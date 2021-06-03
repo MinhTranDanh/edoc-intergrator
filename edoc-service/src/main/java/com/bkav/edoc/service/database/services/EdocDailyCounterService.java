@@ -1,6 +1,5 @@
 package com.bkav.edoc.service.database.services;
 
-import com.bkav.edoc.service.commonutil.Checker;
 import com.bkav.edoc.service.database.cache.OrganizationCacheEntry;
 import com.bkav.edoc.service.database.daoimpl.EdocDailyCounterDaoImpl;
 import com.bkav.edoc.service.database.entity.*;
@@ -53,6 +52,8 @@ public class EdocDailyCounterService {
                     contacts = edocDynamicContactService.getOrganByKeyword(keyword);
                 }
             }
+
+            // Except organ contain "A"
             contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
 
             for (OrganizationCacheEntry contact : contacts) {

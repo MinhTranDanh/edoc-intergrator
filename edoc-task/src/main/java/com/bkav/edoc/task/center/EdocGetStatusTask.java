@@ -41,7 +41,7 @@ public class EdocGetStatusTask implements Task, ManagedLifecycle {
         boolean isTurnOn = GetterUtil.getBoolean(this.getTurnOn(), false);
         if (isTurnOn) {
             LOGGER.info("Start get status from vpcp at " + DateUtils.format(new Date(), DateUtils.DEFAULT_DATETIME_FORMAT));
-            ServiceVPCP.getInstance().getStatus();
+            //ServiceVPCP.getInstance().getStatus();
             LOGGER.info("Get status from vpcp at " + DateUtils.format(new Date()) + " done !!!!!!!!!");
         } else {
             LOGGER.info("------------------------ Get status from VPCP turn off -----------------------");
