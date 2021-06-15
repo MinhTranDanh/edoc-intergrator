@@ -511,10 +511,10 @@ public class ExcelService {
     }
 
     public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword) throws IOException {
-        List<EPublicStat> eStats;
-        boolean isGetAllAgency = true;
+        List<EPublicStat> eStats = new ArrayList<>();
+        boolean isGetAllAgency = false;
         if (fromDate == null || toDate == null)
-            eStats = EdocDailyCounterServiceUtil.getStatsDetail(null, null, keyword, isGetAllAgency);
+            eStats =  EdocDailyCounterServiceUtil.getStatsDetail(null, null, keyword, isGetAllAgency);
         else
             eStats = EdocDailyCounterServiceUtil.getStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
 
@@ -550,31 +550,74 @@ public class ExcelService {
             headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(j).getHeaderName());
             headerCell.setCellStyle(headerStyle);
         }
+        font = (XSSFFont) workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 10);
+
+
+       // font.setUnderline(Font.U_DOUBLE);
 
         CellStyle style = workbook.createCellStyle();
+        CellStyle styleparent = workbook.createCellStyle();
         style.setWrapText(true);
+
+
         int numRow = 1;
 
         for (EPublicStat ePublicStat : sortedListStat) {
             Row row = sheet.createRow(numRow);
+            styleparent.setFont(font);
 
             Cell cell = row.createCell(0);
             cell.setCellValue(ePublicStat.getOrganName());
             cell.setCellStyle(style);
+            cell.setCellStyle(styleparent);
 
             cell = row.createCell(1);
             cell.setCellValue(ePublicStat.getSent());
             cell.setCellStyle(style);
+            cell.setCellStyle(styleparent);
 
             cell = row.createCell(2);
             cell.setCellValue(ePublicStat.getReceived());
             cell.setCellStyle(style);
+            cell.setCellStyle(styleparent);
 
             cell = row.createCell(3);
             cell.setCellValue(ePublicStat.getTotal());
             cell.setCellStyle(style);
+            cell.setCellStyle(styleparent);
 
-            numRow++;
+            List<EPublicStat> childOrganStatSet = ePublicStat.getChildOrgan();
+
+            if (childOrganStatSet != null) {
+                numRow++;
+                List<EPublicStat>sortchildOrganStatSet=childOrganStatSet.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
+                for (EPublicStat childePublicStat : sortchildOrganStatSet) {
+
+                    Row rowchild = sheet.createRow(numRow);
+                    cell = rowchild.createCell(0);
+                    cell.setCellValue(childePublicStat.getOrganName());
+                    cell.setCellStyle(style);
+
+                    cell = rowchild.createCell(1);
+                    cell.setCellValue(childePublicStat.getSent());
+                    cell.setCellStyle(style);
+
+                    cell = rowchild.createCell(2);
+                    cell.setCellValue(childePublicStat.getReceived());
+                    cell.setCellStyle(style);
+
+                    cell = rowchild.createCell(3);
+                    cell.setCellValue(childePublicStat.getTotal());
+                    cell.setCellStyle(style);
+                    numRow++;
+                }
+
+            }
+            else {
+                numRow++;
+            }
         }
 
         ServletOutputStream outputStream = response.getOutputStream();

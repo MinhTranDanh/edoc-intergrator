@@ -106,6 +106,11 @@
                         <spring:message code="menu.document.not.send.vpcp"/>
                     </a>
                 </li>
+                <li>
+                    <a href="javascript:void(0)" data-mode="done-taken-edoc" id="done-taken-edoc">
+                        <spring:message code="menu.document.done.taken"/>
+                    </a>
+                </li>
             </ul>
             <!-- /.nav-second-level -->
         </li>

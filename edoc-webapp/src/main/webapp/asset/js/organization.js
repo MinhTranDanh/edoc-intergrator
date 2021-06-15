@@ -93,6 +93,7 @@ let organManage = {
                     "title": organ_message.organ_status,
                     "data": null,
                     "render": function (data) {
+
                         if (data.status === true) {
                             return organ_message.organ_status_active;
                         } else {

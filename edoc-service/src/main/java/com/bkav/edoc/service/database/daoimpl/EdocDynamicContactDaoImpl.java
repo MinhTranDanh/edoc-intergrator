@@ -35,7 +35,26 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
             currentSession.close();
         }
     }
-
+    public EdocDynamicContact findByName(String name) {
+        Session currentSession = openCurrentSession();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT edc FROM EdocDynamicContact edc where edc.name=:name");
+            Query<EdocDynamicContact> query = currentSession.createQuery(sql.toString(), EdocDynamicContact.class);
+            query.setParameter("name", name);
+            List<EdocDynamicContact> edc = query.list();
+            if (edc != null && edc.size() > 0) {
+                return edc.get(0);
+            }
+            LOGGER.warn("Not found dynamic contact for organ domain " + name);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error get dynamic contact from organ domain " + name + " cause " + e.getMessage());
+            return null;
+        } finally {
+            currentSession.close();
+        }
+    }
     @Override
     public List<EdocDynamicContact> getDynamicContactsByAgency(boolean agency) {
         Session currentSession = openCurrentSession();

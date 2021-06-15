@@ -2,6 +2,7 @@ package com.bkav.edoc.service.database.util;
 
 import com.bkav.edoc.service.database.cache.OrganizationCacheEntry;
 import com.bkav.edoc.service.database.entity.EdocDynamicContact;
+import com.bkav.edoc.service.database.entity.EdocNotification;
 import com.bkav.edoc.service.database.entity.pagination.PaginationCriteria;
 import com.bkav.edoc.service.database.services.EdocDynamicContactService;
 
@@ -26,6 +27,10 @@ public class EdocDynamicContactServiceUtil {
 
     public static void createContact(EdocDynamicContact edocDynamicContact) {
         DYNAMIC_CONTACT_SERVICE.createContact(edocDynamicContact);
+    }
+
+    public static EdocDynamicContact findByName(String name) {
+        return DYNAMIC_CONTACT_SERVICE.findContactName(name);
     }
 
     public static OrganizationCacheEntry findByDomain(String organDomain) {

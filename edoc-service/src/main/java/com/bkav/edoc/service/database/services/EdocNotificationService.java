@@ -46,7 +46,9 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(currentSession);
         }
     }
-
+    public List<EdocNotification> getNotifiByIdandReceiveId(long documentId, String ReceiveId) {
+        return notificationDaoImpl.getEdocNotifyByDocumentIdandReceiveId(documentId, ReceiveId);
+    }
     /**
      * remove pending document
      *
@@ -182,7 +184,17 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(session);
         }
     }
+    public void comfirmReceive(EdocNotification en) {
 
+        this.notificationDaoImpl.setNotificationtaken(en);
+    }
+    public List<EdocNotification> getNotifiById(long documentId) {
+        return notificationDaoImpl.getEdocNotifyByDocumentId(documentId);
+    }
+    public void resendDocument(EdocNotification en) {
+
+        this.notificationDaoImpl.setNotificationtaken(en);
+    }
     public List<TelegramMessage> getTelegramMessages() {
         List<TelegramMessage> telegramMessages = new ArrayList<>();
         try {

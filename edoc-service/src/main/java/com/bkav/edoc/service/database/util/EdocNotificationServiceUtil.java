@@ -1,12 +1,10 @@
 package com.bkav.edoc.service.database.util;
 
-import com.bkav.edoc.service.database.entity.EdocDocument;
-import com.bkav.edoc.service.database.entity.EdocNotification;
-import com.bkav.edoc.service.database.entity.EmailRequest;
-import com.bkav.edoc.service.database.entity.TelegramMessage;
+import com.bkav.edoc.service.database.entity.*;
 import com.bkav.edoc.service.database.entity.pagination.PaginationCriteria;
 import com.bkav.edoc.service.database.services.EdocNotificationService;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +21,10 @@ public class EdocNotificationServiceUtil {
         return NOTIFICATION_SERVICE.getEmailRequestScheduleSend(fromDate, toDate);
     }
 
+    public static List<EdocNotification> getNotifyBydocumentIdandReceiveId(long documentId, String ReceiveId) {
+        return NOTIFICATION_SERVICE.getNotifiByIdandReceiveId(documentId, ReceiveId);
+
+    }
     public static List<TelegramMessage> telegramScheduleSend() {
         return NOTIFICATION_SERVICE.getTelegramMessages();
     }
@@ -57,5 +59,17 @@ public class EdocNotificationServiceUtil {
 
     public static Map<String, Object> getAllDocumentNotTaken(PaginationCriteria paginationCriteria) {
         return NOTIFICATION_SERVICE.getAllDocumentNotTaken(paginationCriteria);
+    }
+    public static void comfirmReceive(EdocNotification en) throws SQLException {
+        NOTIFICATION_SERVICE.comfirmReceive(en);
+
+    }
+    public static List<EdocNotification> getNotifyBydocumentId(long documentId) {
+        return NOTIFICATION_SERVICE.getNotifiById(documentId);
+
+    }
+    public static void resend(EdocNotification en) throws SQLException {
+        NOTIFICATION_SERVICE.resendDocument(en);
+
     }
 }

@@ -74,9 +74,17 @@ public class QueryString {
             "where ed.document_id = en.document_id and ed.to_organ_domain like concat('%', en.receiver_id, '%') " +
             "and en.receiver_id = co.domain and co.receive_notify = 1 and en.taken = 0 #WHERE_CLAUSE# #ORDER_CLASUE#";
 
+    public static String BASE_QUERY_DOCUMENT_DONE_TAKEN_TMP = "select en.* from edoc_notification as en, edoc_document as ed, edoc_dynamiccontact as co " +
+            "where ed.document_id = en.document_id and ed.to_organ_domain like concat('%', en.receiver_id, '%') " +
+            "and en.receiver_id = co.domain and co.receive_notify = 1 and en.taken = 1 #WHERE_CLAUSE# #ORDER_CLASUE#";
+
     public static String QUERY_COUNT_DOCUMENT_NOT_TAKEN_TMP = "select count(1) from edoc_document as ed, edoc_notification as en, edoc_dynamiccontact as co " +
             "where ed.document_id = en.document_id and ed.to_organ_domain like concat('%', en.receiver_id, '%') " +
             "and en.receiver_id = co.domain and co.receive_notify = 1 and en.taken = 0 #WHERE_CLAUSE# #ORDER_CLASUE#";
+
+    public static String QUERY_COUNT_DOCUMENT_DONE_TAKEN_TMP = "select count(1) from edoc_document as ed, edoc_notification as en, edoc_dynamiccontact as co " +
+            "where ed.document_id = en.document_id and ed.to_organ_domain like concat('%', en.receiver_id, '%') " +
+            "and en.receiver_id = co.domain and co.receive_notify = 1 and en.taken = 1 #WHERE_CLAUSE# #ORDER_CLASUE#";
 
     public static String BASE_QUERY_DOCUMENT_NOT_SEND_VPCP = "select ed.* from edoc_document as ed where ed.send_ext = 1 and ed.document_ext_id = ''" +
             " and ed.send_success = 0 and (not ed.transaction_status = '') #WHERE_CLAUSE# #ORDER_CLASUE#";

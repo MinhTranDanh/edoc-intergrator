@@ -50,6 +50,7 @@ let edocReport = {
             async: false,
             success: function (data) {
                 jsonData = data;
+                console.log(data);
             }
         });
 

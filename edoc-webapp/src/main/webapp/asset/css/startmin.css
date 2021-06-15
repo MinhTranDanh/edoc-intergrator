@@ -2043,6 +2043,9 @@ input:checked + .slider:before {
     display: none;
 }
 
+#warning-document-done-taken {
+    display: none;
+}
 #resend-documents-not-sendVPCP {
     display: none;
 }

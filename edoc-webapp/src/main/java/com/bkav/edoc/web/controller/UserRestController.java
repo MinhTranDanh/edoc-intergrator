@@ -121,7 +121,7 @@ public class UserRestController {
                 user.setDynamicContact(organization);
 
                 UserCacheEntry userCacheEntry = MapperUtil.modelToUserCache(user);
-                UserServiceUtil.updateUser(user);
+                UserServiceUtil.updateUser(user);   
                 message = messageSourceUtil.getMessage("user.message.edit.success", null);
             }
             Response response = new Response(code, errors, message);

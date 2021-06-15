@@ -68,7 +68,9 @@ public class EdocDynamicContactService {
     public EdocDynamicContact findEdocDynamicContactById(long contactId) {
         return dynamicContactDaoImpl.findById(contactId);
     }
-
+    public EdocDynamicContact findContactName(String name) {
+        return dynamicContactDaoImpl.findByName(name);
+    }
     public void updateContact(EdocDynamicContact edocDynamicContact) {
         dynamicContactDaoImpl.updateContact(edocDynamicContact);
     }

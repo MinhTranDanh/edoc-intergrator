@@ -44,6 +44,55 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         }
         return null;
     }
+    public void setNotificationtaken(EdocNotification en) {
+        saveOrUpdate(en);
+    }
+    public List<EdocNotification> getEdocNotifyByDocumentId(long documentId) {
+        Session session = openCurrentSession();
+        //EdocNotification en= new EdocNotification();
+        List<EdocNotification> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT en FROM EdocNotification en WHERE en.document.documentId=:documentId ");
+            Query<EdocNotification> query = session.createQuery(sql.toString(), EdocNotification.class);
+            //query.setParameter("taken", false);
+            query.setParameter("documentId", documentId);
+            //query.setParameter("receiverId", receiveId);
+            list = query.getResultList();
+            return list;
+
+        } catch (Exception e) {
+            LOGGER.error("Error get edoc notification not taken cause " + e.getMessage());
+            return new ArrayList<>();
+        } finally {
+            closeCurrentSession(session);
+        }
+
+    }
+
+    public List<EdocNotification> getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId) {
+        Session session = openCurrentSession();
+        //EdocNotification en= new EdocNotification();
+        List<EdocNotification> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT en FROM EdocNotification en WHERE en.document.documentId=:documentId and en.receiverId=:Id");
+            Query<EdocNotification> query = session.createQuery(sql.toString(), EdocNotification.class);
+            //query.setParameter("taken", false);
+            query.setParameter("documentId", documentId);
+            query.setParameter("Id", ReceiveId);
+            //query.setParameter("receiverId", receiveId);
+            list = query.getResultList();
+            return list;
+
+        } catch (Exception e) {
+            LOGGER.error("Error get edoc notification not taken cause " + e.getMessage());
+            return new ArrayList<>();
+        } finally {
+            closeCurrentSession(session);
+        }
+
+    }
 
     public List<EdocDocument> getDocumentByOrganId(String organId) {
         Session currentSession = openCurrentSession();

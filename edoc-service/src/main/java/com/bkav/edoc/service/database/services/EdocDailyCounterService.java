@@ -53,7 +53,7 @@ public class EdocDailyCounterService {
                     contacts = edocDynamicContactService.getOrganByKeyword(keyword);
                 }
             }
-            contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+//            contacts = contacts.stream().filter(o -> (!(o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
 
             for (OrganizationCacheEntry contact : contacts) {
                 String organId = contact.getDomain();
@@ -69,7 +69,7 @@ public class EdocDailyCounterService {
 
                 List<OrganizationCacheEntry> childOrgan = edocDynamicContactService.getOrganByKeyword(regex);
 
-                Set<EPublicStat> childOrganStatSet = new HashSet<>();
+                List<EPublicStat> childOrganStatSet = new ArrayList<>();
 
                 for (OrganizationCacheEntry child : childOrgan) {
                     String childDomain = child.getDomain();
@@ -98,6 +98,7 @@ public class EdocDailyCounterService {
         } finally {
             edocDailyCounterDao.closeCurrentSession(session);
         }
+
         return ePublicStats;
     }
 

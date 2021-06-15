@@ -81,6 +81,23 @@
             </table>
         </div>
     </div>
+    <div class="edoc-table-done-taken">
+    <div class="table-responsive">
+        <div class="row user-import" id="warning-document-done-taken">
+            <button class="btn btn-primary import-excel-button" id="put-to-telegram">
+                <i class="fa fa-telegram"></i>
+                <spring:message code="edoc.not.taken.warning.telegram"/>
+            </button>
+            <%--<button class="btn btn-primary import-excel-button" id="put-to-email">
+                <i class="fa fa-envelope"></i>
+                <spring:message code="edoc.not.taken.warning.email"/>
+            </button>--%>
+        </div>
+        <table class="table table-striped table-bordered table-hover custom-datatable" id="dataTables-edoc-doneTaken">
+        </table>
+    </div>
+</div>
+
     <div class="edoc-table-not-sendPCP">
         <div class="table-responsive">
             <div class="row user-import" id="resend-documents-not-sendVPCP">

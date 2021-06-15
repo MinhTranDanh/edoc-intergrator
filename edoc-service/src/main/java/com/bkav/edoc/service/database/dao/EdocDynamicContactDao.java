@@ -14,6 +14,8 @@ public interface EdocDynamicContactDao {
 
     Long countOrgan(boolean agency);
 
+    public EdocDynamicContact findByName(String name);
+
     boolean checkPermission(String organId, String token);
 
     void updateContact(EdocDynamicContact edocDynamicContact);

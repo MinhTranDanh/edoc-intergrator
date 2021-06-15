@@ -119,7 +119,7 @@ public class MapperUtil {
             documentCacheEntry.setTraces(traces);
             TraceHeaderListCacheEntry traceHeaderListCacheEntry = MapperUtil.modelToTraceHeaderListCache(document.getTraceHeaderList());
             traceHeaderListCacheEntry.setDocumentId(document.getDocumentId());
-            documentCacheEntry.setTraceHeaderList(traceHeaderListCacheEntry);
+            documentCacheEntry.setTraceHeaderList(traceHeaderListCacheEntry);*/
 
             List<NotificationCacheEntry> notificationCacheEntries = new ArrayList<>();
 
@@ -132,7 +132,7 @@ public class MapperUtil {
                     notificationCacheEntries.add(notificationCacheEntry);
                 }
             }
-            documentCacheEntry.setNotifications(notificationCacheEntries);*/
+            documentCacheEntry.setNotifications(notificationCacheEntries);
             return documentCacheEntry;
         } catch (Exception e) {
             LOGGER.error("Error convert document model to cache entry with document id "
