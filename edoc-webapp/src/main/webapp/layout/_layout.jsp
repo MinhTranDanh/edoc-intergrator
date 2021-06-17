@@ -238,7 +238,7 @@
                             <span class="required">*</span>
                         </div>
                         <div class="col-md-9 col-sm-6 col-xs-12">
-                            <input id="password" type="password" class="form-control" name="password" value="">
+                            <input id="password" type="password" class="form-control" name="password" value="" autocomplete="confirm-password">
                             <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
                     </div>
@@ -514,7 +514,7 @@
                             <span class="required">*</span>
                         </div>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                            <input class="form-control" required id="oldPassword" type="password">
+                            <input class="form-control" required id="oldPassword" type="password" autocomplete="confirm-password">
                             <span toggle="#oldPassword" class="fa fa-fw fa-eye-slash field-icon toggle-old-password"></span>
                         </div>
                     </div>
@@ -526,7 +526,7 @@
                             <span class="required">*</span>
                         </div>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                            <input type="password" autocomplete="off" class="form-control" required id="newPassword" value="">
+                            <input type="password" class="form-control" required id="newPassword" value="" autocomplete="confirm-password">
                             <span toggle="#newPassword" class="fa fa-fw fa-eye-slash field-icon toggle-new-password"></span>
                             <progress max="100" value="0" id="meter"></progress>
                         </div>
@@ -539,7 +539,7 @@
                             <span class="required">*</span>
                         </div>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                            <input id="retypeNewPassword" type="password" class="form-control" value="">
+                            <input id="retypeNewPassword" type="password" class="form-control" value="" autocomplete="confirm-password">
                             <span toggle="#retypeNewPassword" class="fa fa-fw fa-eye-slash field-icon toggle-renew-password"></span>
                         </div>
                     </div><br>
@@ -2043,6 +2043,7 @@
 <script src="<c:url value="/asset/js/jquery.datetimepicker.full.js"/>"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="<c:url value="/asset/js/bootstrap.min.js"/>"></script>
+<%--<script src="<c:url value="/asset/js/lib/bootstrap-modal-popover.js"/>"></script>--%>
 <script src="<c:url value="/asset/js/jquery.contextMenu.min.js"/>"></script>
 <%--JQuery template--%>
 <script src="<c:url value="/asset/js/jquery.tmpl.min.js"/>"></script>
@@ -2055,7 +2056,6 @@
 <script src="<c:url value="/asset/js/dataTables/dataTables.bootstrap.min.js"/>"></script>
 <script src="<c:url value="/asset/js/dataTables/dataTables.responsive.min.js"/>"></script>
 <script src="<c:url value="/asset/js/dataTables/responsive.bootstrap.min.js"/>"></script>
-<script src="<c:url value="/asset/js/lib/bootstrap.modalOver.js"/>"></script>
 <!-- Custom Theme JavaScript -->
 <script src="<c:url value="/asset/js/startmin.js"/>"></script>
 <script src="<c:url value="/asset/js/document.js"/>"></script>

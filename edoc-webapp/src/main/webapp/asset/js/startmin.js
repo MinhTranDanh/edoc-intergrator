@@ -38,4 +38,19 @@ $(function () {
         e.preventDefault();
         $(".buttons-excel").click();
     });
+
+    $(document).ready(function() {
+        $('.btn-open').click(function(event) {
+            $('.dialog_box').addClass('show-dialog');
+            $('.back').addClass('show-dialog');
+        });
+        $('.btn-close').click(function(event) {
+            $('.dialog_box').removeClass('show-dialog');
+            $('.back').removeClass('show-dialog');
+        });
+        $('.back').click(function(event) {
+            $('.dialog_box').removeClass('show-dialog');
+            $('.back').removeClass('show-dialog');
+        });
+    });
 });

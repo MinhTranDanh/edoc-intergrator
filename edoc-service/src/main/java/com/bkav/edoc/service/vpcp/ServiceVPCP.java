@@ -17,6 +17,7 @@ import com.bkav.edoc.service.xml.base.header.Error;
 import com.bkav.edoc.service.xml.base.header.Organization;
 import com.bkav.edoc.service.xml.base.header.TraceHeaderList;
 import com.bkav.edoc.service.xml.base.parser.ParserException;
+import com.bkav.edoc.service.xml.base.util.DateUtils;
 import com.bkav.edoc.service.xml.ed.Ed;
 import com.bkav.edoc.service.xml.ed.header.MessageHeader;
 import com.bkav.edoc.service.xml.ed.parser.EdXmlParser;
@@ -34,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,7 @@ public class ServiceVPCP {
 
     public void GetDocuments() {
         // Get list documents sent from VPCP
-        LOGGER.info("----------------- Invoke GetDocuments from VPCP ----------------");
+        LOGGER.info("----------------- Invoke GetDocuments from VPCP at " + DateUtils.format(new Date()));
         JSONObject getDocumentsHeader = new JSONObject();
         getDocumentsHeader.put("servicetype", "eDoc");
         getDocumentsHeader.put("messagetype", MessageType.edoc);
@@ -150,8 +152,8 @@ public class ServiceVPCP {
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
-                                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId())) {
-                                        LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " on Esb !!!!!");
+                                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), messageHeader.getToes())) {
+                                        LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
                                     } else {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                         document = EdocDocumentServiceUtil.addDocument(messageHeader,

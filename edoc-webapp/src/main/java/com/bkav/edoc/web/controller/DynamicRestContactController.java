@@ -126,12 +126,16 @@ public class DynamicRestContactController {
                             organ.setTelephone(contactRequest.getTelephone());
 
                         EdocDynamicContactServiceUtil.updateContact(organ);
+                        OrganizationCacheEntry organizationCacheEntry = EdocDynamicContactServiceUtil.findByDomain(organ.getDomain());
+                        EdocDynamicContactServiceUtil.updateContact(organizationCacheEntry, organ);
                     } else {
                         organ.setSendToVPCP(contactRequest.getSendToVPCP());
                         if (!contactRequest.getTelephone().equals(""))
                             organ.setTelephone(contactRequest.getTelephone());
 
                         EdocDynamicContactServiceUtil.updateContact(organ);
+                        OrganizationCacheEntry organizationCacheEntry = EdocDynamicContactServiceUtil.findByDomain(organ.getDomain());
+                        EdocDynamicContactServiceUtil.updateContact(organizationCacheEntry, organ);
 
                         if (!contactRequest.getSendToVPCP()) {
                             String jsonHeader = "{\"AgencyCode\":\"" + contactRequest.getDomain() + "\"}";

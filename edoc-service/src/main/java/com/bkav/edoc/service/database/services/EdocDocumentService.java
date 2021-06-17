@@ -35,6 +35,7 @@ import org.hibernate.query.Query;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -118,8 +119,9 @@ public class EdocDocumentService {
         List<DocumentCacheEntry> entries = new ArrayList<>();
         Session session = documentDaoImpl.openCurrentSession();
         String condition = "and";
-        if (organId != null)
+        if (organId != null) {
             if (organId.equals(PropsUtil.get("edoc.domain.vpubnd.0"))) condition = "or";
+        }
         try {
             String queryDocument = "";
             switch (mode) {
@@ -198,17 +200,6 @@ public class EdocDocumentService {
                     entries.add(documentCacheEntry);
                 }
             }
-
-            /*List<EdocNotification> edocNotifications = edocNotificationDao.getEdocNotificationNotTaken(paginationCriteria);
-            for (EdocNotification edocNotification: edocNotifications) {
-                //EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(edocNotification.getReceiverId());
-                //if (contact.getReceiveNotify()) {
-                    EdocDocument edocDocument = edocNotification.getDocument();
-                    edocDocument.setToOrganDomain(edocNotification.getReceiverId());
-                    DocumentCacheEntry documentCacheEntry = MapperUtil.documentToCached(edocDocument);
-                    entries.add(documentCacheEntry);
-                //}
-            }*/
         } catch (Exception e) {
             LOGGER.error("Error get documents not taken " + Arrays.toString(e.getStackTrace()));
         } finally {
@@ -521,29 +512,45 @@ public class EdocDocumentService {
                 notification.setSendNumber(0);
                 notification.setDueDate(dueDate);
                 if (isTayNinh) {
+                    LOGGER.info("Is that VNPT request: " + turnOn);
                     if (turnOn) {
                         // tay ninh
-                        if (to.getOrganId().charAt(10) == 'A') {
-                            notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
-                        } else {
-                            notification.setReceiverId(to.getOrganId());
+                        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(to.getOrganId());
+                        if (contact != null) {
+                            if (contact.getIntegratorCenter()) {
+                                LOGGER.info("Organ is in the integrator center with domain in notification: " + to.getOrganId() + " ----> " + PropsUtil.get("edoc.domain.A.parent"));
+                                notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
+                            }
+                        /*if (to.getOrganId().length() >= 13) {
+                            if (to.getOrganId().charAt(10) == 'A') {
+                                notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
+                            }
+                        }*/ else {
+                                notification.setReceiverId(to.getOrganId());
+                            }
                         }
                     } else {
                         notification.setReceiverId(to.getOrganId());
                     }
                 } else {
                     // lamdong
+                    LOGGER.info("Is that VNPT request: " + turnOn);
                     if (turnOn) {
+                        LOGGER.info("Find edoc dynamiccontact with domain " + to.getOrganId());
                         EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(to.getOrganId());
-                        if (contact.getIntegratorCenter()) {
-                            if (countOrgan == 0) {
-                                notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
-                                countOrgan++;
+                        if (contact != null) {
+                            LOGGER.info("The organ is in the integrator center: " + contact.getIntegratorCenter());
+                            if (contact.getIntegratorCenter()) {
+                                if (countOrgan == 0) {
+                                    LOGGER.info("Organ is in the integrator center with domain in notification: " + to.getOrganId() + " ----> " + PropsUtil.get("edoc.domain.A.parent"));
+                                    notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
+                                    countOrgan++;
+                                } else {
+                                    continue;
+                                }
                             } else {
-                                continue;
+                                notification.setReceiverId(to.getOrganId());
                             }
-                        } else {
-                            notification.setReceiverId(to.getOrganId());
                         }
                         /*String[] subDomain = to.getOrganId().split("\\.");
                         String childDomain = subDomain[2] + "." + subDomain[3];
@@ -583,7 +590,7 @@ public class EdocDocumentService {
             LOGGER.error("Error add document to database because " + e);
             LOGGER.error("Error add document to database cause " + Arrays.toString(new String[]{Arrays.toString(e.getStackTrace())}));
             Error error = new Error("M.SaveDocError", "Save document error cause "
-                    + Arrays.toString(e.getStackTrace()) + " with document code " + messageHeader.getCode().getCodeNumber());
+                    + Arrays.toString(e.getStackTrace()) + " with document code: " + messageHeader.getCode().getCodeNumber() + "/" + messageHeader.getCode().getCodeNotation());
             errors.add(error);
             if (currentSession != null) {
                 currentSession.getTransaction().rollback();
@@ -625,6 +632,19 @@ public class EdocDocumentService {
     public boolean checkExistDocument(String edXmlDocumentId) {
         EdocDocument check = documentDaoImpl.checkExistDocument(edXmlDocumentId);
         return (check != null);
+    }
+
+    public boolean checkExistDocument(String edXmlDocumentId, List<Organization> toOrgans) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        toOrgans.forEach(toOrgan -> {
+            //LOGGER.info("Check exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
+            EdocDocument check = documentDaoImpl.checkExistDocumentVPCP(edXmlDocumentId, toOrgan.getOrganId());
+            if (check != null) {
+                LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
+                flag.set(true);
+            }
+        });
+        return flag.get();
     }
 
     public boolean checkExistDocumentByDocCode(String fromOrgan, String toOrgan, String docCode) {
@@ -669,8 +689,19 @@ public class EdocDocumentService {
     public void savePendingDocumentCache(List<Organization> tos, long docId) {
         for (Organization to : tos) {
             String organId = to.getOrganId();
-            if (organId.charAt(10) == 'A') {
-                organId = PropsUtil.get("edoc.domain.A.parent");
+            EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(to.getOrganId());
+            if (contact != null) {
+                if (contact.getIntegratorCenter()) {
+                    LOGGER.info("Organ is in the integrator center with domain: " + to.getOrganId() + " ----> " + PropsUtil.get("edoc.domain.A.parent"));
+                    organId = PropsUtil.get("edoc.domain.A.parent");
+                    /*if (organId.length() >= 13) {
+                        LOGGER.info("Organ not in the integrator center !!!!!!");
+                        if (organId.charAt(10) == 'A') {
+                            LOGGER.info("Organ is in the integrator center with domain: " + PropsUtil.get("edoc.domain.A.parent"));
+                            organId = PropsUtil.get("edoc.domain.A.parent");
+                        }
+                    }*/
+                }
             }
             // TODO: Cache
             List obj = RedisUtil.getInstance().get(RedisKey.getKey(organId, RedisKey.GET_PENDING_KEY), List.class);
@@ -696,10 +727,19 @@ public class EdocDocumentService {
     private void saveAllowGetDocumentCache(List<Organization> toOrgans, long documentId) {
         for (Organization to : toOrgans) {
             String organId = to.getOrganId();
-            // check if send to group config
-            if (organId.charAt(10) == 'A') {
-                organId = PropsUtil.get("edoc.domain.A.parent");
+            EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(to.getOrganId());
+            if (contact != null) {
+                if (contact.getIntegratorCenter()) {
+                    LOGGER.info("Organ is in the integrator center with domain: " + to.getOrganId() + " ----> " + PropsUtil.get("edoc.domain.A.parent"));
+                    organId = PropsUtil.get("edoc.domain.A.parent");
+                }
             }
+            // check if send to group config
+            /*if (organId.length() >= 13) {
+                if (organId.charAt(10) == 'A') {
+                    organId = PropsUtil.get("edoc.domain.A.parent");
+                }
+            }*/
             Boolean allowObj = RedisUtil.getInstance().get(RedisKey.getKey(organId
                     + documentId, RedisKey.CHECK_ALLOW_KEY), Boolean.class);
             if (allowObj == null) {
@@ -968,21 +1008,6 @@ public class EdocDocumentService {
         return documentDaoImpl.getDocCodeByCounterDate(_counterDate);
     }
 
-    public boolean testCheck(String domain) {
-
-        String[] subDomain = domain.split("\\.");
-        String childDomain = subDomain[2] + "." + subDomain[3];
-        List<String> listParentDomain = Arrays.asList(PropsUtil.get("edoc.integrator.center.lamdong").split("\\|"));
-        listParentDomain.forEach(str -> {
-            System.out.println(str);
-        });
-        return listParentDomain.stream().anyMatch(s -> s.contains(childDomain));
-        /*for (String s: listParentDomain) {
-            if (s.trim().contains(childDomain))
-                return true;
-        }*/
-    }
-
     public static void main(String[] args) {
         /*String yesterday = "2021-01-26";
         java.sql.Date yes = java.sql.Date.valueOf(yesterday);
@@ -996,14 +1021,6 @@ public class EdocDocumentService {
         EdocDocumentService edocDocumentService = new EdocDocumentService();
         //edocDocumentService.getDailyCounterDocument(yes, no);
         System.out.println(edocDocumentService.getDocCodeByCounterDate(date));*/
-
-        EdocDocumentService edocDocumentService = new EdocDocumentService();
-        String domain = "000.01.77.H36";
-        if (edocDocumentService.testCheck(domain)) {
-            System.out.println("True!!");
-        } else {
-            System.out.println("False");
-        }
     }
 
 

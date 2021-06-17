@@ -511,6 +511,7 @@ public class ExcelService {
     }
 
     public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword) throws IOException {
+<<<<<<< HEAD
         List<EPublicStat> eStats = new ArrayList<>();
         boolean isGetAllAgency = false;
         if (fromDate == null || toDate == null)
@@ -518,6 +519,9 @@ public class ExcelService {
         else
             eStats = EdocDailyCounterServiceUtil.ExportStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
 
+=======
+        List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
+>>>>>>> cb09bff04cf44c8d436ba93085b5bb94a066627b
         List<EPublicStat> sortedListStat = eStats.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
