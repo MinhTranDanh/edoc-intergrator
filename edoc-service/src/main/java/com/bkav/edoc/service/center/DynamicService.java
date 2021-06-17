@@ -606,10 +606,14 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
 
         StringBuilder strDocumentId = new StringBuilder();
         Report report = xmlChecker.checkXmlTag(envelop);
+
+        String fromOrganId = null;
         if (report.isIsSuccess()) {
             try {
                 // Extract MessageHeader
                 messageHeader = extractMime.getMessageHeader(envelop);
+                LOGGER.info("Send a document from organ: " + messageHeader.getFrom().getOrganId() + " " + DateUtils.format(new Date(), "yyyy/MM/dd"));
+                fromOrganId = messageHeader.getFrom().getOrganId();
 
                 // Extract TraceHeaderList
                 traceHeaderList = extractMime.getTraceHeaderList(envelop);
@@ -688,6 +692,8 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 }
                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
 
+                LOGGER.info("------------ Start save document with from organ " + messageHeader.getFrom().getOrganId() + " and id "
+                        + messageHeader.getDocumentId() + " at " + DateUtils.format(new Date(), "yyyy/MM/dd"));
                 // add document, document detail, notification, attachment, trace header list
                 EdocDocument document = documentService.addDocument(messageHeader, traceHeaderList,
                         attachmentsEntity, strDocumentId, attachmentCacheEntries, errorList);
@@ -758,7 +764,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 map.put(StringPool.CHILD_BODY_KEY, bodyChildDocument);
                 map.put(StringPool.SEND_DOCUMENT_RESPONSE_ID_KEY, docIdResponseElm);
             } catch (Exception e) {
-                LOGGER.error("Error send document " + Arrays.toString(e.getStackTrace()));
+                LOGGER.error("Error send document from organ " + fromOrganId + " cause " + Arrays.toString(e.getStackTrace()));
                 errorList.add(new Error("M.SendDocument", "Error send document to esb error trace" + Arrays.toString(e.getStackTrace())));
 
                 report = new Report(false, new ErrorList(errorList));

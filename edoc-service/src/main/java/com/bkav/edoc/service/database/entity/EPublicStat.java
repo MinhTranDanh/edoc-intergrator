@@ -1,7 +1,5 @@
 package com.bkav.edoc.service.database.entity;
 
-import com.bkav.edoc.service.database.cache.OrganizationCacheEntry;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;

@@ -33,9 +33,6 @@ public class EdocDailyCounterService {
 
     public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
         List<EPublicStat> ePublicStats = new ArrayList<>();
-        vpubnd_sent = 0;
-        vpubnd_received = 0;
-        vpubndName = "";
         boolean hasKeyword = false;
         List<OrganizationCacheEntry> contacts;
 
@@ -90,7 +87,7 @@ public class EdocDailyCounterService {
                 ePublicStat.setOrganName(vpubndName);
                 ePublicStat.setSent(vpubnd_sent);
                 ePublicStat.setReceived(vpubnd_received);
-                long total = vpubnd_sent + vpubnd_received;
+                int total = vpubnd_sent + vpubnd_received;
                 ePublicStat.setTotal(total);
                 ePublicStats.add(ePublicStat);
             }
@@ -226,10 +223,46 @@ public class EdocDailyCounterService {
             ePublicStat.setOrganName(contact.getName());
             ePublicStat.setSent(sent);
             ePublicStat.setReceived(received);
-            long total = sent + received;
+            int total = sent + received;
             ePublicStat.setTotal(total);
             return ePublicStat;
         }
+    }
+
+    public List<EPublicStat> getStatDetailForExcel() {
+        List<EPublicStat> ePublicStats = new ArrayList<>();
+        List<OrganizationCacheEntry> contacts;
+        Session session = edocDailyCounterDao.openCurrentSession();
+        try {
+            contacts = edocDynamicContactService.getDynamicContactsByAgency(true);
+
+            // Except organ contain "A" in domain
+            contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+
+            contacts.forEach(contact -> {
+                EPublicStat parentOrgan = callStatStoredProcedure(null, null, session, contact);
+
+                if (parentOrgan != null)
+                    ePublicStats.add(parentOrgan);
+            });
+            LOGGER.info("Add VPUBND to list !!!!!!!!");
+
+            EPublicStat ePublicStat = new EPublicStat();
+            ePublicStat.setLastUpdate(new Date());
+            ePublicStat.setOrganDomain(PropsUtil.get("edoc.domain.vpubnd.1"));
+            ePublicStat.setOrganName(vpubndName);
+            ePublicStat.setSent(vpubnd_sent);
+            ePublicStat.setReceived(vpubnd_received);
+            long total = vpubnd_sent + vpubnd_received;
+            ePublicStat.setTotal(total);
+            ePublicStat.setChildOrgan(null);
+            ePublicStats.add(ePublicStat);
+        } catch (Exception e) {
+            LOGGER.error("Error get stat document detail cause " + e);
+        } finally {
+            edocDailyCounterDao.closeCurrentSession(session);
+        }
+        return ePublicStats;
     }
 
     public List<EdocStatisticDetail> getStatisticSentReceivedExtDetail(String fromDate, String toDate, String organDomain) {
@@ -253,18 +286,6 @@ public class EdocDailyCounterService {
 
                 List<Long> listDocCode = edocDocumentService.getDocCodeByOrganDomain(fromDate, toDate, organDomain);
                 LOGGER.info("Has " + listDocCode.size() + " documents!!!!");
-                /*for (long doc_code: listDocCode) {
-                    LOGGER.info("Start at documentID " + doc_code);
-                    if (edocAttachmentService.checkSignedAttachment(doc_code)) {
-                        int signed = edocStatisticDetail.getSigned() + 1;
-                        edocStatisticDetail.setSigned(signed);
-                    } else {
-                        int not_signed = edocStatisticDetail.getNot_signed() + 1;
-                        edocStatisticDetail.setNot_signed(not_signed);
-                    }
-                }
-
-                 */
                 edocStatDetails.add(edocStatisticDetail);
             }
         } else {
@@ -287,18 +308,6 @@ public class EdocDailyCounterService {
 
                 List<Long> listDocCode = edocDocumentService.getDocCodeByOrganDomain(fromDate, toDate, domain);
                 LOGGER.info("Has " + listDocCode.size() + " documents!!!!");
-                /*for (long doc_code: listDocCode) {
-                    LOGGER.info("Start at documentID " + doc_code);
-                    if (edocAttachmentService.checkSignedAttachment(doc_code)) {
-                        int signed = edocStatDetail.getSigned() + 1;
-                        edocStatDetail.setSigned(signed);
-                    } else {
-                        int not_signed = edocStatDetail.getNot_signed() + 1;
-                        edocStatDetail.setNot_signed(not_signed);
-                    }
-                }
-
-                 */
                 dailyCounterMap.put(domain, edocStatDetail);
                 LOGGER.info("End count organ domain " + domain);
             }
@@ -335,12 +344,6 @@ public class EdocDailyCounterService {
         List<Long> received, moreReceived;
         sent = edocDailyCounterDao.getSentByMonth(year, organDomain);
         received = edocDailyCounterDao.getReceivedByMonth(year, organDomain);
-        /*if (organDomain.equals(PropsUtil.get("edoc.domain.vpubnd.0"))) {
-            moreSent = edocDailyCounterDao.getSentByMonth(year, PropsUtil.get("edoc.domain.vpubnd.1"));
-            sent.addAll(moreSent);
-            moreReceived = edocDailyCounterDao.getSentByMonth(year, PropsUtil.get("edoc.domain.vpubnd.1"));
-            received.addAll(moreReceived);
-        }*/
         map.put("sent", sent);
         map.put("received", received);
         return new Gson().toJson(map);
