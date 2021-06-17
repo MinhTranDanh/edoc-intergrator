@@ -29,6 +29,10 @@ public class EdocDailyCounterServiceUtil {
         return EDOC_DAILY_COUNTER_SERVICE.getStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
     }
 
+    public static List<EPublicStat> ExportStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+        return EDOC_DAILY_COUNTER_SERVICE.ExportStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
+    }
+
     public static EPublic getStat() {
         return EDOC_DAILY_COUNTER_SERVICE.getStat();
     }

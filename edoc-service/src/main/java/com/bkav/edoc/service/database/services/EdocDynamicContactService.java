@@ -213,6 +213,48 @@ public class EdocDynamicContactService {
 
         return organizationCacheEntries;
     }
+    public List<OrganizationCacheEntry> getAllContact() {
+        List<OrganizationCacheEntry> organizationCacheEntries;
+        String cacheKey = MemcachedKey.getKey("", RedisKey.GET_LIST_CONTACT_BY_KEY);
+        MemcachedUtil.getInstance().delete(cacheKey);
+        organizationCacheEntries = (List<OrganizationCacheEntry>) MemcachedUtil.getInstance().read(cacheKey);
+
+        if (organizationCacheEntries == null) {
+            organizationCacheEntries = new ArrayList<>();
+            List<EdocDynamicContact> contacts = dynamicContactDaoImpl.getAllContact();
+
+            for (EdocDynamicContact contact : contacts) {
+                OrganizationCacheEntry organizationCacheEntry = MapperUtil.modelToOrganCache(contact);
+                organizationCacheEntries.add(organizationCacheEntry);
+            }
+
+            MemcachedUtil.getInstance().create(cacheKey, MemcachedKey.CHECK_ALLOW_TIME_LIFE, organizationCacheEntries);
+
+        }
+
+        return organizationCacheEntries;
+    }
+    public List<OrganizationCacheEntry> getLevel2Contact() {
+        List<OrganizationCacheEntry> organizationCacheEntries;
+        String cacheKey = MemcachedKey.getKey("", RedisKey.GET_LIST_CONTACT_BY_KEY);
+        MemcachedUtil.getInstance().delete(cacheKey);
+        organizationCacheEntries = (List<OrganizationCacheEntry>) MemcachedUtil.getInstance().read(cacheKey);
+
+        if (organizationCacheEntries == null) {
+            organizationCacheEntries = new ArrayList<>();
+            List<EdocDynamicContact> contacts = dynamicContactDaoImpl.getAllChildrenContact("000.");
+
+            for (EdocDynamicContact contact : contacts) {
+                OrganizationCacheEntry organizationCacheEntry = MapperUtil.modelToOrganCache(contact);
+                organizationCacheEntries.add(organizationCacheEntry);
+            }
+
+            MemcachedUtil.getInstance().create(cacheKey, MemcachedKey.CHECK_ALLOW_TIME_LIFE, organizationCacheEntries);
+
+        }
+
+        return organizationCacheEntries;
+    }
 
     public List<OrganizationCacheEntry> getOrganByKeyword(String keyword) {
         List<OrganizationCacheEntry> organizationCacheEntries;

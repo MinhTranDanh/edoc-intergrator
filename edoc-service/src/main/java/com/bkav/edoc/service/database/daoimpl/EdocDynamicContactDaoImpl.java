@@ -233,6 +233,27 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
             query.setParameter("regexParent", regexParent);
             query.setParameter("agency", true);
             childOrgans = query.getResultList();
+//            System.out.println(childOrgans.size());
+            if (childOrgans != null)
+                return childOrgans;
+        } catch (Exception e) {
+            LOGGER.error(e);
+        } finally {
+            closeCurrentSession(session);
+        }
+        return new ArrayList<>();
+    }
+    public List<EdocDynamicContact> getAllContact () {
+        Session session = openCurrentSession();
+        List<EdocDynamicContact> childOrgans;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("Select edc from EdocDynamicContact edc where  edc.agency = :agency");
+            Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
+
+            query.setParameter("agency", true);
+            childOrgans = query.getResultList();
+//            System.out.println(childOrgans.size());
             if (childOrgans != null)
                 return childOrgans;
         } catch (Exception e) {
