@@ -127,6 +127,7 @@ public class EdocDocumentServiceUtil {
         return DOCUMENT_SERVICE.getDocumentNotTaken(paginationCriteria);
     }
 
+    //MinhTDb
     public static List<DocumentCacheEntry> getDocumentsDoneTaken(PaginationCriteria paginationCriteria) {
         return DOCUMENT_SERVICE.getDocumentDoneTaken(paginationCriteria);
     }

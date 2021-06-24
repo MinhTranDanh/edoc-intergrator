@@ -68,6 +68,7 @@ public class EdocDynamicContactService {
     public EdocDynamicContact findEdocDynamicContactById(long contactId) {
         return dynamicContactDaoImpl.findById(contactId);
     }
+    //MinhTDb
     public EdocDynamicContact findContactName(String name) {
         return dynamicContactDaoImpl.findByName(name);
     }
@@ -164,13 +165,19 @@ public class EdocDynamicContactService {
             else {
                 String keyword = "\"" + paginationCriteria.getSearch() + "\"";
                 storedProcedureQuery.setParameter("keyword", keyword);
+                System.out.println(keyword);
             }
+
             storedProcedureQuery.setParameter("pageIdx", paginationCriteria.getPageNumber());
             storedProcedureQuery.setParameter("pageSize", paginationCriteria.getPageSize());
+            System.out.println(paginationCriteria.getPageNumber());
+            System.out.println(paginationCriteria.getPageSize());
             totalRecords = (Integer) storedProcedureQuery.getOutputParameterValue("totalRecords");
+            System.out.println(totalRecords);
+            System.out.println(paginationCriteria.getOrderBy());
 
             List list = storedProcedureQuery.getResultList();
-
+            System.out.println(list);
             if (list != null && list.size() > 0) {
                 for (Object object : list) {
                     EdocDynamicContact contact = (EdocDynamicContact) object;
@@ -263,12 +270,16 @@ public class EdocDynamicContactService {
         organizationCacheEntries = (List<OrganizationCacheEntry>) MemcachedUtil.getInstance().read(cacheKey);
         if (organizationCacheEntries == null) {
             organizationCacheEntries = new ArrayList<>();
+
             List<EdocDynamicContact> contacts = dynamicContactDaoImpl.getAllChildrenContact(keyword);
+
             for (EdocDynamicContact contact : contacts) {
                 OrganizationCacheEntry organizationCacheEntry = MapperUtil.modelToOrganCache(contact);
                 organizationCacheEntries.add(organizationCacheEntry);
             }
+
             MemcachedUtil.getInstance().create(cacheKey, MemcachedKey.CHECK_ALLOW_TIME_LIFE, organizationCacheEntries);
+
         }
 
         return organizationCacheEntries;

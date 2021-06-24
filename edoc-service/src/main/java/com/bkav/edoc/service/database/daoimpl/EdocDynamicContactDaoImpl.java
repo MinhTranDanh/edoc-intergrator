@@ -35,6 +35,8 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
             currentSession.close();
         }
     }
+
+    //MinhTDb
     public EdocDynamicContact findByName(String name) {
         Session currentSession = openCurrentSession();
         try {
@@ -228,12 +230,12 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
         List<EdocDynamicContact> childOrgans;
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("Select edc from EdocDynamicContact edc where edc.domain like concat('%', :regexParent, '%') and edc.agency = :agency");
+            sql.append("Select edc from EdocDynamicContact edc where (edc.domain like concat('%', :regexParent, '%') OR edc.name like concat('%', :regexParent, '%')) and edc.agency = :agency");
             Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
             query.setParameter("regexParent", regexParent);
             query.setParameter("agency", true);
             childOrgans = query.getResultList();
-//            System.out.println(childOrgans.size());
+
             if (childOrgans != null)
                 return childOrgans;
         } catch (Exception e) {

@@ -193,6 +193,7 @@ let edocDocument = {
             "order": [[1, "desc"]],
         });
     },
+    //MinhTDb
     renderNotTakenDatatable: () => {
         let instance = this;
         instance.dataTable = $('#dataTables-edoc-notTaken').DataTable({
@@ -202,13 +203,8 @@ let edocDocument = {
             ajax: {
                 url: "/documents/-/not/taken",
                 type: "POST",
-                /*success: (data) => console.log(data),
-                error: () => $.notify("Error", "error")*/
-
             },
-
             drawCallback: function() {
-
                 var receiveName;
                 $("tr").mousedown(function(event) {
                     if(event.which===3) {
@@ -218,8 +214,6 @@ let edocDocument = {
                 }),
                 $(this).contextMenu({
                     selector: 'tbody tr td',
-
-
                     callback: (key, options) => {
                         let id = options.$trigger[0].parentElement.id;
 
@@ -228,15 +222,11 @@ let edocDocument = {
                                 console.log(id);
                                 break;
                             case "comfirm-receive":
-                                // window.console && console.log(m);
-
                                 console.log(id);
                                 console.log(receiveName);
-
                                 comfirmReceive(id,receiveName);
                                 // $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
                                 edocDocument.renderNotTakenDatatable();
-
                                 break;
                             case "delete":
                                 edocDocument.deleteDocument(id);
@@ -274,8 +264,6 @@ let edocDocument = {
                     "name": "ed.from_organ_domain",
                     "title": app_message.edoc_table_header_fromOrgan,
                     "data": "fromOrgan.name",
-
-
                 },
                 {
                     "name": "ed.to_organ_domain",
@@ -327,6 +315,7 @@ let edocDocument = {
             }
         });
     },
+    //MinhTDb
     renderDoneTakenDatatable: () => {
         let instance = this;
         instance.dataTable = $('#dataTables-edoc-doneTaken').DataTable({
@@ -336,8 +325,6 @@ let edocDocument = {
             ajax: {
                 url: "/documents/-/done/taken",
                 type: "POST",
-                /*success: (data) => console.log(data),
-                error: () => $.notify("Error", "error")*/
             },
             drawCallback: function() {
 
@@ -350,25 +337,18 @@ let edocDocument = {
                 }),
                     $(this).contextMenu({
                         selector: 'tbody tr td',
-
-
                         callback: (key, options) => {
                             let id = options.$trigger[0].parentElement.id;
-
                             switch (key) {
                                 case "download":
                                     console.log(id);
                                     break;
                                 case "resend":
-                                    // window.console && console.log(m);
-
                                     console.log(id);
                                     console.log(receiveName);
-
                                     reSend(id,receiveName);
                                     // $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
                                     edocDocument.renderDoneTakenDatatable();
-
                                     break;
                                 case "delete":
                                     edocDocument.deleteDocument(id);
@@ -398,7 +378,6 @@ let edocDocument = {
                     "title": app_message.edoc_table_header_subject,
                     "data": null,
                     "render": function (data) {
-
                         return $('#edocSubjectTemplate').tmpl(data).html();
                     }
                 },
@@ -406,8 +385,6 @@ let edocDocument = {
                     "name": "ed.from_organ_domain",
                     "title": app_message.edoc_table_header_fromOrgan,
                     "data": "fromOrgan.name",
-
-
                 },
                 {
                     "name": "ed.to_organ_domain",
@@ -911,6 +888,15 @@ $(document).ready(function () {
             edocDocument.appSetting.mode = dataMode;
             $('.edoc-content > [class^=edoc-table]').hide();
             $(".edoc-statistic").hide();
+
+            //MinhTDb
+            // -> hide/show icon Filter when clicking on the userManage/organManage
+            if(dataMode === "userManage" || dataMode === "organManage"){
+                $('#search-filter').hide();
+            }else {
+                $('#search-filter').show();
+            }
+
             if (dataMode === "draft") {
                 edocDocument.renderDaftTable();
                 $(".edoc-table-draft").show();
@@ -931,8 +917,10 @@ $(document).ready(function () {
                 edocDocument.renderNotSendVpcpDatatable();
                 $('.edoc-table-not-sendPCP').show();
             }
+            //MinhTDb
+            //Tab Quan tri he thong-> Theo doi van ban da nhan
             else if (dataMode === "done-taken-edoc") {
-                $("#warning-document-not-taken").show();
+                $("#warning-document-done-taken").show();
                 edocDocument.renderDoneTakenDatatable();
                 $(".edoc-table-done-taken").show();
             }
@@ -1146,6 +1134,8 @@ function reSendToVPCP (id) {
         $("#overlay-edoc-not-taken").hide()
     });
 }
+//MinhTDb
+//Tab Quan tri he thong-> Theo doi van ban da gui
 function reSend(id, receiveName) {
     let url = "/document/resend";
     // $.get("/document/" + documentId, function (data) {
@@ -1175,6 +1165,8 @@ function reSend(id, receiveName) {
     });
 }
 
+//MinhTDb
+//Tab Quan tri he thong-> Theo doi van ban da nhan
 function comfirmReceive(id, receiveName) {
     let url = "/document/comfirm_receive";
 

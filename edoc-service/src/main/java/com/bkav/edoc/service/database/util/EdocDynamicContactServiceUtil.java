@@ -29,6 +29,7 @@ public class EdocDynamicContactServiceUtil {
         DYNAMIC_CONTACT_SERVICE.createContact(edocDynamicContact);
     }
 
+    //MinhTDb
     public static EdocDynamicContact findByName(String name) {
         return DYNAMIC_CONTACT_SERVICE.findContactName(name);
     }

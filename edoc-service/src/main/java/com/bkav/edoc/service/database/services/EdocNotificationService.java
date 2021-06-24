@@ -46,6 +46,7 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(currentSession);
         }
     }
+    //MinhTDb
     public List<EdocNotification> getNotifiByIdandReceiveId(long documentId, String ReceiveId) {
         return notificationDaoImpl.getEdocNotifyByDocumentIdandReceiveId(documentId, ReceiveId);
     }
@@ -184,6 +185,7 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(session);
         }
     }
+    //MinhTDb
     public void comfirmReceive(EdocNotification en) {
 
         this.notificationDaoImpl.setNotificationtaken(en);
@@ -191,6 +193,7 @@ public class EdocNotificationService {
     public List<EdocNotification> getNotifiById(long documentId) {
         return notificationDaoImpl.getEdocNotifyByDocumentId(documentId);
     }
+    //MinhTDb
     public void resendDocument(EdocNotification en) {
 
         this.notificationDaoImpl.setNotificationtaken(en);

@@ -21,6 +21,7 @@ public class EdocNotificationServiceUtil {
         return NOTIFICATION_SERVICE.getEmailRequestScheduleSend(fromDate, toDate);
     }
 
+    //MinhTDb
     public static List<EdocNotification> getNotifyBydocumentIdandReceiveId(long documentId, String ReceiveId) {
         return NOTIFICATION_SERVICE.getNotifiByIdandReceiveId(documentId, ReceiveId);
 
@@ -60,6 +61,7 @@ public class EdocNotificationServiceUtil {
     public static Map<String, Object> getAllDocumentNotTaken(PaginationCriteria paginationCriteria) {
         return NOTIFICATION_SERVICE.getAllDocumentNotTaken(paginationCriteria);
     }
+    //MinhTDb
     public static void comfirmReceive(EdocNotification en) throws SQLException {
         NOTIFICATION_SERVICE.comfirmReceive(en);
 
@@ -68,6 +70,7 @@ public class EdocNotificationServiceUtil {
         return NOTIFICATION_SERVICE.getNotifiById(documentId);
 
     }
+    //MinhTDb
     public static void resend(EdocNotification en) throws SQLException {
         NOTIFICATION_SERVICE.resendDocument(en);
 

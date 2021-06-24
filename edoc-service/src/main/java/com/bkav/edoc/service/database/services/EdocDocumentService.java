@@ -209,6 +209,7 @@ public class EdocDocumentService {
         return entries;
     }
 
+    //MinhTDb
     public List<DocumentCacheEntry> getDocumentDoneTaken(PaginationCriteria paginationCriteria) {
         List<DocumentCacheEntry> entries = new ArrayList<>();
         Session session = documentDaoImpl.openCurrentSession();

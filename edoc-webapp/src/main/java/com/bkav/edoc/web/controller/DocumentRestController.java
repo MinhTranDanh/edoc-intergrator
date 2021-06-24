@@ -319,6 +319,7 @@ public class DocumentRestController {
         return new Gson().toJson(dataTableResult);
     }
 
+    //MinhTDb
     @RequestMapping(value = "/documents/-/done/taken",method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getAllDocumentDoneTaken(HttpServletRequest request) {
@@ -403,6 +404,8 @@ public class DocumentRestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //MinhTDb
+    //Resend document
     @RequestMapping(value = "/document/resend")
     public ResponseEntity<Response> resendDocument(@RequestParam("documentId") String docId, @RequestParam("receiveName") String receiveName) throws SQLException {
         long documentId = Long.parseLong(docId);
@@ -425,6 +428,7 @@ public class DocumentRestController {
         }
 
     }
+    //MinhTDb
     @RequestMapping(value = "/document/comfirm_receive")
     public ResponseEntity<Response> comfirmReceive(@RequestParam("documentId") String docId,@RequestParam("receiveName") String receiveName) throws SQLException {
         long documentId = Long.parseLong(docId);

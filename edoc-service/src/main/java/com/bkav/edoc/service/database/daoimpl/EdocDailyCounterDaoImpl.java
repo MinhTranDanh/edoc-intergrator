@@ -1,6 +1,7 @@
 package com.bkav.edoc.service.database.daoimpl;
 
 import com.bkav.edoc.service.database.dao.EdocDailyCounterDao;
+import com.bkav.edoc.service.database.entity.EPublicStat;
 import com.bkav.edoc.service.database.entity.EdocDailyCounter;
 import com.bkav.edoc.service.database.services.EdocDailyCounterService;
 import org.apache.log4j.Logger;
@@ -18,6 +19,7 @@ public class EdocDailyCounterDaoImpl extends RootDaoImpl<EdocDailyCounter, Long>
     public EdocDailyCounterDaoImpl() {
         super(EdocDailyCounter.class);
     }
+
 
     @Override
     public boolean checkExistCounter(Date date) {
@@ -73,6 +75,7 @@ public class EdocDailyCounterDaoImpl extends RootDaoImpl<EdocDailyCounter, Long>
             closeCurrentSession(session);
         }
     }
+
 
     @Override
     public Long getStat(int year) {

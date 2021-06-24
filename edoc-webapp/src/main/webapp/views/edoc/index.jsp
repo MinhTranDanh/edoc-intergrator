@@ -81,6 +81,8 @@
             </table>
         </div>
     </div>
+<%--    MinhTDb--%>
+<%--    Tab Quan tri he thong-> Theo doi van ban da nhan--%>
     <div class="edoc-table-done-taken">
     <div class="table-responsive">
         <div class="row user-import" id="warning-document-done-taken">

@@ -44,6 +44,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         }
         return null;
     }
+    //MinhTDb
     public void setNotificationtaken(EdocNotification en) {
         saveOrUpdate(en);
     }
@@ -70,6 +71,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
 
     }
 
+    //MinhTDb
     public List<EdocNotification> getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId) {
         Session session = openCurrentSession();
         //EdocNotification en= new EdocNotification();
