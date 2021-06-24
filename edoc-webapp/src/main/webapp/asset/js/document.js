@@ -858,7 +858,9 @@ $(document).ready(function () {
                 edocDocument.appSetting.dataTable.page.len(1000);
             }
             $('#dataTables-edoc-notTaken').DataTable().search(keyword).draw();
-        } else if (edocDocument.appSetting.mode === "done-taken-edoc") {
+        }
+        //minhtd
+        else if (edocDocument.appSetting.mode === "done-taken-edoc") {
             if (keyword.length === 0) {
                 edocDocument.appSetting.dataTable.page.len(pageLength);
                 pageLength = 0;
