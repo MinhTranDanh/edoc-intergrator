@@ -257,7 +257,7 @@
     <div class="search-container">
         <input class="search-input" id="search-edoc" type="search" placeholder="<spring:message code="edoc.search"/>">
 
-        <a class="btn-open" href="#" type="button" data-toggle="" data-placement="bottom"
+        <a class="btn-open" href="javascript:void(0)" type="button" data-toggle="" data-placement="bottom"
            id="search-filter"
            data-trigger="focus">
             <i class="fa fa-filter fa-lg" title="<spring:message code="edoc.search.filter"/>"></i>

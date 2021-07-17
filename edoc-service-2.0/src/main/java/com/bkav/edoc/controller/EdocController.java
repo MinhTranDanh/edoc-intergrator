@@ -156,6 +156,10 @@ public class EdocController {
                         errors.add(new Error("ExistDoc", "Document is exist"));
                     }
                 }
+                // check attachment is null
+                if (attachments.size() == 0) {
+                    errors.add(new Error("NullAttachment", "Attachment is NULL"));
+                }
                 if (errors.size() == 0) {
                     LOGGER.info("Start to save document to database !!!!!!!!!!!!!");
                     StringBuilder documentEsbId = new StringBuilder();

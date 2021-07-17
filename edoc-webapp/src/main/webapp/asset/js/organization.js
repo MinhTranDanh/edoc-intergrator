@@ -37,6 +37,7 @@ let organManage = {
                         let m = "clicked: " + key + ' ' + id;
                         switch (key) {
                             case "delete":
+
                                 instance.deleteOrgan(id);
                                 break;
                             case "edit":

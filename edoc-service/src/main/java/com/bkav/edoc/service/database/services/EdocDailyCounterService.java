@@ -20,7 +20,7 @@ public class EdocDailyCounterService {
     private final EdocDynamicContactService edocDynamicContactService = new EdocDynamicContactService();
     private final EdocDocumentService edocDocumentService = new EdocDocumentService();
 
-    private int vpubnd_sent = 0, vpubnd_received = 0;
+    private int vpubnd_sent, vpubnd_received;
     private String vpubndName = "";
 
     public boolean checkExistCounter(Date date) {
@@ -32,6 +32,9 @@ public class EdocDailyCounterService {
     }
 
     public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+
+        vpubnd_sent = 0; vpubnd_received = 0;
+
         List<EPublicStat> ePublicStats = new ArrayList<>();
         boolean hasKeyword = false;
         List<OrganizationCacheEntry> contacts;
@@ -230,6 +233,7 @@ public class EdocDailyCounterService {
     }
 
     public List<EPublicStat> getStatDetailForExcel() {
+        vpubnd_sent = 0; vpubnd_received = 0;
         List<EPublicStat> ePublicStats = new ArrayList<>();
         List<OrganizationCacheEntry> contacts;
         Session session = edocDailyCounterDao.openCurrentSession();
@@ -245,7 +249,6 @@ public class EdocDailyCounterService {
                 if (parentOrgan != null)
                     ePublicStats.add(parentOrgan);
             });
-            LOGGER.info("Add VPUBND to list !!!!!!!!");
 
             EPublicStat ePublicStat = new EPublicStat();
             ePublicStat.setLastUpdate(new Date());

@@ -797,7 +797,8 @@ $(document).ready(function () {
             cache: false,
             beforeSend: () => $("#overlay-edoc-not-taken").show(),
             success: () => $.notify(app_message.edoc_message_send_telegram_success, "success")
-        }).done(function() { $("#overlay-edoc-not-taken").hide()})
+        })
+        $("#overlay-edoc-not-taken").hide();
     })
     $("#put-to-telegram-vpcp").on('click', function(e) {
         e.preventDefault();

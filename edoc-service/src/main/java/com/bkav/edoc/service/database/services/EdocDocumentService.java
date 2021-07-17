@@ -363,6 +363,7 @@ public class EdocDocumentService {
             }
 
             // Insert vao bang Attachment
+            LOGGER.info("Starting save attachment successfully with document id " + docId);
             String rootPath = attUtil.getAttachmentPath();
             Calendar cal = Calendar.getInstance();
             String SEPARATOR = EdXmlConstant.SEPARATOR;
@@ -382,6 +383,7 @@ public class EdocDocumentService {
                 long size;
                 InputStream is = attachment.getInputStream();
                 size = attUtil.saveToFile(specPath, is);
+                LOGGER.info("Attachment has size: " + size + " and path " + dataPath);
                 if (size > 0) {
                     String name = attachment.getName();
                     String type = attachment.getContentType();

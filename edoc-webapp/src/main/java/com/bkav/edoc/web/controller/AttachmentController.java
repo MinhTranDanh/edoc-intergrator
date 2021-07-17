@@ -98,6 +98,8 @@ public class AttachmentController {
 
                     String filePath = fullPath + "/attachment/" + specPath;
 
+                    logger.info("Get file path for attachmentId " + attachmentId + ": " + filePath);
+
                     File file = new File(filePath);
 
                     byte[] data = FileUtils.readFileToByteArray(file);
@@ -118,7 +120,7 @@ public class AttachmentController {
                 }
             }
         } catch (Exception e) {
-            logger.error("Error process download file with attachmentId " + attachmentId);
+            logger.error("Error process download file with attachmentId " + attachmentId + " cause " + e.getMessage());
             return new ResponseEntity<>(null, responseHeader, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
