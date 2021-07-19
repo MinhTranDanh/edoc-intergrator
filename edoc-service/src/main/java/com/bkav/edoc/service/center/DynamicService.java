@@ -29,8 +29,6 @@ import com.bkav.edoc.service.xml.status.header.MessageStatus;
 import com.vpcp.services.model.SendEdocResult;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.synapse.ManagedLifecycle;
 import org.apache.synapse.MessageContext;
@@ -675,6 +673,16 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 attachmentsEntity = attachmentUtil.getAttachments(envelop,
                         attachments);
 
+                if (attachmentsEntity.size() == 0) {
+                    errorList.add(new Error("M.Null", "Attachment is null !!!!"));
+                    report = new Report(false, new ErrorList(errorList));
+
+                    bodyChildDocument = xmlUtil.convertEntityToDocument(Report.class, report);
+
+                    map.put(StringPool.CHILD_BODY_KEY, bodyChildDocument);
+                    return map;
+                }
+
                 // only check exist with new document
                 if (documentService.checkNewDocument(traceHeaderList)) {
                     // check exist document
@@ -698,6 +706,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 EdocDocument document = documentService.addDocument(messageHeader, traceHeaderList,
                         attachmentsEntity, strDocumentId, attachmentCacheEntries, errorList);
                 if (document == null) {
+                    errorList.add(new Error("M.Null", "Document is null !!!!"));
                     report = new Report(false, new ErrorList(errorList));
 
                     bodyChildDocument = xmlUtil.convertEntityToDocument(Report.class, report);

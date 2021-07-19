@@ -152,9 +152,14 @@ public class EdocController {
                 // only check exist with new document
                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                     // check exist document
-                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), messageHeader.getToes())) {
+                    String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                         errors.add(new Error("ExistDoc", "Document is exist"));
                     }
+                }
+                // check attachment is null
+                if (attachments.size() == 0) {
+                    errors.add(new Error("NullAttachment", "Attachment is NULL"));
                 }
                 if (errors.size() == 0) {
                     LOGGER.info("Start to save document to database !!!!!!!!!!!!!");

@@ -241,8 +241,10 @@ public class DynamicRestContactController {
         } else {
             boolean deleteResult = EdocDynamicContactServiceUtil.deleteContact(organId);
             if (deleteResult) {
+                logger.info(" --- Delete organ SUCCESS with domain " + organId + " at " + DateUtils.format(new Date(), DateUtils.VN_DATETIME_FORMAT_NEW));
                 return HttpStatus.OK;
             } else {
+                logger.info("(X) Delete organ FAIL with domain " + organId + " at " + DateUtils.format(new Date(), DateUtils.VN_DATETIME_FORMAT_NEW));
                 return HttpStatus.INTERNAL_SERVER_ERROR;
             }
         }

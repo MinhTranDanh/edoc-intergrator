@@ -19,6 +19,7 @@ import com.bkav.edoc.service.xml.base.attachment.Attachment;
 import com.bkav.edoc.service.xml.base.header.Report;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axis2.context.MessageContext;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import com.bkav.edoc.service.commonutil.Checker;
@@ -26,6 +27,7 @@ import com.bkav.edoc.service.commonutil.Checker;
 public class AttachmentUtil {
     private final Checker _checker;
     private static final ExtractMime extractMime = new ExtractMime();
+    private static final Logger LOGGER = Logger.getLogger(AttachmentUtil.class);
 
     public AttachmentUtil() {
         _checker = new Checker();
@@ -90,17 +92,21 @@ public class AttachmentUtil {
         Attachments attachMap = messageContext.getAttachmentMap();
 
         Map<String, Object> attachments = new HashMap<>();
+        try {
+            // Get Attachment Ids
+            String[] ids = attachMap.getAllContentIDs();
 
-        // Get Attachment Ids
-        String[] ids = attachMap.getAllContentIDs();
+            String soapPartId = attachMap.getSOAPPartContentID();
 
-        String soapPartId = attachMap.getSOAPPartContentID();
-
-        for (String id : ids) {
-            if (!id.equals(soapPartId)) {
-                DataHandler data = attachMap.getDataHandler(id);
-                attachments.put(id, data);
+            for (String id : ids) {
+                if (!id.equals(soapPartId)) {
+                    DataHandler data = attachMap.getDataHandler(id);
+                    attachments.put(id, data);
+                }
             }
+
+        } catch (Exception e) {
+            LOGGER.info("Get all content id of attachment cause " + e.getMessage());
         }
 
         return attachments;

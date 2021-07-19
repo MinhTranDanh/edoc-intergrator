@@ -48,7 +48,7 @@
 
     <bean id="getDocumentTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="getDocumentJobDetail"/>
-        <property name="cronExpression" value="0 */15 * ? * *"/>
+        <property name="cronExpression" value="0 */10 * ? * *"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy">

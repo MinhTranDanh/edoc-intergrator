@@ -20,7 +20,9 @@ public class EdocDailyCounterService {
     private final EdocDynamicContactService edocDynamicContactService = new EdocDynamicContactService();
     private final EdocDocumentService edocDocumentService = new EdocDocumentService();
 
-    private int vpubnd_sent=0 , vpubnd_received=0 ;
+
+    private int vpubnd_sent = 0 , vpubnd_received = 0;
+
     private String vpubndName = "";
 
     public boolean checkExistCounter(Date date) {
@@ -33,6 +35,9 @@ public class EdocDailyCounterService {
     //MinhTD
     //****** Using for Tay Ninh
     public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+
+        vpubnd_sent = 0; vpubnd_received = 0;
+
         List<EPublicStat> ePublicStats = new ArrayList<>();
         vpubnd_sent = 0;
         vpubnd_received = 0;
@@ -282,43 +287,7 @@ public class EdocDailyCounterService {
         return ePublicStats;
     }*/
     //HuyNQ
-    public List<EPublicStat> getStatDetailForExcel() {
-        vpubnd_sent=0;
-        vpubnd_received=0;
-        List<EPublicStat> ePublicStats = new ArrayList<>();
-        List<OrganizationCacheEntry> contacts;
-        Session session = edocDailyCounterDao.openCurrentSession();
-        try {
-            contacts = edocDynamicContactService.getDynamicContactsByAgency(true);
 
-            // Except organ contain "A" in domain
-            //contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
-            contacts = contacts.stream().filter(o -> (!((o.getDomain().charAt(10)) == 'A') & ((o.getDomain().charAt(9)) == '.'))).collect(Collectors.toList());
-
-            contacts.forEach(contact -> {
-                EPublicStat parentOrgan = callStatStoredProcedure(null, null, session, contact);
-
-                if (parentOrgan != null)
-                    ePublicStats.add(parentOrgan);
-            });
-            LOGGER.info("Add VPUBND to list !!!!!!!!");
-            EPublicStat ePublicStat = new EPublicStat();
-            ePublicStat.setLastUpdate(new Date());
-            ePublicStat.setOrganDomain(PropsUtil.get("edoc.domain.vpubnd.1"));
-            ePublicStat.setOrganName(vpubndName);
-            ePublicStat.setSent(vpubnd_sent);
-            ePublicStat.setReceived(vpubnd_received);
-            long total = vpubnd_sent + vpubnd_received;
-            ePublicStat.setTotal(total);
-            ePublicStat.setChildOrgan(null);
-            ePublicStats.add(ePublicStat);
-        } catch (Exception e) {
-            LOGGER.error("Error get stat document detail cause " + e);
-        } finally {
-            edocDailyCounterDao.closeCurrentSession(session);
-        }
-        return ePublicStats;
-    }
 
     /*public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword) {
         List<EPublicStat> ePublicStats = new ArrayList<>();
@@ -457,7 +426,41 @@ public class EdocDailyCounterService {
         }
     }
 
+    public List<EPublicStat> getStatDetailForExcel() {
+        vpubnd_sent = 0; vpubnd_received = 0;
+        List<EPublicStat> ePublicStats = new ArrayList<>();
+        List<OrganizationCacheEntry> contacts;
+        Session session = edocDailyCounterDao.openCurrentSession();
+        try {
+            contacts = edocDynamicContactService.getDynamicContactsByAgency(true);
 
+            // Except organ contain "A" in domain
+            contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+
+            contacts.forEach(contact -> {
+                EPublicStat parentOrgan = callStatStoredProcedure(null, null, session, contact);
+
+                if (parentOrgan != null)
+                    ePublicStats.add(parentOrgan);
+            });
+
+            EPublicStat ePublicStat = new EPublicStat();
+            ePublicStat.setLastUpdate(new Date());
+            ePublicStat.setOrganDomain(PropsUtil.get("edoc.domain.vpubnd.1"));
+            ePublicStat.setOrganName(vpubndName);
+            ePublicStat.setSent(vpubnd_sent);
+            ePublicStat.setReceived(vpubnd_received);
+            long total = vpubnd_sent + vpubnd_received;
+            ePublicStat.setTotal(total);
+            ePublicStat.setChildOrgan(null);
+            ePublicStats.add(ePublicStat);
+        } catch (Exception e) {
+            LOGGER.error("Error get stat document detail cause " + e);
+        } finally {
+            edocDailyCounterDao.closeCurrentSession(session);
+        }
+        return ePublicStats;
+    }
 
     public List<EdocStatisticDetail> getStatisticSentReceivedExtDetail(String fromDate, String toDate, String organDomain) {
         Map<String, EdocStatisticDetail> dailyCounterMap = new HashMap<>();

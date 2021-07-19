@@ -152,7 +152,8 @@ public class ServiceVPCP {
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
-                                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), messageHeader.getToes())) {
+                                    String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                                         LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
                                     } else {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
