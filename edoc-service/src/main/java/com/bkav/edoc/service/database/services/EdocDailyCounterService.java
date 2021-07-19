@@ -426,6 +426,7 @@ public class EdocDailyCounterService {
         }
     }
 
+
     public List<EPublicStat> getStatDetailForExcel() {
         vpubnd_sent = 0; vpubnd_received = 0;
         List<EPublicStat> ePublicStats = new ArrayList<>();
@@ -435,7 +436,7 @@ public class EdocDailyCounterService {
             contacts = edocDynamicContactService.getDynamicContactsByAgency(true);
 
             // Except organ contain "A" in domain
-            contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+            contacts = contacts.stream().filter(o -> (!((o.getDomain().charAt(10)) == 'A') & ((o.getDomain().charAt(9)) == '.'))).collect(Collectors.toList());
 
             contacts.forEach(contact -> {
                 EPublicStat parentOrgan = callStatStoredProcedure(null, null, session, contact);
@@ -461,6 +462,7 @@ public class EdocDailyCounterService {
         }
         return ePublicStats;
     }
+
 
     public List<EdocStatisticDetail> getStatisticSentReceivedExtDetail(String fromDate, String toDate, String organDomain) {
         Map<String, EdocStatisticDetail> dailyCounterMap = new HashMap<>();
