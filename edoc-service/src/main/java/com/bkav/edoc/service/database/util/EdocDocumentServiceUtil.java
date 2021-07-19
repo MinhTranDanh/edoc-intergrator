@@ -44,7 +44,7 @@ public class EdocDocumentServiceUtil {
         return DOCUMENT_SERVICE.getDocByCodeAndDomain(docCode, organDomain);
     }
 
-    public static boolean checkExistDocument(String documentId, List<Organization> toOrgans) {
+    public static boolean checkExistDocument(String documentId, String toOrgans) {
         return DOCUMENT_SERVICE.checkExistDocument(documentId, toOrgans);
     }
 

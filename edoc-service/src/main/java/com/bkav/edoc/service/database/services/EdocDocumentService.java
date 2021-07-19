@@ -575,8 +575,15 @@ public class EdocDocumentService {
         return (check != null);
     }
 
-    public boolean checkExistDocument(String edXmlDocumentId, List<Organization> toOrgans) {
-        AtomicBoolean flag = new AtomicBoolean(false);
+    public boolean checkExistDocument(String edXmlDocumentId, String toOrgans) {
+        EdocDocument check = documentDaoImpl.checkExistDocumentVPCP(edXmlDocumentId, toOrgans);
+        if (check != null) {
+            LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgans);
+            return true;
+        }
+        return false;
+
+        /*AtomicBoolean flag = new AtomicBoolean(false);
         toOrgans.forEach(toOrgan -> {
             //LOGGER.info("Check exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
             EdocDocument check = documentDaoImpl.checkExistDocumentVPCP(edXmlDocumentId, toOrgan.getOrganId());
@@ -585,7 +592,7 @@ public class EdocDocumentService {
                 flag.set(true);
             }
         });
-        return flag.get();
+        return flag.get();*/
     }
 
     public boolean checkExistDocumentByDocCode(String fromOrgan, String toOrgan, String docCode) {

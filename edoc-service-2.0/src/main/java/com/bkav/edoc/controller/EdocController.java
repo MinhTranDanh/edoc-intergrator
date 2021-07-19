@@ -152,7 +152,8 @@ public class EdocController {
                 // only check exist with new document
                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                     // check exist document
-                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), messageHeader.getToes())) {
+                    String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                    if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                         errors.add(new Error("ExistDoc", "Document is exist"));
                     }
                 }
