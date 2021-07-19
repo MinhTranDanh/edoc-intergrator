@@ -24,6 +24,11 @@ public class PropsUtil {
         }
         return prop;
     }
+    public static Properties removeProperty() {
+        prop= new Properties();
+
+        return prop;
+    }
 
     public static String get(String key) {
         if (prop.isEmpty()) {

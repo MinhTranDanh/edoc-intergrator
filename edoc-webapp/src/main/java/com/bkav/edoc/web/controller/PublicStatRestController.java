@@ -9,6 +9,7 @@ import com.bkav.edoc.service.database.util.UserServiceUtil;
 import com.bkav.edoc.service.xml.base.util.DateUtils;
 import com.bkav.edoc.web.util.ExcelUtil;
 import com.bkav.edoc.web.util.PropsUtil;
+import com.vpcp.services.model.FullUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.InputStreamResource;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -199,25 +201,28 @@ public class PublicStatRestController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    @RequestMapping(value = "/public/-/stat/export/excel", method = RequestMethod.GET)
+    @RequestMapping(value = "/public/-/stat/export/excel",produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
     public void exportToExcel(HttpServletResponse response,
                               @RequestParam(value = "fromDate", required = false) String fromDate,
                               @RequestParam(value = "toDate", required = false) String toDate,
-                              @RequestParam(value = "keyword", required = false) String keyword) throws IOException {
+                              @RequestParam(value = "keyword", required = false) String keyword,
+                              @RequestParam(value = "arr", required = false) List<Integer> arr
+                              ) throws IOException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
 
         if (fromDate == null || toDate == null) {
             String headerValue = "attachment; filename=ThongKeVanBan.xlsx";
             response.setHeader(headerKey, headerValue);
-            ExcelUtil.exportExcelDailyCounter(response, null, null, null);
+            ExcelUtil.exportExcelDailyCounter(response, null, null, null, arr);
         } else {
             Date fromDateValue = DateUtils.parse(fromDate);
             Date toDateValue = DateUtils.parse(toDate);
             String headerValue = "attachment; filename=ThongKeVanBan_" + DateUtils.format(fromDateValue, DateUtils.VN_DATE_FORMAT_D)
                     + "-" + DateUtils.format(toDateValue, DateUtils.VN_DATE_FORMAT_D) + ".xlsx";
             response.setHeader(headerKey, headerValue);
-            ExcelUtil.exportExcelDailyCounter(response, fromDateValue, toDateValue, keyword);
+            ExcelUtil.exportExcelDailyCounter(response, fromDateValue, toDateValue, keyword, arr);
         }
     }
 

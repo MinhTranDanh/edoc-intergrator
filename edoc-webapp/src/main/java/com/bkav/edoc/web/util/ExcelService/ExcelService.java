@@ -5,11 +5,13 @@ import com.bkav.edoc.service.database.util.*;
 import com.bkav.edoc.web.payload.ImportExcelError;
 import com.bkav.edoc.web.util.PropsUtil;
 import com.bkav.edoc.web.util.TokenUtil;
+import com.itextpdf.text.pdf.PdfName;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
+import sun.awt.X11.awtImageData;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -601,18 +603,33 @@ public class ExcelService {
     }
 */
 
-    public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword) throws IOException {
+    public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword, List<Integer> arr) throws IOException {
         List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
         List<EPublicStat> sortedListStat = eStats.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
 
-        Sheet sheet = workbook.createSheet("Thống kê văn bản điện tử");
-        sheet.setColumnWidth(0, 15000);
-        sheet.setColumnWidth(1, 4000);
-        sheet.setColumnWidth(2, 4000);
-        sheet.setColumnWidth(3, 5000);
+        System.out.println(arr.size());
 
+        Sheet sheet = workbook.createSheet("Thống kê văn bản điện tử");
+        for(int i=0; i<arr.size(); i++) {
+            switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
+                case 0:
+                sheet.setColumnWidth(i, 15000);
+                break;
+                case 1:
+                sheet.setColumnWidth(i, 4000);
+                break;
+                case 2:
+                sheet.setColumnWidth(i, 4000);
+                break;
+                case 3:
+                sheet.setColumnWidth(i, 5000);
+                break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + arr.get(i));
+            }
+        }
         sheet.setDefaultRowHeight((short) 450);
 
         Row header = sheet.createRow(0);
@@ -630,9 +647,9 @@ public class ExcelService {
         Cell headerCell;
 
         // Write header row to excel file for organization
-        for (int i = 0, j = 1; i < 4; i++, j++) {
+        for (int i = 0, j = 1; i < arr.size(); i++, j++) {
             headerCell = header.createCell(i);
-            headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(j).getHeaderName());
+            headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(Integer.parseInt(String.valueOf(arr.get(i)))+1).getHeaderName());
             headerCell.setCellStyle(headerStyle);
         }
 
@@ -642,24 +659,33 @@ public class ExcelService {
 
         for (EPublicStat ePublicStat : sortedListStat) {
             Row row = sheet.createRow(numRow);
-
-            Cell cell = row.createCell(0);
-            cell.setCellValue(ePublicStat.getOrganName());
-            cell.setCellStyle(style);
-
-            cell = row.createCell(1);
-            cell.setCellValue(ePublicStat.getSent());
-            cell.setCellStyle(style);
-
-            cell = row.createCell(2);
-            cell.setCellValue(ePublicStat.getReceived());
-            cell.setCellStyle(style);
-
-            cell = row.createCell(3);
-            cell.setCellValue(ePublicStat.getTotal());
-            cell.setCellStyle(style);
+            for(int i=0; i<arr.size(); i++) {
+                switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
+                    case 0:
+                        Cell cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getOrganName());
+                        cell.setCellStyle(style);
+                        break;
+                    case 1:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getSent());
+                        cell.setCellStyle(style);
+                        break;
+                    case 2:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getReceived());
+                        cell.setCellStyle(style);
+                        break;
+                    case 3:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getTotal());
+                        cell.setCellStyle(style);
+                        break;
+                }
+            }
 
             numRow++;
+
         }
 
         ServletOutputStream outputStream = response.getOutputStream();

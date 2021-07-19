@@ -1,4 +1,6 @@
 let appSettings;
+var arr= new Array();
+var receiveName;
 let fromOrgan = null, toOrgan = null, docCode = null;
 let edocDocument = {
     appSetting: {
@@ -73,17 +75,17 @@ let edocDocument = {
                                 instance.deleteDocument(id);
                                 break;
                             case "Resend":
-                                console.log(id);
-                                //reSendDocument(id);
+                                //template();
+                                reSendDocumentModal(id);
                                 // reSend(id);
-                                edocDocument.renderUserDatatable();
+                                //edocDocument.renderUserDatatable();
                                 break;
                         }
                     },
                     items: {
                         "resend": {name: app_message.edoc_resend_document, icon: "fa-repeat"},
                         "delete": {name: app_message.edoc_remove_document, icon: "delete"},
-                        // "Resend": {name: app_message.edoc_resend, icon: "fa-repeat"}
+                         "Resend": {name: app_message.edoc_resend, icon: "fa-repeat"}
                     }
                 });
             },
@@ -204,8 +206,9 @@ let edocDocument = {
                 url: "/documents/-/not/taken",
                 type: "POST",
             },
+
             drawCallback: function() {
-                var receiveName;
+
                 $("tr").mousedown(function(event) {
                     if(event.which===3) {
                         receiveName = $(this).find('td').eq(2).text();
@@ -225,8 +228,8 @@ let edocDocument = {
                                 console.log(id);
                                 console.log(receiveName);
                                 comfirmReceive(id,receiveName);
-                                // $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
-                                edocDocument.renderNotTakenDatatable();
+                                 $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
+                                //edocDocument.renderNotTakenDatatable();
                                 break;
                             case "delete":
                                 edocDocument.deleteDocument(id);
@@ -705,6 +708,7 @@ let draftDocument = {
 
 $(document).ready(function () {
     edocDocument.init();
+
     $.datetimepicker.setLocale('vi');
     //show datetime picker
     $('#promulgationDate').datetimepicker({
@@ -1101,16 +1105,35 @@ $(document).on('click', '#btn-resend-cancel', function(e) {
     $("#resendDocument").modal('toggle');
 })
 
-function reSendDocument (documentId) {
+function reSendDocumentModal (documentId) {
     $.get("/document/" + documentId, function(data) {
+        console.log(data.toOrgan);
         $('#edoc-resend').empty();
         $('#resendDocumentTemplate').tmpl(data).appendTo('#edoc-resend');
         $("#resendDocument").modal({
             backdrop: 'static',
             keyboard: false
         })
+
+        $(document).on('click', '#btn-resend-confirm',function(e) {
+            e.preventDefault();
+            $("#resendDocument").modal('toggle');
+            //console.log("dsnfnf");
+
+           for( let i=0; i<data.toOrgan.length; i++){
+               let valuecheck="#"+data.toOrgan[i].id;
+               //console.log(valuecheck);
+               if($(valuecheck).prop('checked')){
+                   arr.push($(valuecheck).val());
+               }
+           }
+           console.log(arr);
+           reSend(documentId,arr);
+        });
     });
+
 }
+
 
 function reSendToVPCP (id) {
     let url = "/resend/toVPVP";
@@ -1138,15 +1161,13 @@ function reSendToVPCP (id) {
 }
 //MinhTDb
 //Tab Quan tri he thong-> Theo doi van ban da gui
-function reSend(id, receiveName) {
+function reSend(id, arr) {
     let url = "/document/resend";
-    // $.get("/document/" + documentId, function (data) {
-    //
-    // },
+
     $.ajax({
         url: url,
         type: "POST",
-        data: {"documentId": id, "receiveName":receiveName},
+        data: {"documentId": id,"arr":arr},
         beforeSend: function () {
             $("#overlay-edoc-not-taken").show();
         },
@@ -1195,6 +1216,32 @@ function comfirmReceive(id, receiveName) {
 
     });
 }
+// function reSendToVPCP() {
+//     let url ="jdbc:mysql://localhost:3306/edoc_lamdong?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+//
+//     $.ajax({
+//         url: "/config/dynamic",
+//         type: "POST",
+//         data: {"url": url },
+//         beforeSend: function () {
+//             $("#overlay-edoc-not-taken").show();
+//         },
+//         success: function (response) {
+//             if (response.code === 200)
+//                 $.notify(response.message, "success");
+//             else if (response.code === 500)
+//                 $.notify(response.message, "error");
+//             else
+//                 $.notify(response.message, "error");
+//         },
+//         error: function (error) {
+//             $.notify(app_message.edoc_resend_document_fail, "error");
+//         }
+//     }).done(function () {
+//         $("#overlay-edoc-not-taken").hide()
+//
+//     });
+// }
 
 function validateDocument(subject, toOrgan, codeNation, codeNumber, staffName, promulgationDate, fromOrgan, signerFullName, attachments) {
     let result = false;
@@ -1324,3 +1371,4 @@ function getStatusOfTrace(statusCode) {
     }
     return message;
 }
+

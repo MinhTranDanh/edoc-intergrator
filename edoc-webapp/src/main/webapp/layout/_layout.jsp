@@ -29,7 +29,6 @@
     OrganizationCacheEntry organizationCacheEntry = new Gson().fromJson(userLogin, OrganizationCacheEntry.class);
     //remove this organ login from list
     organizationCacheEntries.remove(organizationCacheEntry);
-
     String userLoginCookie = CookieUtil.getValue(request, OAuth2Constants.USER_LOGIN);
     String loginUser = new String(Base64.decode(userLoginCookie), StandardCharsets.UTF_8);
     UserCacheEntry user = new Gson().fromJson(loginUser, UserCacheEntry.class);
@@ -588,7 +587,7 @@
                 <span class="toOrgan-name">${name}</span>
             </div>
             <div class="col-md-2 col-sm-2 col-xs-12">
-                <input type="checkbox" value="${domain}"/><br/>
+                <input type="checkbox" id="${id}" value="${domain}"/><br/>
             </div>
         {{/each}}
         </div>
@@ -862,7 +861,6 @@
                                         <%--<span class="from-to">${fromOrgan.name} -> ${toOrgan.name}</span>--%>
                                         <span class="from-to">${fromOrgan.name}
                                     </div>
-
                                     <div class="col-md-2 col-sm-6 col-xs-12 text-center">
                                         ${getStatusOfTrace(statusCode)}
                                     </div>
@@ -915,7 +913,6 @@
             </div>
         </div>
     </form>
-
 </script>
 <script id="edocAttachmentTemplate" type="text/x-jquery-tmpl">
     <ul class="attachment-list">
@@ -993,7 +990,6 @@
             <span>${displayName}</span>
         </a>
     </div>
-
 </script>
 <script id="userEmailTemplate" type="text/x-jquery-tmpl">
     <div>
@@ -1129,14 +1125,14 @@
                 <select class="form-control" id="editOrganDomain">
                     <option value="${organization.domain}">${organization.name}</option>
                     <%
-                        for (OrganizationCacheEntry organization : organizationCacheEntries) {
-                    %>
+    for (OrganizationCacheEntry organization : organizationCacheEntries) {
+%>
                     <option value="<%=organization.getDomain()%>">
                         <%=organization.getName()%>
                     </option>
                     <%
-                        }
-                    %>
+    }
+%>
                 </select>
             </div>
         </div>
@@ -1164,7 +1160,6 @@
         </div>
     </form>
 </script>
-
 <script id="editOrganTemplate" type="text/x-jquery-tmpl">
     <form class="form-horizontal" id="editOrgan" method="POST" enctype="multipart/form-data">
         <div class="form-group">
@@ -1327,7 +1322,6 @@
         </div>
     </form>
 </script>
-
 <script id="organSelect" type="application/x-jquery-tmpl">
 <div>
     <input type="checkbox" class="organ-active" data-id="${id}">
@@ -1355,7 +1349,6 @@
     {{/if}}
 </div>
 </script>
-
 <script id="organDetailTemplate" type="text/x-jquery-tmpl">
     <form class="form-horizontal" action="javascript:void(0)">
         <div class="form-group">
@@ -1457,11 +1450,9 @@
         </div>
     </form>
 </script>
-
 <script id="organNameReport" type="text/x-jquery-tmpl">
     <span class='organ-name'> + ${organName} + </span>
 </script>
-
 <!-- AJAX response must be wrapped in the modal's root class. -->
 <div class="modal fade" id="edocFormAdd" role="dialog">
     <div class="modal-dialog">
@@ -1733,7 +1724,6 @@
     </div>
     <!-- /.modal-content -->
 </div>
-
 <div class="modal fade" id="draftDetail" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1774,14 +1764,14 @@
                 <select class="form-control to-organ" id="toOrgan">
                     <option value="" selected>${toOrgan[0].name}</option>
                     <%
-                        for (OrganizationCacheEntry organization : organizationCacheEntries) {
-                    %>
+    for (OrganizationCacheEntry organization : organizationCacheEntries) {
+%>
                                         <option value="<%=organization.getDomain()%>">
                                             <%=organization.getName()%>
                                         </option>
                                         <%
-                        }
-                    %>
+    }
+%>
                 </select>
             </div>
         </div>
@@ -2016,7 +2006,6 @@
             </div>
         </div>
     </form>
-
 </script>
 <div id="overlay">
     <div class="cv-spinner">
@@ -2024,7 +2013,6 @@
         <span>&nbsp;Đang xử lý</span>
     </div>
 </div>
-
 <%--Jquery--%>
 <script src="<c:url value="/asset/js/jquery.min.js"/>"></script>
 <script src="<c:url value="/asset/js/message.js"/>"></script>
@@ -2033,12 +2021,10 @@
 <script src="<c:url value="/asset/js/jquery.formatter.js"/>"></script>
 <script src="<c:url value="/asset/js/select2.min.js"/>"></script>
 <script src="<c:url value="/asset/js/sweetalert2.min.js"/>"></script>
-
 <!-- Chart JS -->
 <script src="<c:url value="/asset/js/lib/Chart.min.js"/>"></script>
 <script src="<c:url value="/asset/js/lib/utils.js"/>"></script>
 <script src="<c:url value="/asset/js/lib/year-select.js"/>"></script>
-
 <%--datetimepicker--%>
 <script src="<c:url value="/asset/js/jquery.datetimepicker.full.js"/>"></script>
 <!-- Bootstrap Core JavaScript -->
@@ -2057,13 +2043,13 @@
 <script src="<c:url value="/asset/js/dataTables/dataTables.responsive.min.js"/>"></script>
 <script src="<c:url value="/asset/js/dataTables/responsive.bootstrap.min.js"/>"></script>
 <!-- Custom Theme JavaScript -->
-<script src="<c:url value="/asset/js/startmin.js"/>"></script>
-<script src="<c:url value="/asset/js/document.js"/>"></script>
-<script src="<c:url value="/asset/js/user.js"/>"></script>
-<script src="<c:url value="/asset/js/organization.js"/>"></script>
-<script src="<c:url value="/asset/js/statistic.js"/>"></script>
-<script src="<c:url value="/asset/js/trace.js"/>"></script>
+<script src="<c:url value="/asset/js/startmin.js"/>" ></script>
+<script src="<c:url value="/asset/js/document.js"/>" ></script>
+<script src="<c:url value="/asset/js/user.js"/>" ></script>
+<script src="<c:url value="/asset/js/organization.js"/>" ></script>
+<script src="<c:url value="/asset/js/statistic.js"/>" ></script>
+<script src="<c:url value="/asset/js/trace.js"/>" ></script>
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-<script src="<c:url value="/asset/js/attachment.js"/>"></script>
+<script src="<c:url value="/asset/js/attachment.js"/>" ></script>
 </body>
 </html>

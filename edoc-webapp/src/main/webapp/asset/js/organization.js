@@ -20,6 +20,7 @@ let organManage = {
         instance.renderOrganDatatable();
     },
     renderOrganDatatable: function () {
+
         let instance = this;
         instance.organSetting.dataTable = $('#dataTables-organ').DataTable({
             serverSide: true,
@@ -37,7 +38,9 @@ let organManage = {
                         let m = "clicked: " + key + ' ' + id;
                         switch (key) {
                             case "delete":
-                                instance.deleteOrgan(id);
+
+                                //instance.deleteOrgan(id);
+                                alertDelete(instance,id);
                                 break;
                             case "edit":
                                 editOrganClick(id);
@@ -238,6 +241,7 @@ let organManage = {
         })
     },
     deleteOrgan: function (organId) {
+
         let instance = this;
         if (organId !== null && organId !== "") {
             $.ajax({
@@ -259,6 +263,37 @@ let organManage = {
             })
         }
     }
+
+}
+//MinhTD
+function alertDelete(instance,id){
+    // Swal.fire({
+    //     title: 'Are you sure?',
+    //     text: 'Bạn có chắc chắn muốn xóa!',
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonText: "Xóa",
+    //     cancelButtonText: "Hủy",
+    //     closeOnConfirm: false,
+    //     closeOnCancel: false
+    // }).then((result) => {
+    //     if (result.isConfirmed)
+    //         swal.fire("Done!", "It was succesfully deleted!", "success");
+    //
+    // });
+    Swal.fire({
+            title: "Are you sure?",
+            text: "Bạn có chắc chắn muốn xóa!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Xóa",
+            cancelButtonText: "Hủy",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        }).then((result) => {
+            if (result.isConfirmed)
+                instance.deleteOrgan(id);
+        });
 }
 $(document).ready(function () {
     $("#dataTables-organ").on('click', 'tbody>tr', function (e) {

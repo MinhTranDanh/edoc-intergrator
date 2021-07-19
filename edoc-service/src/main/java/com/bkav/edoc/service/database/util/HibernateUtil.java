@@ -18,8 +18,10 @@ public class HibernateUtil {
 
     public static synchronized SessionFactory getSessionFactory() {
         try {
+
             if (sessionFactory == null) {
                 // Create the SessionFactory from hibernate.cfg.xml
+
                 Configuration configuration = new Configuration();
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, PropsUtil.get(Environment.DRIVER));
@@ -82,7 +84,11 @@ public class HibernateUtil {
             throw new ExceptionInInitializerError(ex);
         }
     }
-
+    public static synchronized SessionFactory removeSessionFactory() {
+        sessionFactory=null;
+        serviceRegistry=null;
+        return sessionFactory;
+    }
     public static void shutdown() {
         // Close caches and connection pools
         if (serviceRegistry != null) {

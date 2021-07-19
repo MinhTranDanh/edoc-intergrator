@@ -22,7 +22,7 @@ public class EdocNotificationServiceUtil {
     }
 
     //MinhTDb
-    public static List<EdocNotification> getNotifyBydocumentIdandReceiveId(long documentId, String ReceiveId) {
+    public static EdocNotification getNotifyBydocumentIdandReceiveId(long documentId, String ReceiveId) {
         return NOTIFICATION_SERVICE.getNotifiByIdandReceiveId(documentId, ReceiveId);
 
     }

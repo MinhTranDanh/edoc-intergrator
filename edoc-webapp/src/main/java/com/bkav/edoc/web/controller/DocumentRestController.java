@@ -407,25 +407,31 @@ public class DocumentRestController {
     //MinhTDb
     //Resend document
     @RequestMapping(value = "/document/resend")
-    public ResponseEntity<Response> resendDocument(@RequestParam("documentId") String docId, @RequestParam("receiveName") String receiveName) throws SQLException {
+    public ResponseEntity<Response> resendDocument(@RequestParam("documentId") String docId,  @RequestParam(value = "arr[]") List<String> arr) throws SQLException {
         long documentId = Long.parseLong(docId);
-        EdocDynamicContact edc=EdocDynamicContactServiceUtil.findByName(receiveName);
-        List<EdocNotification> list = EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId,edc.getDomain());
-        List<String> errors = new ArrayList<>();
-        Response response;
-        try {
-            for (EdocNotification en : list) {
-                en.setTaken(false);
-                EdocNotificationServiceUtil.resend(en);
-            }
-            response = new Response(200, errors, messageSourceUtil.getMessage("edoc.resend.success", null));
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            LOGGER.error("Not re-send document cause " + e);
-            response = new Response(500, errors, messageSourceUtil.getMessage("edoc.resend.to.fail", null));
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        System.out.println(arr);
+        List<EdocNotification> list = new ArrayList<EdocNotification>();
+        //EdocDynamicContact edc=EdocDynamicContactServiceUtil.findByName(receiveName);
+        for(int i=0; i<arr.size(); i++) {
+            list.add(EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId, arr.get(i)));
         }
+            System.out.println(list.get(0).getTaken());
+            List<String> errors = new ArrayList<>();
+            Response response;
+            try {
+                for (EdocNotification en : list) {
+                    en.setTaken(false);
+                    EdocNotificationServiceUtil.resend(en);
+                }
+                response = new Response(200, errors, messageSourceUtil.getMessage("edoc.resend.success", null));
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } catch (Exception e) {
+                LOGGER.error("Not re-send document cause " + e);
+                response = new Response(500, errors, messageSourceUtil.getMessage("edoc.resend.to.fail", null));
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
 
     }
     //MinhTDb
@@ -433,7 +439,9 @@ public class DocumentRestController {
     public ResponseEntity<Response> comfirmReceive(@RequestParam("documentId") String docId,@RequestParam("receiveName") String receiveName) throws SQLException {
         long documentId = Long.parseLong(docId);
         EdocDynamicContact edc = EdocDynamicContactServiceUtil.findByName(receiveName);
-        List<EdocNotification> list = EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId,edc.getDomain());
+        EdocNotification enotifi = EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId,edc.getDomain());
+        List<EdocNotification> list=new ArrayList<EdocNotification>();
+        list.add(enotifi);
         List<String> errors = new ArrayList<>();
         Response response;
 

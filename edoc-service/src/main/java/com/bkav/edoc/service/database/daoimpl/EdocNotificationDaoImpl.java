@@ -72,7 +72,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
     }
 
     //MinhTDb
-    public List<EdocNotification> getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId) {
+    public EdocNotification getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId) {
         Session session = openCurrentSession();
         //EdocNotification en= new EdocNotification();
         List<EdocNotification> list = new ArrayList<>();
@@ -85,15 +85,15 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
             query.setParameter("Id", ReceiveId);
             //query.setParameter("receiverId", receiveId);
             list = query.getResultList();
-            return list;
+            EdocNotification edocNotification = list.get(0);
+            return edocNotification;
 
         } catch (Exception e) {
             LOGGER.error("Error get edoc notification not taken cause " + e.getMessage());
-            return new ArrayList<>();
+            return new EdocNotification();
         } finally {
             closeCurrentSession(session);
         }
-
     }
 
     public List<EdocDocument> getDocumentByOrganId(String organId) {

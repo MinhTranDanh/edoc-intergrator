@@ -47,7 +47,7 @@ public class EdocNotificationService {
         }
     }
     //MinhTDb
-    public List<EdocNotification> getNotifiByIdandReceiveId(long documentId, String ReceiveId) {
+    public EdocNotification getNotifiByIdandReceiveId(long documentId, String ReceiveId) {
         return notificationDaoImpl.getEdocNotifyByDocumentIdandReceiveId(documentId, ReceiveId);
     }
     /**

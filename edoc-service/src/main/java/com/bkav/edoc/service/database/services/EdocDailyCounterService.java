@@ -20,7 +20,7 @@ public class EdocDailyCounterService {
     private final EdocDynamicContactService edocDynamicContactService = new EdocDynamicContactService();
     private final EdocDocumentService edocDocumentService = new EdocDocumentService();
 
-    private int vpubnd_sent = 0, vpubnd_received = 0;
+    private int vpubnd_sent=0 , vpubnd_received=0 ;
     private String vpubndName = "";
 
     public boolean checkExistCounter(Date date) {
@@ -283,6 +283,8 @@ public class EdocDailyCounterService {
     }*/
     //HuyNQ
     public List<EPublicStat> getStatDetailForExcel() {
+        vpubnd_sent=0;
+        vpubnd_received=0;
         List<EPublicStat> ePublicStats = new ArrayList<>();
         List<OrganizationCacheEntry> contacts;
         Session session = edocDailyCounterDao.openCurrentSession();
@@ -290,7 +292,8 @@ public class EdocDailyCounterService {
             contacts = edocDynamicContactService.getDynamicContactsByAgency(true);
 
             // Except organ contain "A" in domain
-            contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+            //contacts = contacts.stream().filter(o -> !((o.getDomain().charAt(10)) == 'A')).collect(Collectors.toList());
+            contacts = contacts.stream().filter(o -> (!((o.getDomain().charAt(10)) == 'A') & ((o.getDomain().charAt(9)) == '.'))).collect(Collectors.toList());
 
             contacts.forEach(contact -> {
                 EPublicStat parentOrgan = callStatStoredProcedure(null, null, session, contact);
@@ -299,7 +302,6 @@ public class EdocDailyCounterService {
                     ePublicStats.add(parentOrgan);
             });
             LOGGER.info("Add VPUBND to list !!!!!!!!");
-
             EPublicStat ePublicStat = new EPublicStat();
             ePublicStat.setLastUpdate(new Date());
             ePublicStat.setOrganDomain(PropsUtil.get("edoc.domain.vpubnd.1"));
@@ -431,6 +433,7 @@ public class EdocDailyCounterService {
                 contact.getDomain().equals(PropsUtil.get("edoc.domain.vpubnd.1"))) {
             vpubnd_sent += sent;
             vpubnd_received += received;
+            System.out.println("ddsfdishfjdhfkjgdfkljg");
             if (contact.getDomain().equals(PropsUtil.get("edoc.domain.vpubnd.1"))) {
                 vpubndName = contact.getName();
             }

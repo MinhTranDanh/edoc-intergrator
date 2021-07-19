@@ -114,6 +114,8 @@ let app_message = {
     "edoc_validate_document_request_fail": "Dữ liệu văn bản không hợp lệ !",
     "edoc_resend_submit": "Gửi lại",
     "edoc_resend_cancel": "Hủy",
+    "edoc_export_cancel": "Hủy",
+    "edoc_export_submit": "Thành công",
     // public stat
     "edoc_before_content": "Đến tháng {0} đã trao đổi",
     "edoc_after_first_content": "văn bản qua mạng",
@@ -148,6 +150,7 @@ let user_message = {
     "user_is_on_sso_false" : "Chưa đồng bộ",
     "manage_remove_user": "Xóa người dùng",
     "manage_permission_user": "Phân quyền",
+    "manage_reset_pass_user": "Resert mật khẩu",
     "manage_edit_user": "Chỉnh sửa",
     "user_import_from_excel_success": "Nhập dữ liệu người dùng từ Excel thành công",
     "user_import_invalid_format_file": "Sai định dạng file",
