@@ -1,6 +1,7 @@
 package com.bkav.edoc.service.center;
 
 import com.bkav.edoc.service.commonutil.Checker;
+import com.bkav.edoc.service.commonutil.ConvertDomainUtil;
 import com.bkav.edoc.service.commonutil.XmlChecker;
 import com.bkav.edoc.service.database.cache.AttachmentCacheEntry;
 import com.bkav.edoc.service.database.entity.EdocDocument;
@@ -47,6 +48,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DynamicService extends AbstractMediator implements ManagedLifecycle {
 
@@ -735,6 +737,28 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                             LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
                             document.setDocumentExtId(sendEdocResult.getDocID());
                             if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
+                                List<Organization> newOrgans = converter.convertToNewDomainFormat(toesVPCP);
+                                messageHeader.setToes(newOrgans);
+
+                                SendEdocResult sendEdocResultNew = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
+                                if (sendEdocResult != null) {
+                                    LOGGER.info("-------------------- Send to VPCP by new Domain --------------------");
+                                    LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
+                                    LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
+                                    LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
+                                    document.setDocumentExtId(sendEdocResult.getDocID());
+
+                                    if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
+                                        LOGGER.info("----- Create fail trace for document id " + document.getDocumentId());
+                                    } else {
+                                        toesVPCP.forEach(to -> {
+                                            LOGGER.info("----- Create trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
+                                            MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), true);
+                                            traceService.updateTrace(messageStatusVPCP, errorList);
+                                        });
+                                    }
+                                }
+                                ///////////////////////////////////////////////////////////
                                 toesVPCP.forEach(to -> {
                                     LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
                                     MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), false);
@@ -758,6 +782,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                             LOGGER.error("------------------------- Error send document to VPCP with document Id " + strDocumentId);
                             document.setDocumentExtId("");
                         }
+
                         Date now = new Date();
                         document.setModifiedDate(now);
                         documentService.updateDocument(document);
@@ -975,4 +1000,5 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
     private static final Checker checker = new Checker();
     private static final AttachmentUtil attachmentUtil = new AttachmentUtil();
     private static final XmlUtil xmlUtil = new XmlUtil();
+    private static final ConvertDomainUtil converter = new ConvertDomainUtil();
 }

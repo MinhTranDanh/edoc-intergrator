@@ -149,6 +149,8 @@ public class ServiceVPCP {
                                 StringBuilder documentEsbId = new StringBuilder();
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
+
+
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
@@ -234,6 +236,7 @@ public class ServiceVPCP {
                                 MessageStatus messageStatus = StatusXmlParser.parse(inputStream);
                                 LOGGER.info("Parser success status from file " + getEdocResult.getFilePath());
                                 LOGGER.info(messageStatus.toString());
+
                                 List<Error> errors = new ArrayList<>();
                                 EdocTrace edocTrace = EdocTraceServiceUtil.addTrace(messageStatus, errors);
                                 if (edocTrace != null) {
