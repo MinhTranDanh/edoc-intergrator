@@ -1,5 +1,5 @@
 let appSettings;
-var arr= new Array();
+var arr = new Array();
 var receiveName;
 let fromOrgan = null, toOrgan = null, docCode = null;
 let edocDocument = {
@@ -85,7 +85,7 @@ let edocDocument = {
                     items: {
                         "resend": {name: app_message.edoc_resend_document, icon: "fa-repeat"},
                         "delete": {name: app_message.edoc_remove_document, icon: "delete"},
-                         "Resend": {name: app_message.edoc_resend, icon: "fa-repeat"}
+                        "Resend": {name: app_message.edoc_resend, icon: "fa-repeat"}
                     }
                 });
             },
@@ -207,41 +207,41 @@ let edocDocument = {
                 type: "POST",
             },
 
-            drawCallback: function() {
+            drawCallback: function () {
 
-                $("tr").mousedown(function(event) {
-                    if(event.which===3) {
+                $("tr").mousedown(function (event) {
+                    if (event.which === 3) {
                         receiveName = $(this).find('td').eq(2).text();
                         console.log(receiveName);
                     }
                 }),
-                $(this).contextMenu({
-                    selector: 'tbody tr td',
-                    callback: (key, options) => {
-                        let id = options.$trigger[0].parentElement.id;
+                    $(this).contextMenu({
+                        selector: 'tbody tr td',
+                        callback: (key, options) => {
+                            let id = options.$trigger[0].parentElement.id;
 
-                        switch (key) {
-                            case "download":
-                                console.log(id);
-                                break;
-                            case "comfirm-receive":
-                                console.log(id);
-                                console.log(receiveName);
-                                comfirmReceive(id,receiveName);
-                                 $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
-                                //edocDocument.renderNotTakenDatatable();
-                                break;
-                            case "delete":
-                                edocDocument.deleteDocument(id);
-                                break;
+                            switch (key) {
+                                case "download":
+                                    console.log(id);
+                                    break;
+                                case "comfirm-receive":
+                                    console.log(id);
+                                    console.log(receiveName);
+                                    comfirmReceive(id, receiveName);
+                                    $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
+                                    //edocDocument.renderNotTakenDatatable();
+                                    break;
+                                case "delete":
+                                    edocDocument.deleteDocument(id);
+                                    break;
+                            }
+                        },
+                        items: {
+                            "download": {name: app_message.edoc_download_xml, icon: "fa-download"},
+                            "comfirm-receive": {name: app_message.edoc_comfirm_receive, icon: "fa-check"},
+                            "delete": {name: app_message.edoc_remove_document, icon: "delete"}
                         }
-                    },
-                    items: {
-                        "download": {name: app_message.edoc_download_xml, icon: "fa-download"},
-                        "comfirm-receive":{name: app_message.edoc_comfirm_receive, icon: "fa-check"},
-                        "delete": {name: app_message.edoc_remove_document, icon: "delete"}
-                    }
-                });
+                    });
             },
             rowId: "documentId",
             responsive: true,
@@ -297,8 +297,8 @@ let edocDocument = {
                     "data": null,
                     "render": function (data) {
                         console.log(data)
-                        for(let i=0; i<data.notifications.length; i++) {
-                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name ) {
+                        for (let i = 0; i < data.notifications.length; i++) {
+                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name) {
                                 return app_message.taken_status_false;
                             }
                         }
@@ -329,11 +329,11 @@ let edocDocument = {
                 url: "/documents/-/done/taken",
                 type: "POST",
             },
-            drawCallback: function() {
+            drawCallback: function () {
 
                 var receiveName;
-                $("tr").mousedown(function(event) {
-                    if(event.which===3) {
+                $("tr").mousedown(function (event) {
+                    if (event.which === 3) {
                         receiveName = $(this).find('td').eq(2).text();
                         console.log(receiveName);
                     }
@@ -349,7 +349,7 @@ let edocDocument = {
                                 case "resend":
                                     console.log(id);
                                     console.log(receiveName);
-                                    reSend(id,receiveName);
+                                    reSend(id, receiveName);
                                     // $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
                                     edocDocument.renderDoneTakenDatatable();
                                     break;
@@ -418,8 +418,8 @@ let edocDocument = {
                     "data": null,
                     "render": function (data) {
                         console.log(data)
-                        for(let i=0; i<data.notifications.length; i++) {
-                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name ) {
+                        for (let i = 0; i < data.notifications.length; i++) {
+                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name) {
                                 return app_message.taken_status_true;
 
                             }
@@ -451,7 +451,7 @@ let edocDocument = {
                 url: "/documents/-/not/sendVPCP",
                 type: "POST"
             },
-            drawCallback: function() {
+            drawCallback: function () {
                 $(this).contextMenu({
                     selector: 'tbody tr td',
                     callback: (key, options) => {
@@ -514,7 +514,7 @@ let edocDocument = {
                     "name": "ed.transaction_status",
                     "title": "Trạng thái",
                     "data": null,
-                    "render": function(data) {
+                    "render": function (data) {
                         return $('#sendVPCPStatusTemplate').tmpl(data).html();
                     }
                 },
@@ -765,8 +765,7 @@ $(document).ready(function () {
                                 let status = app_message.edoc_organ_taken;
                                 //let takenStatus = status.fontcolor("blue");
                                 takenOrgan = organ["name"] + " (" + status + ")";
-                            }
-                            else {
+                            } else {
                                 let status = app_message.edoc_organ_not_taken;
                                 //let notTakenStatus = status.fontcolor("red");
                                 takenOrgan = organ["name"] + " (" + status + ")";
@@ -873,7 +872,7 @@ $(document).ready(function () {
                 edocDocument.appSetting.dataTable.page.len(1000);
             }
             $('#dataTables-edoc-doneTaken').DataTable().search(keyword).draw();
-        }else {
+        } else {
             if (keyword.length === 0) {
                 edocDocument.appSetting.dataTable.page.len(pageLength);
                 pageLength = 0;
@@ -897,9 +896,9 @@ $(document).ready(function () {
 
             //MinhTDb
             // -> hide/show icon Filter when clicking on the userManage/organManage
-            if(dataMode === "userManage" || dataMode === "organManage"){
+            if (dataMode === "userManage" || dataMode === "organManage") {
                 $('#search-filter').hide();
-            }else {
+            } else {
                 $('#search-filter').show();
             }
 
@@ -923,14 +922,13 @@ $(document).ready(function () {
                 edocDocument.renderNotSendVpcpDatatable();
                 $('.edoc-table-not-sendPCP').show();
             }
-            //MinhTDb
+                //MinhTDb
             //Tab Quan tri he thong-> Theo doi van ban da nhan
             else if (dataMode === "done-taken-edoc") {
                 $("#warning-document-done-taken").show();
                 edocDocument.renderDoneTakenDatatable();
                 $(".edoc-table-done-taken").show();
-            }
-            else {
+            } else {
                 edocDocument.renderDatatable(fromOrgan, toOrgan, docCode);
                 $(".edoc-table").show();
             }
@@ -985,7 +983,7 @@ $(document).ready(function () {
         });
     })
 
-    $("#put-to-telegram").on('click', function(e) {
+    $("#put-to-telegram").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -996,7 +994,7 @@ $(document).ready(function () {
         })
         $("#overlay-edoc-not-taken").hide();
     })
-    $("#put-to-telegram-vpcp").on('click', function(e) {
+    $("#put-to-telegram-vpcp").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -1004,9 +1002,11 @@ $(document).ready(function () {
             cache: false,
             beforeSend: () => $("#overlay-edoc-not-taken").show(),
             success: () => $.notify(app_message.edoc_message_send_telegram_success, "success")
-        }).done(function() { $("#overlay-edoc-not-taken").hide()})
+        }).done(function () {
+            $("#overlay-edoc-not-taken").hide()
+        })
     })
-    $("#put-to-email").on('click', function(e) {
+    $("#put-to-email").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -1014,15 +1014,17 @@ $(document).ready(function () {
             cache: false,
             beforeSend: () => $("#overlay-edoc-not-taken").show(),
             success: () => $.notify(app_message.edoc_message_send_email_success, "success")
-        }).done(function () {$("#overlay-edoc-not-taken").hide()});
+        }).done(function () {
+            $("#overlay-edoc-not-taken").hide()
+        });
     })
 
     // search filter event
-    $("#search-filter").on('click', function() {
+    $("#search-filter").on('click', function () {
         $("#searchFilter").toggle();
     })
 
-    $("#btn-searchFilter-confirm").on('click', function(e) {
+    $("#btn-searchFilter-confirm").on('click', function (e) {
         fromOrgan = ($("#fromOrganSearch").val() === "" ? null : $("#fromOrganSearch").val());
         toOrgan = ($("#toOrganSearch").val() === "" ? null : $("#toOrganSearch").val());
         docCode = ($("#docCodeSearch").val() === "" ? null : $("#docCodeSearch").val());
@@ -1033,7 +1035,7 @@ $(document).ready(function () {
         fromOrgan = null, toOrgan = null, docCode = null;
     })
 
-    $("#btn-searchFilter-reset").on('click', function() {
+    $("#btn-searchFilter-reset").on('click', function () {
         $('#fromOrganSearch, #toOrganSearch').val(null).trigger('change');
         $("#docCodeSearch").val("");
     })
@@ -1096,18 +1098,18 @@ $(document).on("click", "#btn-confirm", function (event) {
     $("#delete-confirm-modal").modal('toggle');
 })
 
-$(document).on('click', '#btn-resend-submit', function(e) {
+$(document).on('click', '#btn-resend-submit', function (e) {
     e.preventDefault();
 
     $("#resendDocument").modal('toggle');
 })
-$(document).on('click', '#btn-resend-cancel', function(e) {
+$(document).on('click', '#btn-resend-cancel', function (e) {
     e.preventDefault();
     $("#resendDocument").modal('toggle');
 })
 
-function reSendDocumentModal (documentId) {
-    $.get("/document/" + documentId, function(data) {
+function reSendDocumentModal(documentId) {
+    $.get("/document/" + documentId, function (data) {
         console.log(data.toOrgan);
         $('#edoc-resend').empty();
         $('#resendDocumentTemplate').tmpl(data).appendTo('#edoc-resend');
@@ -1116,27 +1118,27 @@ function reSendDocumentModal (documentId) {
             keyboard: false
         })
 
-        $(document).on('click', '#btn-resend-confirm',function(e) {
+        $(document).on('click', '#btn-resend-confirm', function (e) {
             e.preventDefault();
             $("#resendDocument").modal('toggle');
             //console.log("dsnfnf");
 
-           for( let i=0; i<data.toOrgan.length; i++){
-               let valuecheck="#"+data.toOrgan[i].id;
-               //console.log(valuecheck);
-               if($(valuecheck).prop('checked')){
-                   arr.push($(valuecheck).val());
-               }
-           }
-           console.log(arr);
-           reSend(documentId,arr);
+            for (let i = 0; i < data.toOrgan.length; i++) {
+                let valuecheck = "#" + data.toOrgan[i].id;
+                //console.log(valuecheck);
+                if ($(valuecheck).prop('checked')) {
+                    arr.push($(valuecheck).val());
+                }
+            }
+            console.log(arr);
+            reSend(documentId, arr);
         });
     });
 
 }
 
 
-function reSendToVPCP (id) {
+function reSendToVPCP(id) {
     let url = "/resend/toVPVP";
     $.ajax({
         url: url,
@@ -1160,6 +1162,7 @@ function reSendToVPCP (id) {
         $("#overlay-edoc-not-taken").hide()
     });
 }
+
 //MinhTDb
 //Tab Quan tri he thong-> Theo doi van ban da gui
 function reSend(id, arr) {
@@ -1168,7 +1171,7 @@ function reSend(id, arr) {
     $.ajax({
         url: url,
         type: "POST",
-        data: {"documentId": id,"arr":arr},
+        data: {"documentId": id, "arr": arr},
         beforeSend: function () {
             $("#overlay-edoc-not-taken").show();
         },
@@ -1197,7 +1200,7 @@ function comfirmReceive(id, receiveName) {
     $.ajax({
         url: url,
         type: "POST",
-        data: {"documentId": id,"receiveName": receiveName},
+        data: {"documentId": id, "receiveName": receiveName},
         beforeSend: function () {
             $("#overlay-edoc-not-taken").show();
         },
@@ -1217,6 +1220,7 @@ function comfirmReceive(id, receiveName) {
 
     });
 }
+
 // function reSendToVPCP() {
 //     let url ="jdbc:mysql://localhost:3306/edoc_lamdong?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 //

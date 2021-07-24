@@ -40,7 +40,7 @@ public class PublicStatRestController {
         boolean isGetAllAgency = false;
         if (keyword == null) {
             if (fromDate == null || toDate == null) {
-                return EdocDailyCounterServiceUtil.getStatsDetail(null, null, null, isGetAllAgency);
+                return EdocDailyCounterServiceUtil.getStatsDaily(null, null, null, isGetAllAgency);
             } else {
                 Date fromDateValue = DateUtils.parse(fromDate);
                 Date toDateValue = DateUtils.parse(toDate);
@@ -48,7 +48,7 @@ public class PublicStatRestController {
             }
         } else {
             if (fromDate == null || toDate == null) {
-                return EdocDailyCounterServiceUtil.getStatsDetail(null, null, keyword, isGetAllAgency);
+                return EdocDailyCounterServiceUtil.getStatsDaily(null, null, keyword, isGetAllAgency);
             } else {
                 Date fromDateValue = DateUtils.parse(fromDate);
                 Date toDateValue = DateUtils.parse(toDate);
@@ -201,14 +201,14 @@ public class PublicStatRestController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    @RequestMapping(value = "/public/-/stat/export/excel",produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/public/-/stat/export/excel", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public void exportToExcel(HttpServletResponse response,
                               @RequestParam(value = "fromDate", required = false) String fromDate,
                               @RequestParam(value = "toDate", required = false) String toDate,
                               @RequestParam(value = "keyword", required = false) String keyword,
                               @RequestParam(value = "arr", required = false) List<Integer> arr
-                              ) throws IOException {
+    ) throws IOException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
 

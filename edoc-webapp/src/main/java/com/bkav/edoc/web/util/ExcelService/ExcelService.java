@@ -380,7 +380,7 @@ public class ExcelService {
         LOGGER.info("Write organs to Excel END!!!!!!!!!");
     }
 
-    public void ExportSampleOrganExcelFile (HttpServletResponse response) throws IOException {
+    public void ExportSampleOrganExcelFile(HttpServletResponse response) throws IOException {
         createOrganExcelHeader();
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
@@ -612,20 +612,20 @@ public class ExcelService {
         System.out.println(arr.size());
 
         Sheet sheet = workbook.createSheet("Thống kê văn bản điện tử");
-        for(int i=0; i<arr.size(); i++) {
+        for (int i = 0; i < arr.size(); i++) {
             switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
                 case 0:
-                sheet.setColumnWidth(i, 15000);
-                break;
+                    sheet.setColumnWidth(i, 15000);
+                    break;
                 case 1:
-                sheet.setColumnWidth(i, 4000);
-                break;
+                    sheet.setColumnWidth(i, 4000);
+                    break;
                 case 2:
-                sheet.setColumnWidth(i, 4000);
-                break;
+                    sheet.setColumnWidth(i, 4000);
+                    break;
                 case 3:
-                sheet.setColumnWidth(i, 5000);
-                break;
+                    sheet.setColumnWidth(i, 5000);
+                    break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + arr.get(i));
             }
@@ -649,7 +649,7 @@ public class ExcelService {
         // Write header row to excel file for organization
         for (int i = 0, j = 1; i < arr.size(); i++, j++) {
             headerCell = header.createCell(i);
-            headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(Integer.parseInt(String.valueOf(arr.get(i)))+1).getHeaderName());
+            headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(Integer.parseInt(String.valueOf(arr.get(i))) + 1).getHeaderName());
             headerCell.setCellStyle(headerStyle);
         }
 
@@ -659,7 +659,7 @@ public class ExcelService {
 
         for (EPublicStat ePublicStat : sortedListStat) {
             Row row = sheet.createRow(numRow);
-            for(int i=0; i<arr.size(); i++) {
+            for (int i = 0; i < arr.size(); i++) {
                 switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
                     case 0:
                         Cell cell = row.createCell(i);
@@ -695,6 +695,7 @@ public class ExcelService {
 
         LOGGER.info("Write data to Excel end!!!!!");
     }
+
     private void createOrganExcelHeader() {
         workbook = new XSSFWorkbook();
 

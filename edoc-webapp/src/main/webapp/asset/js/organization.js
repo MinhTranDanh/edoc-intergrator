@@ -39,7 +39,7 @@ let organManage = {
                         switch (key) {
                             case "delete":
                                 //instance.deleteOrgan(id);
-                                alertDelete(instance,id);
+                                alertDelete(instance, id);
                                 break;
                             case "edit":
                                 editOrganClick(id);
@@ -135,7 +135,7 @@ let organManage = {
         });
     },
 
-    createOrgan: function(e) {
+    createOrgan: function (e) {
         let instance = this;
 
         let name = $("#name").val();
@@ -187,7 +187,7 @@ let organManage = {
         }
     },
 
-    editOrgan: function(id) {
+    editOrgan: function (id) {
         let instance = this;
 
         let name = $("#editName").val();
@@ -264,39 +264,41 @@ let organManage = {
     }
 
 }
+
 //MinhTD
-function alertDelete(instance,id){
+function alertDelete(instance, id) {
     Swal.fire({
-            title: "Are you sure?",
-            text: "Bạn có chắc chắn muốn xóa!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Xóa",
-            cancelButtonText: "Hủy",
-            closeOnConfirm: false,
-            closeOnCancel: false
-        }).then((result) => {
-            if (result.isConfirmed)
-                instance.deleteOrgan(id);
-        });
+        title: "Are you sure?",
+        text: "Bạn có chắc chắn muốn xóa!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    }).then((result) => {
+        if (result.isConfirmed)
+            instance.deleteOrgan(id);
+    });
 }
+
 $(document).ready(function () {
     $("#dataTables-organ").on('click', 'tbody>tr', function (e) {
         let organId = $(this).attr("id");
         /*let $cell = $(e.target).closest('td');
         if ($cell.index() > 0) {*/
-            $.get("/contact/-/document/contacts/" + organId, function (data) {
-                $('#organ-detail').empty();
-                $('#organDetailTemplate').tmpl(data).appendTo('#organ-detail');
-            });
-            $('#organDetail').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
+        $.get("/contact/-/document/contacts/" + organId, function (data) {
+            $('#organ-detail').empty();
+            $('#organDetailTemplate').tmpl(data).appendTo('#organ-detail');
+        });
+        $('#organDetail').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
         //}
     });
 
-    $("#deleteOrgans").on('click', function() {
+    $("#deleteOrgans").on('click', function () {
         /*$.each($("input[name='checkBox[]']:checked").closest("td").next("td"), function () {
             values.push($(this).text());
         });*/

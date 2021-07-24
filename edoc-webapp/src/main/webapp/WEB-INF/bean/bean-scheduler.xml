@@ -216,4 +216,34 @@
         <property name="overwriteExistingJobs" value="false"/>
     </bean>
 
+    <!--Declare scheduler for public stat-->
+    <bean name="statSumDocumentJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="com.bkav.edoc.web.scheduler.StatDailyJob"/>
+        <property name="jobDataMap">
+            <map>
+                <entry key="statSumDocumentBean" value-ref="statSumDocumentBean"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="statSumDocumentTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="statSumDocumentJobDetail"/>
+        <!--<property name="cronExpression" value="0 */3 * ? * *"/>-->
+<!--        <property name="cronExpression" value="0 0/3 * * * ?"/>-->
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy">
+        <property name="configLocation" value="classpath:/quartz-schedule.properties"/>
+        <property name="triggers">
+            <list>
+                <ref bean="statSumDocumentTrigger"/>
+            </list>
+        </property>
+        <property name="autoStartup" value="true"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+        <property name="overwriteExistingJobs" value="false"/>
+    </bean>
+
 </beans>

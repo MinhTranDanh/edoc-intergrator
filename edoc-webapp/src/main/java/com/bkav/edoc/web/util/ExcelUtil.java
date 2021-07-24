@@ -49,7 +49,7 @@ public class ExcelUtil {
         return excelService.syncUserToSSO(users);
     }
 
-    public static void exportExcelDailyCounter(HttpServletResponse response, Date fromDate, Date toDate, String keyword, List<Integer>  arr) throws IOException {
+    public static void exportExcelDailyCounter(HttpServletResponse response, Date fromDate, Date toDate, String keyword, List<Integer> arr) throws IOException {
         excelService.ExportDailyCounterToExcel(response, fromDate, toDate, keyword, arr);
     }
 

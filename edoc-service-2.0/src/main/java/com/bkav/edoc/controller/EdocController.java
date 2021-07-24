@@ -292,7 +292,7 @@ public class EdocController {
                                 listToOrgan.forEach(toOrgan -> {
                                     GetPendingResult pendingResult = new GetPendingResult();
                                     if (GetterUtil.getBoolean(PropsUtil.get("edoc.turn.on.vnpt.request"), false)) {
-                                        if (toOrgan.geIntegratorCenter())  {
+                                        if (toOrgan.geIntegratorCenter()) {
                                             pendingResult.setDocId(documentCacheEntry.getDocumentId());
                                             pendingResult.setOrganId(toOrgan.getDomain());
                                             getPendingResults.add(pendingResult);
@@ -339,7 +339,7 @@ public class EdocController {
                                                 LOGGER.info("-------- Get document pending by VNPT request with organ: " + toOrgan);
                                             }
                                         } else {
-                                            LOGGER.error("------Error: Not found contact with domain "  + toOrgan);
+                                            LOGGER.error("------Error: Not found contact with domain " + toOrgan);
                                         }
                                         /*String[] subDomain = toOrgan.split("\\.");
                                         String childDomain = subDomain[2] + "." + subDomain[3];
