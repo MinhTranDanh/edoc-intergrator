@@ -461,12 +461,7 @@ public class EdocDocumentService {
                             if (contact.getIntegratorCenter()) {
                                 LOGGER.info("Organ is in the integrator center with domain in notification: " + to.getOrganId() + " ----> " + PropsUtil.get("edoc.domain.A.parent"));
                                 notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
-                            }
-                        /*if (to.getOrganId().length() >= 13) {
-                            if (to.getOrganId().charAt(10) == 'A') {
-                                notification.setReceiverId(PropsUtil.get("edoc.domain.A.parent"));
-                            }
-                        }*/ else {
+                            } else {
                                 notification.setReceiverId(to.getOrganId());
                             }
                         }
