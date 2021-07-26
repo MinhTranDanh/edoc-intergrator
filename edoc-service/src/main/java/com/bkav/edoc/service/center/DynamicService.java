@@ -731,6 +731,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                         messageHeader.setToes(toesVPCP);
                         document.setSendExt(true);
                         SendEdocResult sendEdocResult = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
+                        boolean flag = false;
                         if (sendEdocResult != null) {
                             LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
                             LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
@@ -760,15 +761,18 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                                                 MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), true);
                                                 traceService.updateTrace(messageStatusVPCP, errorList);
                                             });
+                                            flag = true;
                                         }
                                     }
                                 }
                                 ////////////////////////////////
-                                toesVPCP.forEach(to -> {
-                                    LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
-                                    MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), false);
-                                    traceService.updateTrace(messageStatusVPCP, errorList);
-                                });
+                                if (!flag) {
+                                    toesVPCP.forEach(to -> {
+                                        LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
+                                        MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), false);
+                                        traceService.updateTrace(messageStatusVPCP, errorList);
+                                    });
+                                }
                             } else {
                                 toesVPCP.forEach(to -> {
                                     LOGGER.info("----- Create trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
