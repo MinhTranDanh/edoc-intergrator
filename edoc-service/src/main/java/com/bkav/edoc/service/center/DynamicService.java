@@ -731,39 +731,48 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                         messageHeader.setToes(toesVPCP);
                         document.setSendExt(true);
                         SendEdocResult sendEdocResult = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
+                        boolean flag = false;
                         if (sendEdocResult != null) {
                             LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
                             LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
                             LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
                             document.setDocumentExtId(sendEdocResult.getDocID());
                             if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
-                                List<Organization> newOrgans = converter.convertToNewDomainFormat(toesVPCP);
-                                messageHeader.setToes(newOrgans);
 
-                                SendEdocResult sendEdocResultNew = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
-                                if (sendEdocResult != null) {
-                                    LOGGER.info("-------------------- Send to VPCP by new Domain --------------------");
-                                    LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
-                                    LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
-                                    LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
-                                    document.setDocumentExtId(sendEdocResult.getDocID());
+                                // TayNinh integrator new domain
+                                boolean isTayNinh = GetterUtil.getBoolean(PropsUtil.get("edoc.check.organ.is.tayninh"), false);
+                                if (isTayNinh) {
+                                    List<Organization> newOrgans = converter.convertToNewDomainFormat(toesVPCP);
+                                    messageHeader.setToes(newOrgans);
 
-                                    if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
-                                        LOGGER.info("----- Create fail trace for document id " + document.getDocumentId());
-                                    } else {
-                                        toesVPCP.forEach(to -> {
-                                            LOGGER.info("----- Create trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
-                                            MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), true);
-                                            traceService.updateTrace(messageStatusVPCP, errorList);
-                                        });
+                                    SendEdocResult sendEdocResultNew = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
+                                    if (sendEdocResult != null) {
+                                        LOGGER.info("-------------------- Send to VPCP by new Domain --------------------");
+                                        LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
+                                        LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
+                                        LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
+                                        document.setDocumentExtId(sendEdocResult.getDocID());
+
+                                        if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
+                                            LOGGER.info("----- Create fail trace for document id " + document.getDocumentId());
+                                        } else {
+                                            toesVPCP.forEach(to -> {
+                                                LOGGER.info("----- Create trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
+                                                MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), true);
+                                                traceService.updateTrace(messageStatusVPCP, errorList);
+                                            });
+                                            flag = true;
+                                        }
                                     }
                                 }
-                                ///////////////////////////////////////////////////////////
-                                toesVPCP.forEach(to -> {
-                                    LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
-                                    MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), false);
-                                    traceService.updateTrace(messageStatusVPCP, errorList);
-                                });
+                                ////////////////////////////////
+                                if (!flag) {
+                                    toesVPCP.forEach(to -> {
+                                        LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
+                                        MessageStatus messageStatusVPCP = createConfirmTrace(document, to.getOrganId(), false);
+                                        traceService.updateTrace(messageStatusVPCP, errorList);
+                                    });
+                                }
                             } else {
                                 toesVPCP.forEach(to -> {
                                     LOGGER.info("----- Create trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());

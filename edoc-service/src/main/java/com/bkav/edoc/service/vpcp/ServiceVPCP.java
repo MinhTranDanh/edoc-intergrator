@@ -1,5 +1,6 @@
 package com.bkav.edoc.service.vpcp;
 
+import com.bkav.edoc.service.commonutil.ConvertDomainUtil;
 import com.bkav.edoc.service.database.cache.AttachmentCacheEntry;
 import com.bkav.edoc.service.database.entity.EdocDocument;
 import com.bkav.edoc.service.database.entity.EdocDynamicContact;
@@ -46,6 +47,8 @@ public class ServiceVPCP {
     private final KnobstickServiceImp knobstickServiceImp;
 
     private static final VnptProperties vnptProperties;
+
+    private static final ConvertDomainUtil converter = new ConvertDomainUtil();
 
     private static final String pStart = "---------";
 
@@ -149,7 +152,7 @@ public class ServiceVPCP {
                                 StringBuilder documentEsbId = new StringBuilder();
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
-
+                                boolean isTayNinh = GetterUtil.getBoolean(PropsUtil.get("edoc.check.organ.is.tayninh"), false);
 
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
@@ -159,11 +162,35 @@ public class ServiceVPCP {
                                         LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
                                     } else {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
+                                        // TayNinh integrator new domain
+                                        if (isTayNinh) {
+                                            EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                            if (contact == null) {
+                                                String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                                Organization oldOrganFormat = messageHeader.getFrom();
+                                                oldOrganFormat.setOrganId(oldDomain);
+                                                messageHeader.setFrom(oldOrganFormat);
+                                            }
+                                        }
+                                        //////////////////////////////////
+
                                         document = EdocDocumentServiceUtil.addDocument(messageHeader,
                                                 traceHeaderList, attachments, documentEsbId, attachmentCacheEntries, errors);
                                     }
                                 } else {
                                     LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
+                                    // TayNinh integrator new domain
+                                    if (isTayNinh) {
+                                        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                        if (contact == null) {
+                                            String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                            Organization oldOrganFormat = messageHeader.getFrom();
+                                            oldOrganFormat.setOrganId(oldDomain);
+                                            messageHeader.setFrom(oldOrganFormat);
+                                        }
+                                    }
+                                    //////////////////////////////////
+
                                     document = EdocDocumentServiceUtil.addDocument(messageHeader,
                                             traceHeaderList, attachments, documentEsbId, attachmentCacheEntries, errors);
                                 }
@@ -238,6 +265,20 @@ public class ServiceVPCP {
                                 LOGGER.info(messageStatus.toString());
 
                                 List<Error> errors = new ArrayList<>();
+
+                                // TayNinh integrator new domain
+                                boolean isTayNinh = GetterUtil.getBoolean(PropsUtil.get("edoc.check.organ.is.tayninh"), false);
+                                if (isTayNinh) {
+                                    EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageStatus.getFrom().getOrganId());
+                                    if (contact == null) {
+                                        String oldDomain = converter.convertToOlaDomainFormat(messageStatus.getFrom().getOrganId());
+                                        Organization oldOrganFormat = messageStatus.getFrom();
+                                        oldOrganFormat.setOrganId(oldDomain);
+                                        messageStatus.setFrom(oldOrganFormat);
+                                    }
+                                }
+                                /////////////////////////////////
+
                                 EdocTrace edocTrace = EdocTraceServiceUtil.addTrace(messageStatus, errors);
                                 if (edocTrace != null) {
                                     LOGGER.info("Save successfully MessageStatus from file " + getEdocResult.getFilePath() + " to database !!!!!!!!");
