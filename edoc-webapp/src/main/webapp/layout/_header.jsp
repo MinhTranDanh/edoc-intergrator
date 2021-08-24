@@ -275,14 +275,15 @@
                     <label class="control-label"><spring:message code="edoc.search.fromOrgan"/></label>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12" style="padding-left: 0px;">
-                    <select class="form-control" multiple="multiple" id="fromOrganSearch">
+                    <select class="form-control" multiple="multiple" id="fromOrganSearch"></select>
+                    <%--<select class="form-control" multiple="multiple" id="fromOrganSearch">
                         <%
                             for (OrganizationCacheEntry organization : organizationCacheEntries) {
                         %>
                         <option value="<%=organization.getDomain()%>"><%=organization.getName()%></option><%
                         }
                     %>
-                    </select>
+                    </select>--%>
                 </div>
             </div>
             <br>

@@ -167,6 +167,7 @@ public class ServiceVPCP {
                                             EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                             if (contact == null) {
                                                 String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                                LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                                 Organization oldOrganFormat = messageHeader.getFrom();
                                                 oldOrganFormat.setOrganId(oldDomain);
                                                 messageHeader.setFrom(oldOrganFormat);
@@ -184,6 +185,7 @@ public class ServiceVPCP {
                                         EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                         if (contact == null) {
                                             String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                            LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                             Organization oldOrganFormat = messageHeader.getFrom();
                                             oldOrganFormat.setOrganId(oldDomain);
                                             messageHeader.setFrom(oldOrganFormat);

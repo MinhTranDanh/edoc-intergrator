@@ -2,7 +2,7 @@
 <edXML xmlns="http://www.mic.gov.vn/TBT/QCVN_102_2016">
   <edXML:edXMLEnvelope xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">
     <edXML:edXMLHeader>
-      <edXML:MessageHeader>
+      <edXML:Status>
         <edXML:From>
 			<edXML:OrganId>000.00.00.H41</edXML:OrganId>
 			<edXML:OrganName>UBND Tỉnh Nghệ An</edXML:OrganName>
@@ -28,7 +28,7 @@
         <edXML:StatusCode>05</edXML:StatusCode>
         <edXML:Description>Đang xử lý văn bản đến</edXML:Description>
         <edXML:Timestamp>2015/09/20 11:08:36</edXML:Timestamp>
-      </edXML:MessageHeader>
+      </edXML:Status>
     </edXML:edXMLHeader>
   </edXML:edXMLEnvelope>
 </edXML>

@@ -45,7 +45,7 @@ public class ExcelService {
         int totalCols = 0;
         while (rows.hasNext()) {
             Row currentRow = rows.next();
-            // skip & check header
+            // skip & check header0
             if (rowNum == 0) {
                 totalCols = currentRow.getPhysicalNumberOfCells();
                 rowNum++;

@@ -44,6 +44,12 @@ public class DynamicRestContactController {
         this.validateUtil = validateUtil;
     }
 
+    @RequestMapping(value = "/contact/-/contacts", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public List<OrganizationCacheEntry> getAllContact() {
+        return EdocDynamicContactServiceUtil.getAllContacts();
+    }
+
     @RequestMapping(value = "/contact/-/document/contacts", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getAllContact(HttpServletRequest request) {
