@@ -8,7 +8,6 @@ import com.bkav.edoc.service.xml.base.util.DateUtils;
 import com.bkav.edoc.service.xml.ed.Ed;
 import com.bkav.edoc.service.xml.ed.builder.EdXmlBuilder;
 import com.bkav.edoc.service.xml.ed.header.*;
-import com.bkav.edoc.service.xml.status.Status;
 import com.bkav.edoc.service.xml.status.builder.StatusXmlBuilder;
 import com.bkav.edoc.service.xml.status.header.MessageStatus;
 import com.google.common.collect.Lists;

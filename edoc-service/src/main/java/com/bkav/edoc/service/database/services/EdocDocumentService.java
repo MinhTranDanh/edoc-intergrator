@@ -579,6 +579,15 @@ public class EdocDocumentService {
         return false;
     }
 
+    public boolean getEdocDocumentByEdxmlIdAndToOrganAndDoccode(String edXmlDocumentId, String toOrgans, String docCode) {
+        EdocDocument check = documentDaoImpl.getEdocDocumentByEdxmlAndToOrganAndDocCode(edXmlDocumentId, toOrgans, docCode);
+        if (check != null) {
+            LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgans);
+            return true;
+        }
+        return false;
+    }
+
     public boolean checkExistDocumentByDocCode(String fromOrgan, String toOrgan, String docCode) {
         return documentDaoImpl.checkExistDocumentByDocCode(fromOrgan, toOrgan, docCode);
     }

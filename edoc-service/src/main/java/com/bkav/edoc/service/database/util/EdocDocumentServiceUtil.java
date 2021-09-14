@@ -146,4 +146,8 @@ public class EdocDocumentServiceUtil {
     public static MessageHeader getMessageHeaderByDOcumentID(long documentId) {
         return DOCUMENT_SERVICE.getDocumentById(documentId);
     }
+
+    public static boolean checkEdocDocumentByEdxmlIdAndToOrganAndDoccode(String edXmlDocumentId, String toOrgans, String docCode) {
+        return DOCUMENT_SERVICE.getEdocDocumentByEdxmlIdAndToOrganAndDoccode(edXmlDocumentId, toOrgans, docCode);
+    }
 }

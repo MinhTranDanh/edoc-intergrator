@@ -8,6 +8,7 @@ import com.bkav.edoc.service.database.entity.EdocTrace;
 import com.bkav.edoc.service.database.util.EdocDocumentServiceUtil;
 import com.bkav.edoc.service.database.util.EdocDynamicContactServiceUtil;
 import com.bkav.edoc.service.database.util.EdocTraceServiceUtil;
+import com.bkav.edoc.service.database.util.MapperUtil;
 import com.bkav.edoc.service.kernel.util.GetterUtil;
 import com.bkav.edoc.service.util.CommonUtil;
 import com.bkav.edoc.service.util.PropsUtil;
@@ -127,6 +128,7 @@ public class ServiceVPCP {
                             LOGGER.info(pStart + "Desc:" + getEdocResult.getErrorDesc());
                             LOGGER.info(pStart + "file:" + getEdocResult.getFilePath());
                             EdocDocument document = null;
+                            String status = "fail";
                             if (getEdocResult.getStatus().equals("OK")) {
                                 LOGGER.info("Get successfully document from VPCP with docId: "
                                         + item.getId() + " from " + item.getFrom() + " to " + item.getTo());
@@ -147,8 +149,10 @@ public class ServiceVPCP {
                                 List<Attachment> attachments = ed.getAttachments();
                                 LOGGER.info("Get successfully Attachments from file " + getEdocResult.getFilePath());
                                 //filter list organ of current organ on esb
+                                LOGGER.info("Starting get toes organ !!!!!!!!!");
                                 List<Organization> thisOrganizations = filterOrgan(messageHeader.getToes());
                                 messageHeader.setToes(thisOrganizations);
+                                LOGGER.info("Set toes organ success to document with size " + thisOrganizations.size() + " !!!");
                                 StringBuilder documentEsbId = new StringBuilder();
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
@@ -158,8 +162,10 @@ public class ServiceVPCP {
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
                                     String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                                    LOGGER.info("Starting check exist document in esb !!!");
                                     if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                                         LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
+                                        status = "done";
                                     } else {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                         // TayNinh integrator new domain
@@ -201,16 +207,18 @@ public class ServiceVPCP {
                                     document.setDocumentExtId(item.getId());
                                     document.setReceivedExt(true);
                                     EdocDocumentServiceUtil.updateDocument(document);
-                                    LOGGER.info("Update document from vpcp successfully for document " + documentEsbId.toString());
+                                    LOGGER.info("Update document from vpcp successfully !!!!!!!!!!!");
                                     // TODO change status to vpcp
-                                    headerChangeStatus.put("status", "done");
+                                    status = "done";
+                                    headerChangeStatus.put("status", status);
                                 } else {
                                     LOGGER.error("Error save document from vpcp  with document code " + messageHeader.getCode());
-                                    headerChangeStatus.put("status", "fail");
+                                    headerChangeStatus.put("status", status);
                                 }
                             } else {
-                                headerChangeStatus.put("status", "fail");
+                                headerChangeStatus.put("status", status);
                             }
+                            //confirmReceived(item.getId(), status);
                             GetChangeStatusResult getChangeStatusResult = this.knobstickServiceImp.updateStatus(headerChangeStatus.toString());
                             LOGGER.info("Confirm receiver for document --------------> " + item.getId());
                             if (getChangeStatusResult != null) {
@@ -378,6 +386,83 @@ public class ServiceVPCP {
         int maxConnection = GetterUtil.getInteger(PropsUtil.get("VPCP.maxConnection"));
         int retry = GetterUtil.getInteger(PropsUtil.get("VPCP.retry"));
         vnptProperties = new VnptProperties(vpcpEndpoint, systemId, token, attachmentDir, maxConnection, retry);
+    }
+
+    public void UpdateSuccessTrace() {
+        LOGGER.info("------------------ Invoke UpdateTrace to VPCP for success document ------------------");
+        JSONObject getDocumentsHeader = new JSONObject();
+        getDocumentsHeader.put("servicetype", "eDoc");
+        getDocumentsHeader.put("messagetype", MessageType.edoc);
+        GetReceivedEdocResult getReceivedEdocResult = this.knobstickServiceImp.getReceivedEdocList(getDocumentsHeader.toString());
+        if (getReceivedEdocResult != null) {
+            LOGGER.info(pStart + "status:" + getReceivedEdocResult.getStatus());
+            LOGGER.info(pStart + "Desc:" + getReceivedEdocResult.getErrorDesc());
+            LOGGER.info(pStart + "Size:" + getReceivedEdocResult.getKnobsticks().size());
+            if (getReceivedEdocResult.getKnobsticks().size() > 0) {
+                for (Knobstick item : getReceivedEdocResult.getKnobsticks()) {
+                    try {
+                        LOGGER.info("Prepare check document from VPCP with docId: " + item.getId() + " from " + item.getFrom() + " to " + item.getTo());
+                        JSONObject getDocumentHeader = new JSONObject();
+                        String attachmentDir = PropsUtil.get("VPCP.attachment.dir");
+                        getDocumentHeader.put("filePath", attachmentDir);
+                        getDocumentHeader.put("docId", item.getId());
+                        GetEdocResult getEdocResult = this.knobstickServiceImp.getEdoc(getDocumentHeader.toString());
+                        JSONObject headerChangeStatus = new JSONObject();
+                        headerChangeStatus.put("docid", item.getId());
+                        if (getEdocResult != null) {
+                            LOGGER.info(pStart + "status:" + getEdocResult.getStatus());
+                            LOGGER.info(pStart + "Desc:" + getEdocResult.getErrorDesc());
+                            LOGGER.info(pStart + "file:" + getEdocResult.getFilePath());
+                            if (getEdocResult.getStatus().equals("OK")) {
+                                LOGGER.info("Get successfully document from VPCP with docId: "
+                                        + item.getId() + " from " + item.getFrom() + " to " + item.getTo());
+                                // TODO insert to database
+                                //parse data from edxml
+                                File file = new File(getEdocResult.getFilePath());
+                                InputStream inputStream = new FileInputStream(file);
+                                Ed ed = EdXmlParser.getInstance().parse(inputStream);
+                                LOGGER.info("Parser successfully document from file " + getEdocResult.getFilePath());
+                                //Get message header
+                                MessageHeader messageHeader = (MessageHeader) ed.getHeader().getMessageHeader();
+                                LOGGER.info("Get successfully MessageHeader from file " + getEdocResult.getFilePath());
+                                //filter list organ of current organ on esb
+                                LOGGER.info("Starting get toes organ !!!!!!!!!");
+                                List<Organization> thisOrganizations = filterOrgan(messageHeader.getToes());
+                                messageHeader.setToes(thisOrganizations);
+                                LOGGER.info("Set toes organ success to document with size " + thisOrganizations.size() + " !!!");
+
+                                String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                                EdocDocument edocDocument = MapperUtil.modelToEdocDocument(messageHeader);
+                                LOGGER.info("Starting check exist document in esb !!!");
+                                if (EdocDocumentServiceUtil.checkEdocDocumentByEdxmlIdAndToOrganAndDoccode(messageHeader.getDocumentId(), toesOrgan, edocDocument.getDocCode())) {
+                                    LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
+                                    if (edocDocument.getReceivedExt() && !edocDocument.getDocumentExtId().equals("")) {
+                                        headerChangeStatus.put("status", "done");
+                                    } else {
+                                        headerChangeStatus.put("status", "fail");
+                                    }
+                                }
+                            } else {
+                                headerChangeStatus.put("status", "fail");
+                            }
+                            GetChangeStatusResult getChangeStatusResult = this.knobstickServiceImp.updateStatus(headerChangeStatus.toString());
+                            LOGGER.info("Confirm receiver for document --------------> " + item.getId());
+                            if (getChangeStatusResult != null) {
+                                LOGGER.info("Confirm status ---------------> " + getChangeStatusResult.getStatus());
+                                LOGGER.info("Confirm error code  ---------------> " + getChangeStatusResult.getErrorCode());
+                                LOGGER.info("Confirm error code  ---------------> " + getChangeStatusResult.getErrorCode());
+                            } else {
+                                LOGGER.error("Error confirm receiver for document of vpcp with id " + item.getId());
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("Error get list documents from VPCP " + e);
+                    }
+                }
+            }
+        } else {
+            LOGGER.error("Get list document from vpcp null !!!!");
+        }
     }
 
     private final static Logger LOGGER = Logger.getLogger(ServiceVPCP.class);
