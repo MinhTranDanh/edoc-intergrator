@@ -216,32 +216,4 @@
         <property name="overwriteExistingJobs" value="false"/>
     </bean>
 
-    <!--Declare scheduler for Confirm status documents to VPCP-->
-    <bean name="confirmStatus" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass" value="com.bkav.edoc.web.scheduler.ConfirmStatusJob"/>
-        <property name="jobDataMap">
-            <map>
-                <entry key="confirmStatusBean" value-ref="confirmStatusBean"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="confirmStatusTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="confirmStatus"/>
-        <property name="cronExpression" value="0 * */13 ? * *"/>
-    </bean>
-
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy">
-        <property name="configLocation" value="classpath:/quartz-schedule.properties"/>
-        <property name="triggers">
-            <list>
-                <ref bean="confirmStatusTrigger"/>
-            </list>
-        </property>
-        <property name="autoStartup" value="true"/>
-        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
-        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
-        <property name="overwriteExistingJobs" value="false"/>
-    </bean>
-
 </beans>

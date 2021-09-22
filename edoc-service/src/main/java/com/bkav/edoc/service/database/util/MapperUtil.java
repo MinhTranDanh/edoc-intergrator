@@ -328,7 +328,8 @@ public class MapperUtil {
             organizationCacheEntry.setInCharge(contact.getInCharge());
             organizationCacheEntry.setName(contact.getName().trim());
             organizationCacheEntry.setTelephone(contact.getTelephone());
-            organizationCacheEntry.setToken(contact.getToken());
+            // disable token
+            organizationCacheEntry.setToken("");
             organizationCacheEntry.setParent(contact.getParent());
             organizationCacheEntry.setStatus(contact.getStatus());
             organizationCacheEntry.setAgency(contact.getAgency());

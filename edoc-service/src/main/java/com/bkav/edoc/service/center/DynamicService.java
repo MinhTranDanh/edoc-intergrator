@@ -765,7 +765,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                                         }
                                     }
                                 }
-                                ////////////////////////////////
+                                //----------------------------------------
                                 if (!flag) {
                                     toesVPCP.forEach(to -> {
                                         LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
@@ -862,6 +862,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
             try {
                 LOGGER.info("---------------Start getDocument with organ: " + organId);
                 notifications = notificationService.getDocumentIdsByOrganId(organId);
+
             } catch (Exception e) {
                 log.error(e);
             }
