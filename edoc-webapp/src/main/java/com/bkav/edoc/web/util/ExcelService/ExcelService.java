@@ -18,6 +18,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ExcelService {
@@ -474,6 +475,7 @@ public class ExcelService {
         long success = 0, duplicate = 0, fail = 0;
         /* Push each user to SSO:*/
         for (User user : users) {
+            TimeUnit.MILLISECONDS.sleep(500);
             LOGGER.info("Sync user success with username " + user.getUsername());
             String json = PostUserToSSO.createJson(user);
             int out = PostUserToSSO.postUser(base64encode, is_post_url, json);

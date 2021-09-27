@@ -474,7 +474,6 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
         return map;
     }
 
-
     private Map<String, Object> getDocument(Document doc) {
 
         Map<String, Object> map = new HashMap<>();
@@ -979,7 +978,8 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
         staffInfo.setDepartment(toContact.getName());
         staffInfo.setDepartmentId("");
         staffInfo.setEmail(toContact.getEmail());
-        staffInfo.setStaff("EdocAdapter");
+        //staffInfo.setStaff("EdocAdapter");
+        staffInfo.setStaff("Truc lien thong VB");
         staffInfo.setMobile("");
         staffInfo.setStaffId("");
 

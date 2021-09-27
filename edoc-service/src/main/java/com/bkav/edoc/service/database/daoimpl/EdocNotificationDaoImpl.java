@@ -29,7 +29,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         Session currentSession = openCurrentSession();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT en.document.id FROM EdocNotification en where en.receiverId=:receiverId and en.taken=:taken");
+            sql.append("SELECT en.document.id FROM EdocNotification en, EdocDocument ed where en.receiverId=:receiverId and en.taken=:taken");
             Query<Long> query = currentSession.createQuery(sql.toString(), Long.class);
             query.setParameter("receiverId", organId);
             query.setParameter("taken", false);
