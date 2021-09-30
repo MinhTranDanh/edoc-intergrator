@@ -225,6 +225,30 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
         return contacts;
     }
 
+
+    public List<EdocDynamicContact> searchByName(String name) {
+        Session session = openCurrentSession();
+        List<EdocDynamicContact> contacts;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT edc FROM EdocDynamicContact edc where edc.name like concat('%' ,:name, '%')");
+            Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
+            query.setParameter("name", name);
+            contacts = query.getResultList();
+            if (contacts != null) {
+                return contacts;
+            } else {
+                contacts = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error get list contact by multiple domain cause " + e.getMessage());
+            contacts = new ArrayList<>();
+        } finally {
+            closeCurrentSession(session);
+        }
+        return contacts;
+    }
+
     public List<EdocDynamicContact> getAllChildrenContact (String regexParent) {
         Session session = openCurrentSession();
         List<EdocDynamicContact> childOrgans;

@@ -35,33 +35,33 @@ public class ConvertDomainUtil {
     }
 
 
-//    static String convertToOlaDomainFormat(String newDomain) {
-//        String[] split = newDomain.split("\\.");
-//        String[] subNewDomain = {"0", "0", "0", "0"};
-//
-//        for (int i = 0; i < split.length; i++) {
-//            subNewDomain[i] = split[i];
-//        }
-//        for (int i = subNewDomain.length - 1; i >= 1; i--) {
-//            if (i == 3) {
-//                while (subNewDomain[i].length() < 3) {
-//                    subNewDomain[i] = "0" + subNewDomain[i];
-//                }
-//            } else {
-//                while (subNewDomain[i].length() < 2) {
-//                    subNewDomain[i] = "0" + subNewDomain[i];
-//                }
-//            }
-//        }
-//        String OldDomain = "";
-//        for (int i = subNewDomain.length - 1; i >= 0; i--) {
-//            OldDomain = OldDomain + subNewDomain[i];
-//            if (i > 0) {
-//                OldDomain = OldDomain + ".";
-//            }
-//        }
-//        return OldDomain;
-//    }
+    public String convertToOlaDomainFormat(String newDomain) {
+        String[] split = newDomain.split("\\.");
+        String[] subNewDomain = {"0", "0", "0", "0"};
+
+        for (int i = 0; i < split.length; i++) {
+            subNewDomain[i] = split[i];
+        }
+        for (int i = subNewDomain.length - 1; i >= 1; i--) {
+            if (i == 3) {
+                while (subNewDomain[i].length() < 3) {
+                    subNewDomain[i] = "0" + subNewDomain[i];
+                }
+            } else {
+                while (subNewDomain[i].length() < 2) {
+                    subNewDomain[i] = "0" + subNewDomain[i];
+                }
+            }
+        }
+        String OldDomain = "";
+        for (int i = subNewDomain.length - 1; i >= 0; i--) {
+            OldDomain = OldDomain + subNewDomain[i];
+            if (i > 0) {
+                OldDomain = OldDomain + ".";
+            }
+        }
+        return OldDomain;
+    }
 
 
 
@@ -72,91 +72,91 @@ public class ConvertDomainUtil {
         //System.out.println(convertToOlaDomainFormat(oldDomain));
     }
 
-    public String convertToOlaDomainFormat(String newDomain) {
-        String[] splitDomain = newDomain.split("\\.");
-        revereseArray(splitDomain, 0, splitDomain.length - 1);
-        String oldDomain = "";
-        int l = splitDomain.length;
-
-        switch (l) {
-            case 1:
-                oldDomain += "000.00.00." + splitDomain[0];
-                break;
-            case 2:
-                oldDomain += "000.00";
-                for (int i = 0; i < l; i++) {
-                    if (i == l - 1) {
-                        oldDomain += "." + splitDomain[i];
-                        break;
-                    }
-                    if (Integer.parseInt(splitDomain[i]) > 99) {
-                        LOGGER.error("-----> Invalid domain format " + newDomain);
-                        break;
-                    }
-                    if (Integer.parseInt(splitDomain[i]) > 10) {
-                        oldDomain += "." + splitDomain[i];
-                    } else {
-                        oldDomain += ".0" + splitDomain[i];
-                    }
-                }
-                break;
-            case 3:
-                oldDomain += "000";
-                for (int i = 0; i < l; i++) {
-                    if (i == l - 1) {
-                        oldDomain += "." + splitDomain[i];
-                        break;
-                    }
-                    if (Integer.parseInt(splitDomain[i]) > 99) {
-                        LOGGER.error("-----> Invalid domain format " + newDomain);
-                        break;
-                    }
-                    if (Integer.parseInt(splitDomain[i]) > 10) {
-                        oldDomain += "." + splitDomain[i];
-                    } else {
-                        oldDomain += ".0" + splitDomain[i];
-                    }
-                }
-                break;
-            case 4:
-                for (int i = 0; i < l; i++) {
-                    if (i == l - 1) {
-                        oldDomain += "." + splitDomain[i];
-                        break;
-                    }
-                    if (i == 0) {
-                        if (Integer.parseInt(splitDomain[i]) > 999) {
-                            LOGGER.error("-----> Invalid domain format " + newDomain);
-                            break;
-                        }
-                        if (Integer.parseInt(splitDomain[i]) > 100) {
-                            oldDomain += splitDomain[i];
-                        } else if (Integer.parseInt(splitDomain[i]) > 10) {
-                            oldDomain += "0" + splitDomain[i];
-                        } else {
-                            oldDomain += "00" + splitDomain[i];
-                        }
-                    } else {
-                        if (Integer.parseInt(splitDomain[i]) > 99) {
-                            LOGGER.error("-----> Invalid domain format " + newDomain);
-                            break;
-                        }
-                        if (Integer.parseInt(splitDomain[i]) > 10) {
-                            oldDomain += "." + splitDomain[i];
-                        } else {
-                            oldDomain += ".0" + splitDomain[i];
-                        }
-                    }
-                }
-                break;
-            default:
-                LOGGER.error("----> Invalid domain format with " + newDomain);
-                oldDomain = newDomain;
-                break;
-        }
-
-        return oldDomain;
-    }
+//    public String convertToOlaDomainFormat(String newDomain) {
+//        String[] splitDomain = newDomain.split("\\.");
+//        revereseArray(splitDomain, 0, splitDomain.length - 1);
+//        String oldDomain = "";
+//        int l = splitDomain.length;
+//
+//        switch (l) {
+//            case 1:
+//                oldDomain += "000.00.00." + splitDomain[0];
+//                break;
+//            case 2:
+//                oldDomain += "000.00";
+//                for (int i = 0; i < l; i++) {
+//                    if (i == l - 1) {
+//                        oldDomain += "." + splitDomain[i];
+//                        break;
+//                    }
+//                    if (Integer.parseInt(splitDomain[i]) > 99) {
+//                        LOGGER.error("-----> Invalid domain format " + newDomain);
+//                        break;
+//                    }
+//                    if (Integer.parseInt(splitDomain[i]) > 10) {
+//                        oldDomain += "." + splitDomain[i];
+//                    } else {
+//                        oldDomain += ".0" + splitDomain[i];
+//                    }
+//                }
+//                break;
+//            case 3:
+//                oldDomain += "000";
+//                for (int i = 0; i < l; i++) {
+//                    if (i == l - 1) {
+//                        oldDomain += "." + splitDomain[i];
+//                        break;
+//                    }
+//                    if (Integer.parseInt(splitDomain[i]) > 99) {
+//                        LOGGER.error("-----> Invalid domain format " + newDomain);
+//                        break;
+//                    }
+//                    if (Integer.parseInt(splitDomain[i]) > 10) {
+//                        oldDomain += "." + splitDomain[i];
+//                    } else {
+//                        oldDomain += ".0" + splitDomain[i];
+//                    }
+//                }
+//                break;
+//            case 4:
+//                for (int i = 0; i < l; i++) {
+//                    if (i == l - 1) {
+//                        oldDomain += "." + splitDomain[i];
+//                        break;
+//                    }
+//                    if (i == 0) {
+//                        if (Integer.parseInt(splitDomain[i]) > 999) {
+//                            LOGGER.error("-----> Invalid domain format " + newDomain);
+//                            break;
+//                        }
+//                        if (Integer.parseInt(splitDomain[i]) > 100) {
+//                            oldDomain += splitDomain[i];
+//                        } else if (Integer.parseInt(splitDomain[i]) > 10) {
+//                            oldDomain += "0" + splitDomain[i];
+//                        } else {
+//                            oldDomain += "00" + splitDomain[i];
+//                        }
+//                    } else {
+//                        if (Integer.parseInt(splitDomain[i]) > 99) {
+//                            LOGGER.error("-----> Invalid domain format " + newDomain);
+//                            break;
+//                        }
+//                        if (Integer.parseInt(splitDomain[i]) > 10) {
+//                            oldDomain += "." + splitDomain[i];
+//                        } else {
+//                            oldDomain += ".0" + splitDomain[i];
+//                        }
+//                    }
+//                }
+//                break;
+//            default:
+//                LOGGER.error("----> Invalid domain format with " + newDomain);
+//                oldDomain = newDomain;
+//                break;
+//        }
+//
+//        return oldDomain;
+//    }
 
     private void revereseArray(String arr[], int start, int end) {
         String temp = "";

@@ -13,6 +13,7 @@ import org.hibernate.Session;
 
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -361,6 +362,9 @@ public class EdocDailyCounterService {
                 parentOrgan.setChildOrgan(childOrganStatSet);
                 ePublicStats.add(parentOrgan);
             }
+            if(hasKeyword == true){
+                return ePublicStats;
+            }
 
             for (OrganizationCacheEntry contactlevel2 : contactslevel2) {
                 String organIdlevel2 = contactlevel2.getDomain();
@@ -461,7 +465,9 @@ public class EdocDailyCounterService {
                 ePublicStats.add(parentOrgan);
 
             }
-
+            if(hasKeyword == true){
+                return ePublicStats;
+            }
             for (OrganizationCacheEntry contactleveltwo : contactslevel2) {
                 String organIdleveltwo = contactleveltwo.getDomain();
                 EdocStatDaily edocStat= new EdocStatDailyServiceUtil().findById(organIdleveltwo);
@@ -488,8 +494,8 @@ public class EdocDailyCounterService {
         return ePublicStats;
     }
 
-    private EPublicStat callStatStoredProcedure(Date fromDate, Date toDate, Session session, OrganizationCacheEntry contact) {
-
+    @Transactional
+    public EPublicStat callStatStoredProcedure(Date fromDate, Date toDate, Session session, OrganizationCacheEntry contact) {
         StoredProcedureQuery storedProcedureQuery = session.createStoredProcedureQuery("GetStat");
         storedProcedureQuery.registerStoredProcedureParameter("fromDate", java.sql.Date.class, ParameterMode.IN);
         storedProcedureQuery.registerStoredProcedureParameter("toDate", java.sql.Date.class, ParameterMode.IN);

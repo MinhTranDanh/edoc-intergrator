@@ -227,6 +227,9 @@ public class Mapper {
             MessageStatus status = new MessageStatus();
             status.setDescription(trace.getComment());
             status.setStatusCode(String.valueOf(trace.getStatusCode()));
+            if(trace.getStatusCode() > 10){
+                status.setStatusCode("0"+status.getStatusCode());
+            }
             if (trace.getTimeStamp() != null) {
                 status.setTimestamp(trace.getTimeStamp());
             }

@@ -68,10 +68,34 @@ public class EdocDynamicContactService {
     public EdocDynamicContact findEdocDynamicContactById(long contactId) {
         return dynamicContactDaoImpl.findById(contactId);
     }
+
     //MinhTDb
     public EdocDynamicContact findContactName(String name) {
         return dynamicContactDaoImpl.findByName(name);
     }
+
+    public List<OrganizationCacheEntry> searchContactName(String name) {
+        List<OrganizationCacheEntry> organizationCacheEntries;
+        String cacheKey = MemcachedKey.getKey("", RedisKey.GET_LIST_CONTACT_KEY);
+        MemcachedUtil.getInstance().delete(cacheKey);
+        organizationCacheEntries = (List<OrganizationCacheEntry>) MemcachedUtil.getInstance().read(cacheKey);
+
+        if (organizationCacheEntries == null) {
+            organizationCacheEntries = new ArrayList<>();
+
+            List<EdocDynamicContact> contacts = dynamicContactDaoImpl.searchByName(name);
+
+            for (EdocDynamicContact contact : contacts) {
+                OrganizationCacheEntry organizationCacheEntry = MapperUtil.modelToOrganCache(contact);
+                organizationCacheEntries.add(organizationCacheEntry);
+            }
+
+            MemcachedUtil.getInstance().create(cacheKey, MemcachedKey.CHECK_ALLOW_TIME_LIFE, organizationCacheEntries);
+        }
+
+        return organizationCacheEntries;
+    }
+
     public void updateContact(EdocDynamicContact edocDynamicContact) {
         dynamicContactDaoImpl.updateContact(edocDynamicContact);
     }
@@ -220,6 +244,7 @@ public class EdocDynamicContactService {
 
         return organizationCacheEntries;
     }
+
     public List<OrganizationCacheEntry> getAllContact() {
         List<OrganizationCacheEntry> organizationCacheEntries;
         String cacheKey = MemcachedKey.getKey("", RedisKey.GET_LIST_CONTACT_BY_KEY);
@@ -241,6 +266,7 @@ public class EdocDynamicContactService {
 
         return organizationCacheEntries;
     }
+
     public List<OrganizationCacheEntry> getLevel2Contact() {
         List<OrganizationCacheEntry> organizationCacheEntries;
         String cacheKey = MemcachedKey.getKey("", RedisKey.GET_LIST_CONTACT_BY_KEY);
@@ -382,6 +408,32 @@ public class EdocDynamicContactService {
         }
 
         return childOrgans;
+    }
+
+    public List<OrganizationCacheEntry> filterForReportSearch(String search_content, List<OrganizationCacheEntry> organ) {
+
+        if (organ.size() >= 20) {
+            organ = organ.subList(0, 20);
+        }
+        if (search_content != null){
+            for (int i = 0; i < search_content.length(); i++) {
+                int j = -1;
+                try {
+                    j = Integer.parseInt(String.valueOf(search_content.charAt(i)));
+                }catch (Exception e){
+
+                }
+                if (j != -1) {
+                    OrganizationCacheEntry searchReport = new OrganizationCacheEntry();
+                    searchReport.setName(search_content);
+                    searchReport.setDomain(search_content);
+                    organ.add(0, searchReport);
+                    return organ;
+                }
+            }
+
+        }
+        return organ;
     }
 
     public static void main(String[] args) {

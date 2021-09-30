@@ -34,6 +34,10 @@ public class EdocDynamicContactServiceUtil {
         return DYNAMIC_CONTACT_SERVICE.findContactName(name);
     }
 
+    public static List<OrganizationCacheEntry> searchByName(String name) {
+        return DYNAMIC_CONTACT_SERVICE.searchContactName(name);
+    }
+
     public static OrganizationCacheEntry findByDomain(String organDomain) {
         return DYNAMIC_CONTACT_SERVICE.findByDomain(organDomain);
     }
@@ -81,4 +85,10 @@ public class EdocDynamicContactServiceUtil {
     public static List<EdocDynamicContact> getContactsByMultipleDomains(List<String> domains) {
         return DYNAMIC_CONTACT_SERVICE.getContactsByMultipleDomains(domains);
     }
+
+    public static List<OrganizationCacheEntry> filterReportSearch(String search_content, List<OrganizationCacheEntry> organ) {
+        return DYNAMIC_CONTACT_SERVICE.filterForReportSearch(search_content, organ);
+    }
+
+    ;
 }

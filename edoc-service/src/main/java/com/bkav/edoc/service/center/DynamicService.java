@@ -746,14 +746,14 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                                     messageHeader.setToes(newOrgans);
 
                                     SendEdocResult sendEdocResultNew = ServiceVPCP.getInstance().sendDocument(messageHeader, traceHeaderList, attachmentCacheEntries);
-                                    if (sendEdocResult != null) {
+                                    if (sendEdocResultNew != null) {
                                         LOGGER.info("-------------------- Send to VPCP by new Domain --------------------");
-                                        LOGGER.info("-------------------- Send to VPCP status " + sendEdocResult.getStatus());
-                                        LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResult.getErrorDesc());
-                                        LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResult.getDocID());
-                                        document.setDocumentExtId(sendEdocResult.getDocID());
+                                        LOGGER.info("-------------------- Send to VPCP status " + sendEdocResultNew.getStatus());
+                                        LOGGER.info("-------------------- Send to VPCP Desc: " + sendEdocResultNew.getErrorDesc());
+                                        LOGGER.info("-------------------- Send to VPCP DocID: " + sendEdocResultNew.getDocID());
+                                        document.setDocumentExtId(sendEdocResultNew.getDocID());
 
-                                        if (sendEdocResult.getStatus().equals("FAIL") || sendEdocResult.getStatus() == null) {
+                                        if (sendEdocResultNew.getStatus().equals("FAIL") || sendEdocResultNew.getStatus() == null) {
                                             LOGGER.info("----- Create fail trace for document id " + document.getDocumentId());
                                         } else {
                                             toesVPCP.forEach(to -> {
