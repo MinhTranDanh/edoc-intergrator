@@ -58,6 +58,74 @@
                         <i class="fa fa-arrow-circle-down fa-fw"></i>
                         <spring:message code="edoc.export.report"/>
                     </button>
+                    <div class="modal fade" id="ExportDailyCounterToExcel" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        <span class="close-modal"><i class="fa fa-close fa-fw"></i></span>
+                                    </button>
+                                    <span class="modal-title">
+                                    <i class="fa fa-file-excel-o fa-fw"></i>
+                                    <spring:message code="edoc.export.report"/>
+                                    </span>
+                                </div>
+                                <div class="modal-body edoc-resend" id="edoc-export">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script id="exportTemplate" type="text/x-jquery-tmpl">
+                        <form class="form-horizontal" action="javascript:void(0)">
+                            <span class="resend-header">Chọn (các) cột để xuất dữ liệu...</span>
+                            <br><br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <span class="name">Tên đơn vị</span>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                    <input id="name" type="checkbox" value="0" /><br/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <span class="send">Số lượng gửi</span>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                    <input id="send" type="checkbox" value="1"/><br/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <span class="receive">Số lượng nhận</span>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                    <input id="receive" type="checkbox" value="2"/><br/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <span class="count">Tổng số</span>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                    <input id="count" type="checkbox" value="3"/><br/>
+                                </div>
+                            </div>
+                            <br><hr>
+                            <div class="form-group">
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+                                </div>
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <button class="btn btn-success" data-id="" id="btn-choose-comfirm">
+                                        Xác nhận
+                                    </button>
+                                    <button class="btn btn-danger" data-id="" id="btn-choose-cancel">
+                                        Hủy
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </script>
 <%--                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">--%>
 <%--                        <li><a class="dropdown-item" id="exportReportPDF" href="javascript:void(0)">PDF</a></li>--%>
 <%--                        <li><a class="dropdown-item" id="exportReportExcel" href="javascript:void(0)">Excel</a></li>--%>
@@ -78,3 +146,5 @@
         </div>
     </div>
 </div>
+
+<script src="<c:url value="/asset/js/report.js"/>"></script>

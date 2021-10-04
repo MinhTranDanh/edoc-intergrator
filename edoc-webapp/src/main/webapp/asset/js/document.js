@@ -1,4 +1,6 @@
 let appSettings;
+var arr = new Array();
+var receiveName;
 let fromOrgan = null, toOrgan = null, docCode = null;
 let edocDocument = {
     appSetting: {
@@ -72,11 +74,18 @@ let edocDocument = {
                             case "delete":
                                 instance.deleteDocument(id);
                                 break;
+                            case "Resend":
+                                //template();
+                                reSendDocumentModal(id);
+                                // reSend(id);
+                                //edocDocument.renderUserDatatable();
+                                break;
                         }
                     },
                     items: {
                         "resend": {name: app_message.edoc_resend_document, icon: "fa-repeat"},
-                        "delete": {name: app_message.edoc_remove_document, icon: "delete"}
+                        "delete": {name: app_message.edoc_remove_document, icon: "delete"},
+                        "Resend": {name: app_message.edoc_resend, icon: "fa-repeat"}
                     }
                 });
             },
@@ -125,6 +134,7 @@ let edocDocument = {
                     "title": app_message.table_header_createDate,
                     "data": null,
                     "render": function (data) {
+
                         return convertToDate(data.createDate).formatDate();
                     }
                 }
@@ -185,6 +195,7 @@ let edocDocument = {
             "order": [[1, "desc"]],
         });
     },
+    //MinhTDb
     renderNotTakenDatatable: () => {
         let instance = this;
         instance.dataTable = $('#dataTables-edoc-notTaken').DataTable({
@@ -194,28 +205,43 @@ let edocDocument = {
             ajax: {
                 url: "/documents/-/not/taken",
                 type: "POST",
-                /*success: (data) => console.log(data),
-                error: () => $.notify("Error", "error")*/
             },
-            drawCallback: function() {
-                $(this).contextMenu({
-                    selector: 'tbody tr td',
-                    callback: (key, options) => {
-                        let id = options.$trigger[0].parentElement.id;
-                        switch (key) {
-                            case "download":
-                                console.log(id);
-                                break;
-                            case "delete":
-                                edocDocument.deleteDocument(id);
-                                break;
-                        }
-                    },
-                    items: {
-                        "download": {name: app_message.edoc_download_xml, icon: "fa-download"},
-                        "delete": {name: app_message.edoc_remove_document, icon: "delete"}
+
+            drawCallback: function () {
+
+                $("tr").mousedown(function (event) {
+                    if (event.which === 3) {
+                        receiveName = $(this).find('td').eq(2).text();
+                        console.log(receiveName);
                     }
-                });
+                }),
+                    $(this).contextMenu({
+                        selector: 'tbody tr td',
+                        callback: (key, options) => {
+                            let id = options.$trigger[0].parentElement.id;
+
+                            switch (key) {
+                                case "download":
+                                    console.log(id);
+                                    break;
+                                case "comfirm-receive":
+                                    console.log(id);
+                                    console.log(receiveName);
+                                    comfirmReceive(id, receiveName);
+                                    $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
+                                    //edocDocument.renderNotTakenDatatable();
+                                    break;
+                                case "delete":
+                                    edocDocument.deleteDocument(id);
+                                    break;
+                            }
+                        },
+                        items: {
+                            "download": {name: app_message.edoc_download_xml, icon: "fa-download"},
+                            "comfirm-receive": {name: app_message.edoc_comfirm_receive, icon: "fa-check"},
+                            "delete": {name: app_message.edoc_remove_document, icon: "delete"}
+                        }
+                    });
             },
             rowId: "documentId",
             responsive: true,
@@ -226,6 +252,129 @@ let edocDocument = {
             lengthChange: false,
             paging: true,
             info: true,
+
+            columns: [
+                {
+                    "name": "ed.subject",
+                    "title": app_message.edoc_table_header_subject,
+                    "data": null,
+                    "render": function (data) {
+
+                        return $('#edocSubjectTemplate').tmpl(data).html();
+                    }
+                },
+                {
+                    "name": "ed.from_organ_domain",
+                    "title": app_message.edoc_table_header_fromOrgan,
+                    "data": "fromOrgan.name",
+                },
+                {
+                    "name": "ed.to_organ_domain",
+                    "title": app_message.edoc_table_header_toOrgan,
+                    "data": "toOrgan[0].name"
+                },
+                {
+                    "name": "ed.doc_code",
+                    "title": app_message.table_header_code,
+                    "data": null,
+                    "render": function (data) {
+
+                        return data.codeNumber + "/" + data.codeNotation;
+                    }
+                },
+                {
+                    "name": "en.create_date",
+                    "title": app_message.table_header_createDate,
+                    "data": null,
+                    "render": function (data) {
+
+                        return $('#edocCreateDateTemplate').tmpl(data).html();
+                    }
+                },
+                {
+                    "name": "en.taken",
+                    "title": app_message.table_header_taken,
+                    "data": null,
+                    "render": function (data) {
+                        console.log(data)
+                        for (let i = 0; i < data.notifications.length; i++) {
+                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name) {
+                                return app_message.taken_status_false;
+                            }
+                        }
+                        return app_message.taken_status_true;
+                    }
+                }
+            ],
+            language: app_message.language,
+            order: [[4, 'desc']],
+            createdRow: (row, data) => {
+                // Set the data-status attribute, and add a class
+                if (data["visited"] === false) {
+                    $(row).addClass("not-visited");
+                } else {
+                    $(row).addClass("visited");
+                }
+            }
+        });
+    },
+    //MinhTDb
+    renderDoneTakenDatatable: () => {
+        let instance = this;
+        instance.dataTable = $('#dataTables-edoc-doneTaken').DataTable({
+            serverSide: true,
+            processing: true,
+            pageLength: 15,
+            ajax: {
+                url: "/documents/-/done/taken",
+                type: "POST",
+            },
+            drawCallback: function () {
+
+                var receiveName;
+                $("tr").mousedown(function (event) {
+                    if (event.which === 3) {
+                        receiveName = $(this).find('td').eq(2).text();
+                        console.log(receiveName);
+                    }
+                }),
+                    $(this).contextMenu({
+                        selector: 'tbody tr td',
+                        callback: (key, options) => {
+                            let id = options.$trigger[0].parentElement.id;
+                            switch (key) {
+                                case "download":
+                                    console.log(id);
+                                    break;
+                                case "resend":
+                                    console.log(id);
+                                    console.log(receiveName);
+                                    reSend(id, receiveName);
+                                    // $('#dataTables-edoc-notTaken').DataTable().ajax.reload();
+                                    edocDocument.renderDoneTakenDatatable();
+                                    break;
+                                case "delete":
+                                    edocDocument.deleteDocument(id);
+                                    break;
+                            }
+                        },
+                        items: {
+                            "download": {name: app_message.edoc_download_xml, icon: "fa-download"},
+                            "resend": {name: app_message.edoc_resend, icon: "fa-repeat"},
+                            "delete": {name: app_message.edoc_remove_document, icon: "delete"}
+                        }
+                    });
+            },
+            rowId: "documentId",
+            responsive: true,
+            autoWidth: false,
+            ordering: true,
+            bDestroy: true,
+            searching: true,
+            lengthChange: false,
+            paging: true,
+            info: true,
+
             columns: [
                 {
                     "name": "ed.subject",
@@ -238,7 +387,7 @@ let edocDocument = {
                 {
                     "name": "ed.from_organ_domain",
                     "title": app_message.edoc_table_header_fromOrgan,
-                    "data": "fromOrgan.name"
+                    "data": "fromOrgan.name",
                 },
                 {
                     "name": "ed.to_organ_domain",
@@ -250,6 +399,7 @@ let edocDocument = {
                     "title": app_message.table_header_code,
                     "data": null,
                     "render": function (data) {
+
                         return data.codeNumber + "/" + data.codeNotation;
                     }
                 },
@@ -258,7 +408,23 @@ let edocDocument = {
                     "title": app_message.table_header_createDate,
                     "data": null,
                     "render": function (data) {
+
                         return $('#edocCreateDateTemplate').tmpl(data).html();
+                    }
+                },
+                {
+                    "name": "en.taken",
+                    "title": app_message.table_header_taken,
+                    "data": null,
+                    "render": function (data) {
+                        console.log(data)
+                        for (let i = 0; i < data.notifications.length; i++) {
+                            if (data.notifications[i].toOrganization.name === data.toOrgan[0].name) {
+                                return app_message.taken_status_true;
+
+                            }
+                        }
+                        return app_message.taken_status_false;
                     }
                 }
             ],
@@ -285,7 +451,7 @@ let edocDocument = {
                 url: "/documents/-/not/sendVPCP",
                 type: "POST"
             },
-            drawCallback: function() {
+            drawCallback: function () {
                 $(this).contextMenu({
                     selector: 'tbody tr td',
                     callback: (key, options) => {
@@ -348,7 +514,7 @@ let edocDocument = {
                     "name": "ed.transaction_status",
                     "title": "Trạng thái",
                     "data": null,
-                    "render": function(data) {
+                    "render": function (data) {
                         return $('#sendVPCPStatusTemplate').tmpl(data).html();
                     }
                 },
@@ -542,6 +708,7 @@ let draftDocument = {
 
 $(document).ready(function () {
     edocDocument.init();
+
     $.datetimepicker.setLocale('vi');
     //show datetime picker
     $('#promulgationDate').datetimepicker({
@@ -581,9 +748,10 @@ $(document).ready(function () {
     $("#toOrgan").select2({
         tags: true
     });
-    $("#dataTables-edoc, #dataTables-edoc-notTaken, #dataTables-edoc-not-sendVPCP").on('click', 'tbody>tr', function () {
+    $("#dataTables-edoc, #dataTables-edoc-notTaken, #dataTables-edoc-not-sendVPCP,#dataTables-edoc-doneTaken").on('click', 'tbody>tr', function () {
         let documentId = $(this).attr("id");
         $.get("/document/" + documentId, function (data) {
+            // console.log(data);
             data.attachments.forEach(function (key, index) {
                 console.log(key.fileType + " " + index);
             });
@@ -597,8 +765,7 @@ $(document).ready(function () {
                                 let status = app_message.edoc_organ_taken;
                                 //let takenStatus = status.fontcolor("blue");
                                 takenOrgan = organ["name"] + " (" + status + ")";
-                            }
-                            else {
+                            } else {
                                 let status = app_message.edoc_organ_not_taken;
                                 //let notTakenStatus = status.fontcolor("red");
                                 takenOrgan = organ["name"] + " (" + status + ")";
@@ -694,6 +861,17 @@ $(document).ready(function () {
                 edocDocument.appSetting.dataTable.page.len(1000);
             }
             $('#dataTables-edoc-notTaken').DataTable().search(keyword).draw();
+        }
+        //minhtd
+        else if (edocDocument.appSetting.mode === "done-taken-edoc") {
+            if (keyword.length === 0) {
+                edocDocument.appSetting.dataTable.page.len(pageLength);
+                pageLength = 0;
+            } else if (pageLength === 0) {
+                pageLength = edocDocument.appSetting.dataTable.page.len();
+                edocDocument.appSetting.dataTable.page.len(1000);
+            }
+            $('#dataTables-edoc-doneTaken').DataTable().search(keyword).draw();
         } else {
             if (keyword.length === 0) {
                 edocDocument.appSetting.dataTable.page.len(pageLength);
@@ -715,6 +893,15 @@ $(document).ready(function () {
             edocDocument.appSetting.mode = dataMode;
             $('.edoc-content > [class^=edoc-table]').hide();
             $(".edoc-statistic").hide();
+
+            //MinhTDb
+            // -> hide/show icon Filter when clicking on the userManage/organManage
+            if (dataMode === "userManage" || dataMode === "organManage") {
+                $('#search-filter').hide();
+            } else {
+                $('#search-filter').show();
+            }
+
             if (dataMode === "draft") {
                 edocDocument.renderDaftTable();
                 $(".edoc-table-draft").show();
@@ -734,6 +921,13 @@ $(document).ready(function () {
                 $('#resend-documents-not-sendVPCP').show();
                 edocDocument.renderNotSendVpcpDatatable();
                 $('.edoc-table-not-sendPCP').show();
+            }
+                //MinhTDb
+            //Tab Quan tri he thong-> Theo doi van ban da nhan
+            else if (dataMode === "done-taken-edoc") {
+                $("#warning-document-done-taken").show();
+                edocDocument.renderDoneTakenDatatable();
+                $(".edoc-table-done-taken").show();
             } else {
                 edocDocument.renderDatatable(fromOrgan, toOrgan, docCode);
                 $(".edoc-table").show();
@@ -789,7 +983,7 @@ $(document).ready(function () {
         });
     })
 
-    $("#put-to-telegram").on('click', function(e) {
+    $("#put-to-telegram").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -800,7 +994,7 @@ $(document).ready(function () {
         })
         $("#overlay-edoc-not-taken").hide();
     })
-    $("#put-to-telegram-vpcp").on('click', function(e) {
+    $("#put-to-telegram-vpcp").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -808,9 +1002,11 @@ $(document).ready(function () {
             cache: false,
             beforeSend: () => $("#overlay-edoc-not-taken").show(),
             success: () => $.notify(app_message.edoc_message_send_telegram_success, "success")
-        }).done(function() { $("#overlay-edoc-not-taken").hide()})
+        }).done(function () {
+            $("#overlay-edoc-not-taken").hide()
+        })
     })
-    $("#put-to-email").on('click', function(e) {
+    $("#put-to-email").on('click', function (e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
@@ -818,15 +1014,17 @@ $(document).ready(function () {
             cache: false,
             beforeSend: () => $("#overlay-edoc-not-taken").show(),
             success: () => $.notify(app_message.edoc_message_send_email_success, "success")
-        }).done(function () {$("#overlay-edoc-not-taken").hide()});
+        }).done(function () {
+            $("#overlay-edoc-not-taken").hide()
+        });
     })
 
     // search filter event
-    $("#search-filter").on('click', function() {
+    $("#search-filter").on('click', function () {
         $("#searchFilter").toggle();
     })
 
-    $("#btn-searchFilter-confirm").on('click', function(e) {
+    $("#btn-searchFilter-confirm").on('click', function (e) {
         fromOrgan = ($("#fromOrganSearch").val() === "" ? null : $("#fromOrganSearch").val());
         toOrgan = ($("#toOrganSearch").val() === "" ? null : $("#toOrganSearch").val());
         docCode = ($("#docCodeSearch").val() === "" ? null : $("#docCodeSearch").val());
@@ -837,7 +1035,7 @@ $(document).ready(function () {
         fromOrgan = null, toOrgan = null, docCode = null;
     })
 
-    $("#btn-searchFilter-reset").on('click', function() {
+    $("#btn-searchFilter-reset").on('click', function () {
         $('#fromOrganSearch, #toOrganSearch').val(null).trigger('change');
         $("#docCodeSearch").val("");
     })
@@ -904,28 +1102,47 @@ $(document).on("click", "#btn-confirm", function (event) {
     $("#delete-confirm-modal").modal('toggle');
 })
 
-$(document).on('click', '#btn-resend-submit', function(e) {
+$(document).on('click', '#btn-resend-submit', function (e) {
     e.preventDefault();
 
     $("#resendDocument").modal('toggle');
 })
-$(document).on('click', '#btn-resend-cancel', function(e) {
+$(document).on('click', '#btn-resend-cancel', function (e) {
     e.preventDefault();
     $("#resendDocument").modal('toggle');
 })
 
-function reSendDocument (documentId) {
-    $.get("/document/" + documentId, function(data) {
+function reSendDocumentModal(documentId) {
+    $.get("/document/" + documentId, function (data) {
+        console.log(data.toOrgan);
         $('#edoc-resend').empty();
         $('#resendDocumentTemplate').tmpl(data).appendTo('#edoc-resend');
         $("#resendDocument").modal({
             backdrop: 'static',
             keyboard: false
         })
+
+        $(document).on('click', '#btn-resend-confirm', function (e) {
+            e.preventDefault();
+            $("#resendDocument").modal('toggle');
+            //console.log("dsnfnf");
+
+            for (let i = 0; i < data.toOrgan.length; i++) {
+                let valuecheck = "#" + data.toOrgan[i].id;
+                //console.log(valuecheck);
+                if ($(valuecheck).prop('checked')) {
+                    arr.push($(valuecheck).val());
+                }
+            }
+            console.log(arr);
+            reSend(documentId, arr);
+        });
     });
+
 }
 
-function reSendToVPCP (id) {
+
+function reSendToVPCP(id) {
     let url = "/resend/toVPVP";
     $.ajax({
         url: url,
@@ -949,6 +1166,91 @@ function reSendToVPCP (id) {
         $("#overlay-edoc-not-taken").hide()
     });
 }
+
+//MinhTDb
+//Tab Quan tri he thong-> Theo doi van ban da gui
+function reSend(id, arr) {
+    let url = "/document/resend";
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {"documentId": id, "arr": arr},
+        beforeSend: function () {
+            $("#overlay-edoc-not-taken").show();
+        },
+        success: function (response) {
+            if (response.code === 200)
+                $.notify(response.message, "success");
+            else if (response.code === 500)
+                $.notify(response.message, "error");
+            else
+                $.notify(response.message, "error");
+        },
+        error: function (error) {
+            $.notify(app_message.edoc_resend_document_fail, "error");
+        }
+    }).done(function () {
+
+        $("#overlay-edoc-not-taken").hide()
+    });
+}
+
+//MinhTDb
+//Tab Quan tri he thong-> Theo doi van ban da nhan
+function comfirmReceive(id, receiveName) {
+    let url = "/document/comfirm_receive";
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {"documentId": id, "receiveName": receiveName},
+        beforeSend: function () {
+            $("#overlay-edoc-not-taken").show();
+        },
+        success: function (response) {
+            if (response.code === 200)
+                $.notify(response.message, "success");
+            else if (response.code === 500)
+                $.notify(response.message, "error");
+            else
+                $.notify(response.message, "error");
+        },
+        error: function (error) {
+            $.notify(app_message.edoc_resend_document_fail, "error");
+        }
+    }).done(function () {
+        $("#overlay-edoc-not-taken").hide()
+
+    });
+}
+
+// function reSendToVPCP() {
+//     let url ="jdbc:mysql://localhost:3306/edoc_lamdong?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+//
+//     $.ajax({
+//         url: "/config/dynamic",
+//         type: "POST",
+//         data: {"url": url },
+//         beforeSend: function () {
+//             $("#overlay-edoc-not-taken").show();
+//         },
+//         success: function (response) {
+//             if (response.code === 200)
+//                 $.notify(response.message, "success");
+//             else if (response.code === 500)
+//                 $.notify(response.message, "error");
+//             else
+//                 $.notify(response.message, "error");
+//         },
+//         error: function (error) {
+//             $.notify(app_message.edoc_resend_document_fail, "error");
+//         }
+//     }).done(function () {
+//         $("#overlay-edoc-not-taken").hide()
+//
+//     });
+// }
 
 function validateDocument(subject, toOrgan, codeNation, codeNumber, staffName, promulgationDate, fromOrgan, signerFullName, attachments) {
     let result = false;
@@ -1078,3 +1380,4 @@ function getStatusOfTrace(statusCode) {
     }
     return message;
 }
+

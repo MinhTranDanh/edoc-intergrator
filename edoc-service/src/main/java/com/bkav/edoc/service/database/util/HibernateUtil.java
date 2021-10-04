@@ -18,8 +18,10 @@ public class HibernateUtil {
 
     public static synchronized SessionFactory getSessionFactory() {
         try {
+
             if (sessionFactory == null) {
                 // Create the SessionFactory from hibernate.cfg.xml
+
                 Configuration configuration = new Configuration();
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, PropsUtil.get(Environment.DRIVER));
@@ -70,6 +72,7 @@ public class HibernateUtil {
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/User.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/Counter.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/EdocDailyCounter.hbm.xml"));
+                configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/EdocStatDaily.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelUserHeader.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelOrganHeader.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelDailyCounterHeader.hbm.xml"));
@@ -86,7 +89,11 @@ public class HibernateUtil {
             throw new ExceptionInInitializerError(ex);
         }
     }
-
+    public static synchronized SessionFactory removeSessionFactory() {
+        sessionFactory=null;
+        serviceRegistry=null;
+        return sessionFactory;
+    }
     public static void shutdown() {
         // Close caches and connection pools
         if (serviceRegistry != null) {

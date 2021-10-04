@@ -305,11 +305,11 @@ $(document).ready(function () {
         width: "auto"
     });
 
-   /* $.get("/public/-/role/" + role_message.role_administrator, function (data){
-        console.log(data);
-        AdministratorId = data;
-        console.log(data)
-    });*/
+    /* $.get("/public/-/role/" + role_message.role_administrator, function (data){
+         console.log(data);
+         AdministratorId = data;
+         console.log(data)
+     });*/
     // $.get("/public/-/role/" + role_message.role_super_administrator, function (data) {
     //     SuperAdministratorId = data.roleId;
     // });
@@ -518,7 +518,7 @@ $(document).on("click", "#btn-changePassword-confirm", function (event) {
                     //$.notify(response.message, "success");
                 } else if (response.code === 401)
                     $('#oldPassword').notify(response.message, {position: "right"});
-            }).fail(function() {
+            }).fail(function () {
             $.notify(user_message.user_change_password_fail, "error");
         })
     }
@@ -677,7 +677,7 @@ function changePasswordSubmit() {
     });
 }
 
-function confirmPassword (newPassword, confirmPassword) {
+function confirmPassword(newPassword, confirmPassword) {
     let result = false;
     let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})/;
     if (!passwordRegex.test(newPassword)) {

@@ -24,7 +24,7 @@ let edocTrace = {
         const fromOrgan = urlParams.get("organ");
         if (docCode !== null && fromOrgan !== null) {
             let endpoint = "/public/-/document/trace" + "?docCode=" + docCode + "&organ=" + fromOrgan;
-            $.get(endpoint, function (data){
+            $.get(endpoint, function (data) {
                 let toOrganNames = [];
                 data.toOrgan.forEach(function (organ, index) {
                     toOrganNames.push(organ["name"]);

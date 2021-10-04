@@ -1,4 +1,5 @@
 let keyword = null;
+var arr = new Array();
 let edocReport = {
     appSetting: {
         host: "/van-ban/-/",
@@ -50,6 +51,7 @@ let edocReport = {
             async: false,
             success: function (data) {
                 jsonData = data;
+                console.log(data);
             }
         });
 
@@ -58,7 +60,7 @@ let edocReport = {
             treeColumnIndex: 0,
             isResponsive: true,
             allowSorting: true,
-            allowMultiSorting:true,
+            allowMultiSorting: true,
             allowPaging: true,
             pageSettings: {
                 pageCount: 5,
@@ -70,14 +72,14 @@ let edocReport = {
             childMapping: "childOrgan",
             sortSettings: {
                 sortedColumns: [
-                    { field: "total", direction: ej.sortOrder.Descending }
+                    {field: "total", direction: ej.sortOrder.Descending}
                 ]
             },
             columns: [
-                { field: "organName", headerText: app_message.edoc_organ_name, width: "550px" },
-                { field: "sent", headerText: app_message.edoc_organ_sent },
-                { field: "received", headerText: app_message.edoc_organ_received },
-                { field: "total", headerText: app_message.edoc_organ_total}
+                {field: "organName", headerText: app_message.edoc_organ_name, width: "550px"},
+                {field: "sent", headerText: app_message.edoc_organ_sent},
+                {field: "received", headerText: app_message.edoc_organ_received},
+                {field: "total", headerText: app_message.edoc_organ_total}
             ],
         });
         if (fromDate !== "" && toDate !== "") {
@@ -90,10 +92,11 @@ let edocReport = {
             $("#filterLabel").html(app_message.edoc_report_filter + "<span class='time-filter'>" + beginDate + " - " + currentDate + "</span>");
         }
     },
-    exportExcel: function (fromDate, toDate) {
-        let url = "/public/-/stat/export/excel";
+    exportExcel: function (fromDate, toDate, arr) {
+        let url = "/public/-/stat/export/excel" + "?arr=" + arr;
         if (fromDate !== null && toDate !== null) {
-            url = url + "?fromDate=" + fromDate + "&toDate=" + toDate;
+            url = url + "&fromDate=" + fromDate + "&toDate=" + toDate;
+            console.log("have date");
         }
         $.ajax({
             type: "GET",
@@ -175,11 +178,39 @@ $(document).ready(function () {
 
     $("#exportReport").on("click", function (e) {
         e.preventDefault();
+        // let fromDate = localStorage.getItem("fromDateReport");
+        // let toDate = localStorage.getItem("toDateReport");
+        optionExport();
+
+        //edocReport.exportExcel(fromDate, toDate);
+    });
+    $(document).on('click', '#btn-choose-comfirm', function (e) {
+        e.preventDefault();
         let fromDate = localStorage.getItem("fromDateReport");
         let toDate = localStorage.getItem("toDateReport");
-        edocReport.exportExcel(fromDate, toDate);
+        $("#ExportDailyCounterToExcel").modal('toggle');
+        if ($("#name").prop('checked')) {
+            arr.push($("#name").val());
+            console.log("dsfgds");
+        }
+        if ($("#send").prop('checked')) {
+            arr.push($("#send").val());
+        }
+        if ($("#receive").prop('checked')) {
+            arr.push($("#receive").val());
+        }
+        if ($("#count").prop('checked')) {
+            arr.push($("#count").val());
+        }
+        console.log(arr);
+        edocReport.exportExcel(fromDate, toDate, arr);
+    });
+    $(document).on('click', '#btn-choose-cancel', function (e) {
+        e.preventDefault();
+        $("#ExportDailyCounterToExcel").modal('toggle');
     })
 });
+
 
 String.format = function () {
     let s = arguments[0];
@@ -200,4 +231,14 @@ function addCommas(nStr) {
         x1 = x1.replace(rgx, '$1' + ',' + '$2');
     }
     return x1 + x2;
+}
+
+function optionExport() {
+    $('#edoc-export').empty();
+    $('#exportTemplate').tmpl().appendTo('#edoc-export');
+    $("#ExportDailyCounterToExcel").modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+
 }

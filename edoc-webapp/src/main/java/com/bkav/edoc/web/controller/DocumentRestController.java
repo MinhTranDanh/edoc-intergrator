@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.*;
 
 @RestController
@@ -317,6 +318,21 @@ public class DocumentRestController {
         return new Gson().toJson(dataTableResult);
     }
 
+    //MinhTDb
+    @RequestMapping(value = "/documents/-/done/taken",method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public String getAllDocumentDoneTaken(HttpServletRequest request) {
+        DatatableRequest<DocumentCacheEntry> datatableRequest = new DatatableRequest<>(request);
+        PaginationCriteria pagination = datatableRequest.getPaginationRequest();
+        int totalCount = EdocDocumentServiceUtil.countDocumentsDoneTaken(pagination);
+        List<DocumentCacheEntry> entries = EdocDocumentServiceUtil.getDocumentsDoneTaken(pagination);
+        DataTableResult<DocumentCacheEntry> dataTableResult = new DataTableResult<>();
+        dataTableResult.setDraw(datatableRequest.getDraw());
+        dataTableResult.setListOfDataObjects(entries);
+        dataTableResult = new CommonUtils<DocumentCacheEntry>().getDataTableResult(dataTableResult, entries, totalCount, datatableRequest);
+        return new Gson().toJson(dataTableResult);
+    }
+
     @RequestMapping(value = "/resend/toVPVP")
     public ResponseEntity<Response> resendDocumentToVPCP (@RequestParam("documentId") String docId) {
         long documentId = Long.parseLong(docId);
@@ -387,6 +403,63 @@ public class DocumentRestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //MinhTDb
+    //Resend document
+    @RequestMapping(value = "/document/resend")
+    public ResponseEntity<Response> resendDocument(@RequestParam("documentId") String docId,  @RequestParam(value = "arr[]") List<String> arr) throws SQLException {
+        long documentId = Long.parseLong(docId);
+        System.out.println(arr);
+        List<EdocNotification> list = new ArrayList<EdocNotification>();
+        //EdocDynamicContact edc=EdocDynamicContactServiceUtil.findByName(receiveName);
+        for(int i=0; i<arr.size(); i++) {
+            list.add(EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId, arr.get(i)));
+        }
+            System.out.println(list.get(0).getTaken());
+            List<String> errors = new ArrayList<>();
+            Response response;
+            try {
+                for (EdocNotification en : list) {
+                    en.setTaken(false);
+                    EdocNotificationServiceUtil.resend(en);
+                }
+                response = new Response(200, errors, messageSourceUtil.getMessage("edoc.resend.success", null));
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } catch (Exception e) {
+                LOGGER.error("Not re-send document cause " + e);
+                response = new Response(500, errors, messageSourceUtil.getMessage("edoc.resend.to.fail", null));
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+
+    }
+    //MinhTDb
+    @RequestMapping(value = "/document/comfirm_receive")
+    public ResponseEntity<Response> comfirmReceive(@RequestParam("documentId") String docId,@RequestParam("receiveName") String receiveName) throws SQLException {
+        long documentId = Long.parseLong(docId);
+        EdocDynamicContact edc = EdocDynamicContactServiceUtil.findByName(receiveName);
+        EdocNotification enotifi = EdocNotificationServiceUtil.getNotifyBydocumentIdandReceiveId(documentId,edc.getDomain());
+        List<EdocNotification> list=new ArrayList<EdocNotification>();
+        list.add(enotifi);
+        List<String> errors = new ArrayList<>();
+        Response response;
+
+        try {
+            for (EdocNotification en : list) {
+                en.setTaken(true);
+                EdocNotificationServiceUtil.comfirmReceive(en);
+            }
+            response = new Response(200, errors, messageSourceUtil.getMessage("edoc.comfirm.success", null));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            LOGGER.error("Not re-send document cause " + e);
+            response = new Response(500, errors, messageSourceUtil.getMessage("edoc.comfirm.fail", null));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 
     @RequestMapping(value = "/documents/-/not/sendVPCP",method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody

@@ -36,6 +36,27 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
         }
     }
 
+    //MinhTDb
+    public EdocDynamicContact findByName(String name) {
+        Session currentSession = openCurrentSession();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT edc FROM EdocDynamicContact edc where edc.name=:name");
+            Query<EdocDynamicContact> query = currentSession.createQuery(sql.toString(), EdocDynamicContact.class);
+            query.setParameter("name", name);
+            List<EdocDynamicContact> edc = query.list();
+            if (edc != null && edc.size() > 0) {
+                return edc.get(0);
+            }
+            LOGGER.warn("Not found dynamic contact for organ domain " + name);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error get dynamic contact from organ domain " + name + " cause " + e.getMessage());
+            return null;
+        } finally {
+            currentSession.close();
+        }
+    }
     @Override
     public List<EdocDynamicContact> getDynamicContactsByAgency(boolean agency) {
         Session currentSession = openCurrentSession();
@@ -204,16 +225,61 @@ public class EdocDynamicContactDaoImpl extends RootDaoImpl<EdocDynamicContact, L
         return contacts;
     }
 
+
+    public List<EdocDynamicContact> searchByName(String name) {
+        Session session = openCurrentSession();
+        List<EdocDynamicContact> contacts;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT edc FROM EdocDynamicContact edc where edc.name like concat('%' ,:name, '%')");
+            Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
+            query.setParameter("name", name);
+            contacts = query.getResultList();
+            if (contacts != null) {
+                return contacts;
+            } else {
+                contacts = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error get list contact by multiple domain cause " + e.getMessage());
+            contacts = new ArrayList<>();
+        } finally {
+            closeCurrentSession(session);
+        }
+        return contacts;
+    }
+
     public List<EdocDynamicContact> getAllChildrenContact (String regexParent) {
         Session session = openCurrentSession();
         List<EdocDynamicContact> childOrgans;
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("Select edc from EdocDynamicContact edc where edc.domain like concat('%', :regexParent, '%') and edc.agency = :agency");
+            sql.append("Select edc from EdocDynamicContact edc where (edc.domain like concat('%', :regexParent, '%') OR edc.name like concat('%', :regexParent, '%')) and edc.agency = :agency");
             Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
             query.setParameter("regexParent", regexParent);
             query.setParameter("agency", true);
             childOrgans = query.getResultList();
+
+            if (childOrgans != null)
+                return childOrgans;
+        } catch (Exception e) {
+            LOGGER.error(e);
+        } finally {
+            closeCurrentSession(session);
+        }
+        return new ArrayList<>();
+    }
+    public List<EdocDynamicContact> getAllContact () {
+        Session session = openCurrentSession();
+        List<EdocDynamicContact> childOrgans;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("Select edc from EdocDynamicContact edc where  edc.agency = :agency");
+            Query<EdocDynamicContact> query = session.createQuery(sql.toString(), EdocDynamicContact.class);
+
+            query.setParameter("agency", true);
+            childOrgans = query.getResultList();
+//            System.out.println(childOrgans.size());
             if (childOrgans != null)
                 return childOrgans;
         } catch (Exception e) {

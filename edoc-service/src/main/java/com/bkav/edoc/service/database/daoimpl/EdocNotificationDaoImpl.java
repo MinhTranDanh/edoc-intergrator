@@ -29,7 +29,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         Session currentSession = openCurrentSession();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT en.document.id FROM EdocNotification en, EdocDocument ed where en.receiverId=:receiverId and en.taken=:taken");
+            sql.append("SELECT en.document.id FROM EdocNotification en , EdocDocument edoc  where en.receiverId=:receiverId and en.taken=:taken and en.document.id = edoc.documentId order by edoc.priority desc");
             Query<Long> query = currentSession.createQuery(sql.toString(), Long.class);
             query.setParameter("receiverId", organId);
             query.setParameter("taken", false);
@@ -43,6 +43,57 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
             }
         }
         return null;
+    }
+    //MinhTDb
+    public void setNotificationtaken(EdocNotification en) {
+        saveOrUpdate(en);
+    }
+    public List<EdocNotification> getEdocNotifyByDocumentId(long documentId) {
+        Session session = openCurrentSession();
+        //EdocNotification en= new EdocNotification();
+        List<EdocNotification> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT en FROM EdocNotification en WHERE en.document.documentId=:documentId ");
+            Query<EdocNotification> query = session.createQuery(sql.toString(), EdocNotification.class);
+            //query.setParameter("taken", false);
+            query.setParameter("documentId", documentId);
+            //query.setParameter("receiverId", receiveId);
+            list = query.getResultList();
+            return list;
+
+        } catch (Exception e) {
+            LOGGER.error("Error get edoc notification not taken cause " + e.getMessage());
+            return new ArrayList<>();
+        } finally {
+            closeCurrentSession(session);
+        }
+
+    }
+
+    //MinhTDb
+    public EdocNotification getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId) {
+        Session session = openCurrentSession();
+        //EdocNotification en= new EdocNotification();
+        List<EdocNotification> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT en FROM EdocNotification en WHERE en.document.documentId=:documentId and en.receiverId=:Id");
+            Query<EdocNotification> query = session.createQuery(sql.toString(), EdocNotification.class);
+            //query.setParameter("taken", false);
+            query.setParameter("documentId", documentId);
+            query.setParameter("Id", ReceiveId);
+            //query.setParameter("receiverId", receiveId);
+            list = query.getResultList();
+            EdocNotification edocNotification = list.get(0);
+            return edocNotification;
+
+        } catch (Exception e) {
+            LOGGER.error("Error get edoc notification not taken cause " + e.getMessage());
+            return new EdocNotification();
+        } finally {
+            closeCurrentSession(session);
+        }
     }
 
     public List<EdocDocument> getDocumentByOrganId(String organId) {

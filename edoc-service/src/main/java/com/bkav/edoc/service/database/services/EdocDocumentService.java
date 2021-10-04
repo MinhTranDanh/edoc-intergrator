@@ -195,12 +195,55 @@ public class EdocDocumentService {
                 for (EdocNotification notification : notifications) {
                     EdocDocument edocDocument = notification.getDocument();
                     edocDocument.setToOrganDomain(notification.getReceiverId());
+
                     DocumentCacheEntry documentCacheEntry = MapperUtil.documentToCached(edocDocument);
                     entries.add(documentCacheEntry);
                 }
             }
         } catch (Exception e) {
             LOGGER.error("Error get documents not taken " + Arrays.toString(e.getStackTrace()));
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return entries;
+    }
+
+    //MinhTDb
+    public List<DocumentCacheEntry> getDocumentDoneTaken(PaginationCriteria paginationCriteria) {
+        List<DocumentCacheEntry> entries = new ArrayList<>();
+        Session session = documentDaoImpl.openCurrentSession();
+
+        try {
+            String queryDocumentDoneTaken = AppUtil.buildPaginatedQuery(QueryString.BASE_QUERY_DOCUMENT_DONE_TAKEN_TMP, paginationCriteria, null);
+            Query<EdocNotification> query = session.createNativeQuery(queryDocumentDoneTaken, EdocNotification.class);
+            int pageNumber = paginationCriteria.getPageNumber();
+            int pageSize = paginationCriteria.getPageSize();
+            query.setFirstResult(pageNumber);
+            query.setMaxResults(pageSize);
+            List<EdocNotification> notifications = query.getResultList();
+            if (notifications.size() > 0) {
+                for (EdocNotification notification : notifications) {
+                    EdocDocument edocDocument = notification.getDocument();
+                    edocDocument.setToOrganDomain(notification.getReceiverId());
+
+                    DocumentCacheEntry documentCacheEntry = MapperUtil.documentToCached(edocDocument);
+                    entries.add(documentCacheEntry);
+                }
+            }
+
+            /*List<EdocNotification> edocNotifications = edocNotificationDao.getEdocNotificationNotTaken(paginationCriteria);
+            for (EdocNotification edocNotification: edocNotifications) {
+                //EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(edocNotification.getReceiverId());
+                //if (contact.getReceiveNotify()) {
+                    EdocDocument edocDocument = edocNotification.getDocument();
+                    edocDocument.setToOrganDomain(edocNotification.getReceiverId());
+                    DocumentCacheEntry documentCacheEntry = MapperUtil.documentToCached(edocDocument);
+                    entries.add(documentCacheEntry);
+                //}
+            }*/
+        } catch (Exception e) {
+            LOGGER.error("Error get documents done taken " + Arrays.toString(e.getStackTrace()));
         } finally {
             if (session != null)
                 session.close();
@@ -219,6 +262,25 @@ public class EdocDocumentService {
             result = count.intValue();
         } catch (Exception e) {
             LOGGER.error("Error count documents not taken " + Arrays.toString(e.getStackTrace()));
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return result;
+    }
+
+    public int countDocumentsDoneTaken(PaginationCriteria paginationCriteria) {
+        Session session = documentDaoImpl.openCurrentSession();
+        int result = 0;
+        try {
+            session.beginTransaction();
+            String queryDocument = AppUtil.buildPaginatedQuery(QueryString.QUERY_COUNT_DOCUMENT_DONE_TAKEN_TMP, paginationCriteria, null);
+            Query query = session.createNativeQuery(queryDocument);
+            BigInteger count = (BigInteger) query.getSingleResult();
+            result = count.intValue();
+        } catch (Exception e) {
+            LOGGER.error("Error count documents done taken " + Arrays.toString(e.getStackTrace()));
         } finally {
             if (session != null) {
                 session.close();

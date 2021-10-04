@@ -1,5 +1,6 @@
 package com.bkav.edoc.service.database.dao;
 
+import com.bkav.edoc.service.database.cache.OrganizationCacheEntry;
 import com.bkav.edoc.service.database.entity.EdocDynamicContact;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public interface EdocDynamicContactDao {
 
     Long countOrgan(boolean agency);
 
+    public EdocDynamicContact findByName(String name);
+
     boolean checkPermission(String organId, String token);
 
     void updateContact(EdocDynamicContact edocDynamicContact);
@@ -25,4 +28,6 @@ public interface EdocDynamicContactDao {
     String getNameByOrganId(String organId);
 
     List<EdocDynamicContact> getContactByMultipleDomain(List<String> domains);
+
+
 }

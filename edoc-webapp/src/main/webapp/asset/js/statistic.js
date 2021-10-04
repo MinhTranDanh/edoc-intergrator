@@ -108,7 +108,7 @@ let edocChart = {
     }
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     $.datetimepicker.setLocale('vi');
     $("#fromStatisticDate").datetimepicker({
         i18n: {
@@ -145,7 +145,7 @@ $(document).ready(function() {
         format: 'd/m/Y'
     });
 
-    $("#btnRunStatisticDetail").on('click',  function (e) {
+    $("#btnRunStatisticDetail").on('click', function (e) {
         e.preventDefault();
         console.log("Click");
         let fromDate = $("#fromStatisticDate").val();
@@ -165,11 +165,11 @@ $(document).ready(function() {
                     200: () => $.notify("Success", "success"),
                     400: () => $.notify("Error", "error")
                 }
-            }).done( () => $("#overlay-statistic").hide());
+            }).done(() => $("#overlay-statistic").hide());
         }
     })
 
-    $("#report-menu.nav a:not(.not-click)").on("click",  function (e) {
+    $("#report-menu.nav a:not(.not-click)").on("click", function (e) {
         e.preventDefault();
         let dataMode = $(this).attr("data-mode");
         let userId = $(this).attr("data-id");

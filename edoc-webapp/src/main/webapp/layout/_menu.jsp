@@ -1,3 +1,4 @@
+
 <%@ page import="com.bkav.edoc.web.auth.CookieUtil" %>
 <%@ page import="com.bkav.edoc.web.OAuth2Constants" %>
 <%@ page import="com.bkav.edoc.service.kernel.util.Base64" %>
@@ -106,6 +107,11 @@
                         <spring:message code="menu.document.not.send.vpcp"/>
                     </a>
                 </li>
+<%--                <li>--%>
+<%--                    <a href="javascript:void(0)" data-mode="done-taken-edoc" id="done-taken-edoc">--%>
+<%--                        <spring:message code="menu.document.done.taken"/>--%>
+<%--                    </a>--%>
+<%--                </li>--%>
             </ul>
             <!-- /.nav-second-level -->
         </li>
@@ -129,7 +135,9 @@
                 </li>
                 <%
                     if(roleKey.equals("ADMIN") || roleKey.equals("SUPER ADMIN")) {
+
                 %>
+
                 <li>
                     <a href="javascript:void(0)" data-mode="viewDetail" data-id="<%=user.getUserId()%>" id="report-detail"><spring:message
                             code="edoc.report.view.detail"/></a>

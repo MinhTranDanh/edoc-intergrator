@@ -157,7 +157,17 @@ table.dataTable thead .sorting:after {
     }
 
     #resendDocument .modal-dialog {
+        height: 100%;
+        overflow-y: hidden ;
         width: 650px !important;
+        margin: auto;
+    }
+
+    #ExportDailyCounterToExcel .modal-dialog {
+        height: 100%;
+        overflow-y: hidden ;
+        width: 650px !important;
+        margin: auto;
     }
 
     #delete-confirm-modal .modal-dialog {
@@ -555,7 +565,8 @@ ul.nav a.active {
 #formEditUser .modal-content,
 #formEditOrgan .modal-content,
 #resendDocument .modal-content,
-#formChangePassword .modal-content {
+#formChangePassword .modal-content,
+#ExportDailyCounterToExcel .modal-content{
     top: 150px;
     border-radius: 0 !important;
     border: 0 !important;
@@ -582,6 +593,20 @@ ul.nav a.active {
 
 .edoc-resend {
     height: 170px;
+
+}
+#edoc-resend {
+    height: auto;
+    margin-bottom: auto;
+}
+
+#edoc-export {
+    height: auto;
+    margin-bottom: auto;
+}
+
+#chooseColumforExcel{
+
 }
 .edoc-resend .form-group {
     margin-left: 0 !important;
@@ -720,6 +745,7 @@ ul.nav a.active {
 
 .modal-body {
     padding: 16px 30px !important;
+    margin: auto;
 }
 
 #edoc-tab li.active a {
@@ -2043,6 +2069,9 @@ input:checked + .slider:before {
     display: none;
 }
 
+#warning-document-done-taken {
+    display: none;
+}
 #resend-documents-not-sendVPCP {
     display: none;
 }

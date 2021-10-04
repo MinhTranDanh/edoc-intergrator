@@ -24,4 +24,11 @@ public interface EdocNotificationDao {
     List<EdocNotification> getEdocNotificationsNotTaken(Date date);
 
     List<EdocDocument> getDocumentNotTakenByReceiverId(String receiverId);
+
+    public EdocNotification getEdocNotifyByDocumentIdandReceiveId(long documentId, String ReceiveId);
+
+    void setNotificationtaken(EdocNotification en) ;
+
+    public List<EdocNotification> getEdocNotifyByDocumentId(long documentId);
+
 }

@@ -29,6 +29,15 @@ public class EdocDailyCounterServiceUtil {
         return EDOC_DAILY_COUNTER_SERVICE.getStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
     }
 
+    public static List<EPublicStat> getStatsDaily(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+        return EDOC_DAILY_COUNTER_SERVICE.getStatsDailyforScheduler(fromDate, toDate, keyword, isGetAllAgency);
+    }
+
+
+    /*public static List<EPublicStat> ExportStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+        return EDOC_DAILY_COUNTER_SERVICE.ExportStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
+    }*/
+
     public static List<EPublicStat> getStatDetailForExcel() {
         return EDOC_DAILY_COUNTER_SERVICE.getStatDetailForExcel();
     }

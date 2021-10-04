@@ -5,11 +5,13 @@ import com.bkav.edoc.service.database.util.*;
 import com.bkav.edoc.web.payload.ImportExcelError;
 import com.bkav.edoc.web.util.PropsUtil;
 import com.bkav.edoc.web.util.TokenUtil;
+import com.itextpdf.text.pdf.PdfName;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
+import sun.awt.X11.awtImageData;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -379,7 +381,7 @@ public class ExcelService {
         LOGGER.info("Write organs to Excel END!!!!!!!!!");
     }
 
-    public void ExportSampleOrganExcelFile (HttpServletResponse response) throws IOException {
+    public void ExportSampleOrganExcelFile(HttpServletResponse response) throws IOException {
         createOrganExcelHeader();
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
@@ -512,8 +514,18 @@ public class ExcelService {
         return results;
     }
 
-    public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword) throws IOException {
-        List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
+    /*public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword) throws IOException {
+
+        List<EPublicStat> eStats = new ArrayList<>();
+        boolean isGetAllAgency = false;
+        if (fromDate == null || toDate == null)
+            eStats =  EdocDailyCounterServiceUtil.ExportStatsDetail(null, null, keyword, isGetAllAgency);
+        else
+            eStats = EdocDailyCounterServiceUtil.ExportStatsDetail(fromDate, toDate, keyword, isGetAllAgency);
+
+
+       // List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
+
         List<EPublicStat> sortedListStat = eStats.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
@@ -535,7 +547,7 @@ public class ExcelService {
         XSSFFont font = ((XSSFWorkbook) workbook).createFont();
         font.setFontName("Times New Roman");
         font.setFontHeightInPoints((short) 14);
-        font.setBold(true);
+
         headerStyle.setFont(font);
 
         Cell headerCell;
@@ -546,12 +558,22 @@ public class ExcelService {
             headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(j).getHeaderName());
             headerCell.setCellStyle(headerStyle);
         }
+        font = (XSSFFont) workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 10);
+
+
+       // font.setUnderline(Font.U_DOUBLE);
 
         CellStyle style = workbook.createCellStyle();
+        CellStyle styleparent = workbook.createCellStyle();
         style.setWrapText(true);
+
+
         int numRow = 1;
 
         for (EPublicStat ePublicStat : sortedListStat) {
+//            System.out.println(ePublicStat.getReceived());
             Row row = sheet.createRow(numRow);
 
             Cell cell = row.createCell(0);
@@ -562,6 +584,7 @@ public class ExcelService {
             cell.setCellValue(ePublicStat.getSent());
             cell.setCellStyle(style);
 
+
             cell = row.createCell(2);
             cell.setCellValue(ePublicStat.getReceived());
             cell.setCellStyle(style);
@@ -571,6 +594,100 @@ public class ExcelService {
             cell.setCellStyle(style);
 
             numRow++;
+        }
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+
+        LOGGER.info("Write data to Excel end!!!!!");
+    }
+*/
+
+    public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword, List<Integer> arr) throws IOException {
+        List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
+        List<EPublicStat> sortedListStat = eStats.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
+
+        Workbook workbook = new XSSFWorkbook();
+
+        System.out.println(arr.size());
+
+        Sheet sheet = workbook.createSheet("Thống kê văn bản điện tử");
+        for (int i = 0; i < arr.size(); i++) {
+            switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
+                case 0:
+                    sheet.setColumnWidth(i, 15000);
+                    break;
+                case 1:
+                    sheet.setColumnWidth(i, 4000);
+                    break;
+                case 2:
+                    sheet.setColumnWidth(i, 4000);
+                    break;
+                case 3:
+                    sheet.setColumnWidth(i, 5000);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + arr.get(i));
+            }
+        }
+        sheet.setDefaultRowHeight((short) 450);
+
+        Row header = sheet.createRow(0);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Times New Roman");
+        font.setFontHeightInPoints((short) 14);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        Cell headerCell;
+
+        // Write header row to excel file for organization
+        for (int i = 0, j = 1; i < arr.size(); i++, j++) {
+            headerCell = header.createCell(i);
+            headerCell.setCellValue(ExcelHeaderServiceUtil.getDailyCounterHeaderById(Integer.parseInt(String.valueOf(arr.get(i))) + 1).getHeaderName());
+            headerCell.setCellStyle(headerStyle);
+        }
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+        int numRow = 1;
+
+        for (EPublicStat ePublicStat : sortedListStat) {
+            Row row = sheet.createRow(numRow);
+            for (int i = 0; i < arr.size(); i++) {
+                switch (Integer.parseInt(String.valueOf(arr.get(i)))) {
+                    case 0:
+                        Cell cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getOrganName());
+                        cell.setCellStyle(style);
+                        break;
+                    case 1:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getSent());
+                        cell.setCellStyle(style);
+                        break;
+                    case 2:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getReceived());
+                        cell.setCellStyle(style);
+                        break;
+                    case 3:
+                        cell = row.createCell(i);
+                        cell.setCellValue(ePublicStat.getTotal());
+                        cell.setCellStyle(style);
+                        break;
+                }
+            }
+
+            numRow++;
+
         }
 
         ServletOutputStream outputStream = response.getOutputStream();
