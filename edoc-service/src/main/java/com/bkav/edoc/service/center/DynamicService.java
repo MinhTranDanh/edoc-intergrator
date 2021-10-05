@@ -403,7 +403,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
             updateReceivedNotify(report, checkPermission);
             List<Error> errors = new ArrayList<>();
             // update trace
-            LOGGER.info(status.toString());
+            LOGGER.info("--------------> Content Status from organ " + status.getFrom().getOrganId() + ": " + status);
             if (GetterUtil.getInteger(status.getStatusCode()) != 5) {
                 boolean isExists = traceService.exists(status.getFrom().getOrganId(),
                         status.getResponseFor().getOrganId(),
@@ -473,7 +473,6 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
         }
         return map;
     }
-
 
     private Map<String, Object> getDocument(Document doc) {
 
@@ -765,7 +764,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                                         }
                                     }
                                 }
-                                ////////////////////////////////
+                                //----------------------------------------
                                 if (!flag) {
                                     toesVPCP.forEach(to -> {
                                         LOGGER.info("----- Create fail trace for document id " + document.getDocumentId() + " ------ " + to.getOrganId());
@@ -862,6 +861,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
             try {
                 LOGGER.info("---------------Start getDocument with organ: " + organId);
                 notifications = notificationService.getDocumentIdsByOrganId(organId);
+
             } catch (Exception e) {
                 log.error(e);
             }
@@ -978,7 +978,8 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
         staffInfo.setDepartment(toContact.getName());
         staffInfo.setDepartmentId("");
         staffInfo.setEmail(toContact.getEmail());
-        staffInfo.setStaff("EdocAdapter");
+        //staffInfo.setStaff("EdocAdapter");
+        staffInfo.setStaff("Truc lien thong VB");
         staffInfo.setMobile("");
         staffInfo.setStaffId("");
 

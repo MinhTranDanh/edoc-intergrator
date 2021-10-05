@@ -1055,7 +1055,11 @@ $(document).ready(function () {
     $("#fromOrganSearch").select2({
         tags: true,
         maximumSelectionLength: 1,
-        width: "auto"
+        width: "auto",
+        ajax: {
+            url: "/contact/-/contacts",
+            dataType: "json"
+        }
     });
     $("#toOrganSearch").select2({
         tag: true,

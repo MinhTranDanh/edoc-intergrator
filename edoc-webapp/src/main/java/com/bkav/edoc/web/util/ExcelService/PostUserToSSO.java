@@ -60,7 +60,7 @@ public class PostUserToSSO {
             SSLContext ctx = SSLContext.getInstance("TLS");
             ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
             SSLContext.setDefault(ctx);
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.MILLISECONDS.sleep(500);
             CloseableHttpResponse response = httpclient.execute(httpPost);
             try {
                 result = response.getStatusLine().getStatusCode();

@@ -222,6 +222,8 @@ public class Checker {
         if (checkPermission != null) {
             if (checkPermission.getOrganId() != null && checkPermission.getToken() != null) {
 
+                LOGGER.info("Start checking permission with organ id " + checkPermission.getOrganId());
+
                 boolean result = edocDynamicContactService.checkPermission(checkPermission.getOrganId(), checkPermission.getToken());
 
                 report = new Report(result, new ErrorList(errorList));

@@ -74,6 +74,9 @@ public class EdocController {
     @Value("${edoc.edxml.file.location}")
     private String eDocPath;
 
+    @Value("${edoc.edxml.file.location.get}")
+    private String eDocGetPath;
+
     @RequestMapping(value = "/sendDocument", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @ResponseBody
     public String sendDocument(HttpServletRequest request) {
@@ -423,9 +426,14 @@ public class EdocController {
                     String edXmlFilePath = RedisUtil.getInstance()
                             .get(RedisKey.getKey(String.valueOf(docId), RedisKey.GET_DOCUMENT_EDXML_KEY), String.class);
                     if (edXmlFilePath != null && !edXmlFilePath.equals("")) {
-                        String specPath = eDocPath +
-                                (eDocPath.endsWith(EdXmlConstant.SEPARATOR) ? "" : EdXmlConstant.SEPARATOR) + edXmlFilePath;
+                        String specPath = eDocGetPath +
+                                (eDocGetPath.endsWith(EdXmlConstant.SEPARATOR) ? "" : EdXmlConstant.SEPARATOR) + edXmlFilePath;
                         File file = new File(specPath);
+                        if (file.length() == 0) {
+                            specPath = eDocPath +
+                                    (eDocPath.endsWith(EdXmlConstant.SEPARATOR) ? "" : EdXmlConstant.SEPARATOR) + edXmlFilePath;
+                            file = new File(specPath);
+                        }
                         if (file.exists()) {
                             byte[] encode = new byte[0];
                             try {

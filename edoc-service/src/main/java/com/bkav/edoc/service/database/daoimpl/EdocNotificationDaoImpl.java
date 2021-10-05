@@ -33,7 +33,7 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
             Query<Long> query = currentSession.createQuery(sql.toString(), Long.class);
             query.setParameter("receiverId", organId);
             query.setParameter("taken", false);
-            LOGGER.info("---------------Get Pending document has size: " + query.list().size());
+            LOGGER.info("--------------- Get Pending document has size: " + query.list().size());
             return query.list();
         } catch (Exception e) {
             LOGGER.error("Error when get document pending for organ " + organId + " cause " + Arrays.toString(e.getStackTrace()));
@@ -68,7 +68,6 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         } finally {
             closeCurrentSession(session);
         }
-
     }
 
     //MinhTDb

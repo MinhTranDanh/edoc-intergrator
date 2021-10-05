@@ -8,6 +8,7 @@ import com.bkav.edoc.service.database.entity.EdocTrace;
 import com.bkav.edoc.service.database.util.EdocDocumentServiceUtil;
 import com.bkav.edoc.service.database.util.EdocDynamicContactServiceUtil;
 import com.bkav.edoc.service.database.util.EdocTraceServiceUtil;
+import com.bkav.edoc.service.database.util.MapperUtil;
 import com.bkav.edoc.service.kernel.util.GetterUtil;
 import com.bkav.edoc.service.util.CommonUtil;
 import com.bkav.edoc.service.util.PropsUtil;
@@ -127,6 +128,7 @@ public class ServiceVPCP {
                             LOGGER.info(pStart + "Desc:" + getEdocResult.getErrorDesc());
                             LOGGER.info(pStart + "file:" + getEdocResult.getFilePath());
                             EdocDocument document = null;
+                            String status = "fail";
                             if (getEdocResult.getStatus().equals("OK")) {
                                 LOGGER.info("Get successfully document from VPCP with docId: "
                                         + item.getId() + " from " + item.getFrom() + " to " + item.getTo());
@@ -147,8 +149,10 @@ public class ServiceVPCP {
                                 List<Attachment> attachments = ed.getAttachments();
                                 LOGGER.info("Get successfully Attachments from file " + getEdocResult.getFilePath());
                                 //filter list organ of current organ on esb
+                                LOGGER.info("Starting get toes organ !!!!!!!!!");
                                 List<Organization> thisOrganizations = filterOrgan(messageHeader.getToes());
                                 messageHeader.setToes(thisOrganizations);
+                                LOGGER.info("Set toes organ success to document with size " + thisOrganizations.size() + " !!!");
                                 StringBuilder documentEsbId = new StringBuilder();
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
@@ -158,21 +162,26 @@ public class ServiceVPCP {
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
                                     String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                                    LOGGER.info("Starting check exist document in esb !!!");
                                     if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                                         LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
+                                        status = "done";
                                     } else {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                         // TayNinh integrator new domain
                                         if (isTayNinh) {
-                                            EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                            convertToOldFormatDomain(messageHeader);
+
+                                            /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                             if (contact == null) {
                                                 String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                                LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                                 Organization oldOrganFormat = messageHeader.getFrom();
                                                 oldOrganFormat.setOrganId(oldDomain);
                                                 messageHeader.setFrom(oldOrganFormat);
-                                            }
+                                            }*/
                                         }
-                                        //////////////////////////////////
+                                        //------------------------------------------------------
 
                                         document = EdocDocumentServiceUtil.addDocument(messageHeader,
                                                 traceHeaderList, attachments, documentEsbId, attachmentCacheEntries, errors);
@@ -181,15 +190,18 @@ public class ServiceVPCP {
                                     LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                     // TayNinh integrator new domain
                                     if (isTayNinh) {
-                                        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                        convertToOldFormatDomain(messageHeader);
+
+                                        /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                         if (contact == null) {
                                             String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+                                            LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                             Organization oldOrganFormat = messageHeader.getFrom();
                                             oldOrganFormat.setOrganId(oldDomain);
                                             messageHeader.setFrom(oldOrganFormat);
-                                        }
+                                        }*/
                                     }
-                                    //////////////////////////////////
+                                    //------------------------------------------------------
 
                                     document = EdocDocumentServiceUtil.addDocument(messageHeader,
                                             traceHeaderList, attachments, documentEsbId, attachmentCacheEntries, errors);
@@ -200,16 +212,18 @@ public class ServiceVPCP {
                                     document.setDocumentExtId(item.getId());
                                     document.setReceivedExt(true);
                                     EdocDocumentServiceUtil.updateDocument(document);
-                                    LOGGER.info("Update document from vpcp successfully for document " + documentEsbId.toString());
+                                    LOGGER.info("Update document from vpcp successfully !!!!!!!!!!!");
                                     // TODO change status to vpcp
-                                    headerChangeStatus.put("status", "done");
+                                    status = "done";
+                                    headerChangeStatus.put("status", status);
                                 } else {
                                     LOGGER.error("Error save document from vpcp  with document code " + messageHeader.getCode());
-                                    headerChangeStatus.put("status", "fail");
+                                    headerChangeStatus.put("status", status);
                                 }
                             } else {
-                                headerChangeStatus.put("status", "fail");
+                                headerChangeStatus.put("status", status);
                             }
+                            //confirmReceived(item.getId(), status);
                             GetChangeStatusResult getChangeStatusResult = this.knobstickServiceImp.updateStatus(headerChangeStatus.toString());
                             LOGGER.info("Confirm receiver for document --------------> " + item.getId());
                             if (getChangeStatusResult != null) {
@@ -344,9 +358,20 @@ public class ServiceVPCP {
         return result;
     }
 
+    private void convertToOldFormatDomain(MessageHeader messageHeader) {
+        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+        if (contact == null) {
+            String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+            LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
+            Organization oldOrganFormat = messageHeader.getFrom();
+            oldOrganFormat.setOrganId(oldDomain);
+            messageHeader.setFrom(oldOrganFormat);
+        }
+    }
+
     public void GetDocumentsTest() throws IOException, ParserException {
         // Get list documents sent from VPCP
-        String filePath = "/home/quangcv/backup-school/edoc-integrator/edoc-webapp/src/main/resources/e5f4e280-55b3-460f-be38-e57b80bc3b0d.edxml";
+        String filePath = "/home/edoc-integrator/edoc-webapp/src/main/resources/e5f4e280-55b3-460f-be38-e57b80bc3b0d.edxml";
         //parse data from edxml
         File file = new File(filePath);
         InputStream inputStream = new FileInputStream(file);

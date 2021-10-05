@@ -148,6 +148,30 @@ public class EdocDocumentDaoImpl extends RootDaoImpl<EdocDocument, Long> impleme
         return null;
     }
 
+    public EdocDocument getEdocDocumentByEdxmlAndToOrganAndDocCode(String edXmlDocumentId, String toOrganDomain, String docCode) {
+        Session currentSession = openCurrentSession();
+        try {
+            LOGGER.info("Check exist document for edxml document id " + edXmlDocumentId + " and to organ " + toOrganDomain);
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT ed from EdocDocument ed where ed.edXMLDocId = :edXMLDocId and ed.toOrganDomain = :toOrganDomain and ed.docCode = :docCode");
+            Query<EdocDocument> query = currentSession.createQuery(sql.toString(), EdocDocument.class);
+            query.setParameter("edXMLDocId", edXmlDocumentId);
+            query.setParameter("toOrganDomain", toOrganDomain);
+            query.setParameter("docCode", docCode);
+            List<EdocDocument> documents = query.list();
+            if (documents != null && documents.size() > 0) {
+                return documents.get(0);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error check Exist document for edxml document id " + edXmlDocumentId + " cause " + Arrays.toString(e.getStackTrace()));
+        } finally {
+            if (currentSession != null) {
+                currentSession.close();
+            }
+        }
+        return null;
+    }
+
     public EdocDocument searchDocumentByOrganDomainAndCode(String fromOrganDomain, String toOrganDomain, String code) {
         Session currentSession = openCurrentSession();
         EdocDocument document = null;

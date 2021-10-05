@@ -639,17 +639,15 @@ public class EdocDocumentService {
             return true;
         }
         return false;
+    }
 
-        /*AtomicBoolean flag = new AtomicBoolean(false);
-        toOrgans.forEach(toOrgan -> {
-            //LOGGER.info("Check exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
-            EdocDocument check = documentDaoImpl.checkExistDocumentVPCP(edXmlDocumentId, toOrgan.getOrganId());
-            if (check != null) {
-                LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgan.getOrganId());
-                flag.set(true);
-            }
-        });
-        return flag.get();*/
+    public boolean getEdocDocumentByEdxmlIdAndToOrganAndDoccode(String edXmlDocumentId, String toOrgans, String docCode) {
+        EdocDocument check = documentDaoImpl.getEdocDocumentByEdxmlAndToOrganAndDocCode(edXmlDocumentId, toOrgans, docCode);
+        if (check != null) {
+            LOGGER.info("Exist document with edXML id " + edXmlDocumentId + " and toOrgan " + toOrgans);
+            return true;
+        }
+        return false;
     }
 
     public boolean checkExistDocumentByDocCode(String fromOrgan, String toOrgan, String docCode) {

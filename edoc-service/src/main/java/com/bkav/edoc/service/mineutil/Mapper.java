@@ -226,10 +226,14 @@ public class Mapper {
         for (EdocTrace trace : traces) {
             MessageStatus status = new MessageStatus();
             status.setDescription(trace.getComment());
-            status.setStatusCode(String.valueOf(trace.getStatusCode()));
-            if(trace.getStatusCode() > 10){
-                status.setStatusCode("0"+status.getStatusCode());
+            // check and add "0"
+            String statusCode = "";
+            if (trace.getStatusCode() < 10 || trace.getStatusCode() >= 0) {
+                statusCode = "0" + String.valueOf(trace.getStatusCode());
+            } else {
+                statusCode = String.valueOf(trace.getStatusCode());
             }
+            status.setStatusCode(statusCode);
             if (trace.getTimeStamp() != null) {
                 status.setTimestamp(trace.getTimeStamp());
             }
