@@ -36,23 +36,24 @@ let edocDocument = {
         let url = "/documents?mode=" + instance.appSetting.mode;
 
         // need to optimize.....
-        if (fromOrgan !== null || toOrgan !== null || docCode !== null) {
-            if (fromOrgan !== null && toOrgan === null && docCode === null) {
-                url = url + "&fromOrgan=" + fromOrgan;
-            } else if (fromOrgan === null && toOrgan !== null && docCode === null) {
-                url = url + "&toOrgan=" + toOrgan;
-            } else if (fromOrgan === null && toOrgan === null && docCode !== null) {
-                url = url + "&docCode=" + docCode;
-            } else if (fromOrgan !== null && toOrgan !== null && docCode === null) {
-                url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan;
-            } else if (fromOrgan !== null && toOrgan === null && docCode !== null) {
-                url = url + "&fromOrgan=" + fromOrgan + "&docCode=" + docCode;
-            } else if (fromOrgan === null && toOrgan !== null && docCode !== null) {
-                url = url + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
-            } else {
-                url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
-            }
-        }
+        // if (fromOrgan !== null || toOrgan !== null || docCode !== null) {
+        //     if (fromOrgan !== null && toOrgan === null && docCode === null) {
+        //         url = url + "&fromOrgan=" + fromOrgan;
+        //     } else if (fromOrgan === null && toOrgan !== null && docCode === null) {
+        //         url = url + "&toOrgan=" + toOrgan;
+        //     } else if (fromOrgan === null && toOrgan === null && docCode !== null) {
+        //         url = url + "&docCode=" + docCode;
+        //     } else if (fromOrgan !== null && toOrgan !== null && docCode === null) {
+        //         url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan;
+        //     } else if (fromOrgan !== null && toOrgan === null && docCode !== null) {
+        //         url = url + "&fromOrgan=" + fromOrgan + "&docCode=" + docCode;
+        //     } else if (fromOrgan === null && toOrgan !== null && docCode !== null) {
+        //         url = url + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
+        //     } else {
+        //         url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
+        //     }
+        // }
+        console.log(url);
         instance.appSetting.dataTable = $('#dataTables-edoc').DataTable({
             serverSide: true,
             processing: true,
@@ -1025,9 +1026,10 @@ $(document).ready(function () {
     })
 
     $("#btn-searchFilter-confirm").on('click', function (e) {
-        fromOrgan = ($("#fromOrganSearch").val() === "" ? null : $("#fromOrganSearch").val());
-        toOrgan = ($("#toOrganSearch").val() === "" ? null : $("#toOrganSearch").val());
+        fromOrgan = ($("#fromOrgan").val() === "" ? null : $("#fromOrgan").val());
+        toOrgan = ($("#toOrgan").val() === "" ? null : $("#toOrgan").val());
         docCode = ($("#docCodeSearch").val() === "" ? null : $("#docCodeSearch").val());
+
 
         $("#searchFilter").toggle();
         edocDocument.appSetting.dataTable.clear();
@@ -1037,6 +1039,7 @@ $(document).ready(function () {
 
     $("#btn-searchFilter-reset").on('click', function () {
         $('#fromOrganSearch, #toOrganSearch').val(null).trigger('change');
+        $("#fromOrgan, #toOrgan").empty().trigger('change')
         $("#docCodeSearch").val("");
     })
 
@@ -1056,6 +1059,8 @@ $(document).ready(function () {
     });
     $("#toOrganSearch").select2({
         tag: true,
+        maximumSelectionLength: 1,
+        width: "auto"
     })
 });
 
@@ -1338,7 +1343,73 @@ function validateDocument(subject, toOrgan, codeNation, codeNumber, staffName, p
         );
         return true;
     }
+};
+function formatResult(station) {
+    var markup = "";
+    if (station.name !== undefined) {
+        markup += "<option value=" + station.domain + ">" + station.name + "</option>";
+    }
+    return markup;
 }
+
+function formatSelection(station) {
+    // loadOption(station);
+    return station.name;
+}
+
+$("#fromOrgan").select2({
+    ajax: {
+        url: "/contact/-/document/searchcontacts",
+        dataType: 'json',
+        type: "GET",
+
+        data: function (params) {
+            var selectedLocationId = $(this).val();
+            return {search_content: params.term, selected_location_id: selectedLocationId}
+        },
+        processResults: function (data) {
+            if(data.length > 20){
+                data.shift();
+            }
+            console.log(data)
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.name,
+                        id: item.domain
+                    }
+                })
+            };
+        },
+    }
+});
+
+$("#searchToOrgan").select2({
+    ajax: {
+        url: "/contact/-/document/searchcontacts",
+        dataType: 'json',
+        type: "GET",
+
+        data: function (params) {
+            var selectedLocationId = $(this).val();
+            return {search_content: params.term, selected_location_id: selectedLocationId}
+        },
+
+        processResults: function (data) {
+            if(data.length > 20){
+                data.shift();
+            }
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.name,
+                        id: item.domain
+                    }
+                })
+            };
+        },
+    }
+});
 
 function getStatusOfTrace(statusCode) {
     let message = "";

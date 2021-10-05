@@ -28,7 +28,8 @@ let edocReport = {
         $.get("/public/-/document/stat", function (data, status) {
             $("#publicContent").empty();
             $('#edocPublicStatTmpl').tmpl(data).appendTo('#publicContent');
-            $("#totalReport").text(data.total);
+            // $("#totalReport").text(data.total);
+            console.log(data)
         });
     },
     renderReportTable: function (fromDate, toDate, keyword) {
@@ -44,6 +45,8 @@ let edocReport = {
         }
 
         let jsonData = null;
+        let sent = 0;
+        let received =0;
         $.ajax({
             url: url,
             type: "GET",
@@ -52,6 +55,13 @@ let edocReport = {
             success: function (data) {
                 jsonData = data;
                 console.log(data);
+                for(let i= 0 ; i < data.length ; i++){
+                    sent += data[i].sent;
+                    received += data[i].received;
+                }
+                $("#sendReport").text(sent);
+                $("#receivedReport").text(received);
+                $("#totalReport").text(sent + received);
             }
         });
 
@@ -87,7 +97,7 @@ let edocReport = {
             $("#fromDate").val("");
             $("#toDate").val("");
         } else {
-            let beginDate = new Date(new Date().getFullYear() + 1, 0, 1).formatDate();
+            let beginDate = new Date(new Date().getFullYear() , 0, 1).formatDate();
             let currentDate = new Date().formatDate();
             $("#filterLabel").html(app_message.edoc_report_filter + "<span class='time-filter'>" + beginDate + " - " + currentDate + "</span>");
         }
@@ -162,9 +172,9 @@ $(document).ready(function () {
         event.preventDefault();
         let fromDate = $("#fromDate").val();
         let toDate = $("#toDate").val();
-        keyword = ($("#statDetailSearch").val() === "" ? null : $("#statDetailSearch").val());
-        let fromDateValue = new Date(fromDate);
-        let toDateValue = new Date(toDate);
+        keyword = ($("#searchToOrgan").val() === "" ? null : $("#searchToOrgan").val());
+        let fromDateValue = new Date(getDDMMYYY(fromDate));
+        let toDateValue = new Date(getDDMMYYY(toDate));
         if (fromDateValue > toDateValue) {
             $.notify(app_message.edoc_message_error_report_date, "error");
         } else {
@@ -241,4 +251,34 @@ function optionExport() {
         keyboard: false
     });
 
+}
+$("#searchToOrgan").select2({
+    placeholder: "Nhập từ khóa",
+    ajax: {
+        url: "/contact/-/document/searchcontacts",
+        dataType: 'json',
+        type: "GET",
+
+        data: function (params) {
+            var selectedLocationId = $(this).val();
+            return {search_content: params.term, selected_location_id: selectedLocationId}
+        },
+
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.name,
+                        id: item.domain
+                    }
+                })
+            };
+        },
+    }
+});
+
+function getDDMMYYY(dateString) {
+    var dateParts = dateString.split("/");
+
+    return new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
 }

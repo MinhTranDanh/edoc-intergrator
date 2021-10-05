@@ -14,10 +14,24 @@
                         <fmt:formatDate type="both" pattern="dd/MM/yyyy HH:mm:ss" value="${now}"/> ) </small>
                 </h3>
             </div>
-            <div class="col-md-1 col-sm-6 col-xs-12">
-                <h3 class="public-stat-total">
+            <div class="col-md-1 col-sm-6 col-xs-12" style="text-align: center">
+                <h3 class="public-stat-total" style="  height: 55px ">
                     <small>
-                        <span class="label label-success pull-right">
+                        <span class="label label-success pull-left" style="width: 130px; text-align: left ;">
+                            <spring:message code="edoc.report.sent"/>
+                            <span id="sendReport">
+                            </span>
+                        </span>
+                    </small>
+                    <small>
+                        <span class="label label-success pull-left" style="width: 130px; text-align: left">
+                            <spring:message code="edoc.report.received"/>
+                            <span id="receivedReport">
+                            </span>
+                        </span>
+                    </small>
+                    <small>
+                        <span class="label label-success pull-left" style="width: 130px; text-align: left">
                             <spring:message code="edoc.report.total"/>
                             <span id="totalReport">
                             </span>
@@ -44,7 +58,13 @@
                 </div>
             </div>
             <div class="col-md-2 col-sm-6 col-xs-12">
-                <input class="form-control" type="search" id="statDetailSearch" value="" placeholder="Nhập từ khóa...">
+<%--                <input class="form-control" type="search" id="statDetailSearch" value="" placeholder="Nhập từ khóa...">--%>
+<%--                <br>--%>
+                <select class="form-control" multiple="" id="searchToOrgan">
+                    <select class="form-control" multiple="" id="toOrganSearch">
+
+                    </select>
+                </select>
             </div>
             <ul class="nav navbar-top-links report-action">
                 <li>

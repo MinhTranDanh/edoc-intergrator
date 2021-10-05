@@ -2,11 +2,10 @@ package com.bkav.edoc.web.controller;
 
 import com.bkav.edoc.service.database.cache.DocumentCacheEntry;
 import com.bkav.edoc.service.database.entity.*;
-import com.bkav.edoc.service.database.util.EdocAttachmentServiceUtil;
-import com.bkav.edoc.service.database.util.EdocDailyCounterServiceUtil;
-import com.bkav.edoc.service.database.util.EdocDocumentServiceUtil;
-import com.bkav.edoc.service.database.util.UserServiceUtil;
+import com.bkav.edoc.service.database.util.*;
+import com.bkav.edoc.service.mineutil.Mapper;
 import com.bkav.edoc.service.xml.base.util.DateUtils;
+import com.bkav.edoc.service.xml.status.header.MessageStatus;
 import com.bkav.edoc.web.util.ExcelUtil;
 import com.bkav.edoc.web.util.PropsUtil;
 import com.vpcp.services.model.FullUnit;
@@ -30,8 +29,63 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+
+import com.bkav.edoc.service.commonutil.Checker;
+import com.bkav.edoc.service.commonutil.ConvertDomainUtil;
+import com.bkav.edoc.service.commonutil.XmlChecker;
+import com.bkav.edoc.service.database.cache.AttachmentCacheEntry;
+import com.bkav.edoc.service.database.entity.EdocDocument;
+import com.bkav.edoc.service.database.entity.EdocDynamicContact;
+import com.bkav.edoc.service.database.entity.EdocTrace;
+import com.bkav.edoc.service.database.services.*;
+import com.bkav.edoc.service.kernel.util.GetterUtil;
+import com.bkav.edoc.service.memcached.MemcachedKey;
+import com.bkav.edoc.service.memcached.MemcachedUtil;
+import com.bkav.edoc.service.mineutil.*;
+import com.bkav.edoc.service.redis.RedisKey;
+import com.bkav.edoc.service.redis.RedisUtil;
+import com.bkav.edoc.service.resource.EdXmlConstant;
+import com.bkav.edoc.service.resource.StringPool;
+import com.bkav.edoc.service.util.CommonUtil;
+import com.bkav.edoc.service.util.ResponseUtil;
+import com.bkav.edoc.service.vpcp.ServiceVPCP;
+import com.bkav.edoc.service.xml.base.attachment.Attachment;
+import com.bkav.edoc.service.xml.base.header.Error;
+import com.bkav.edoc.service.xml.base.header.*;
+import com.bkav.edoc.service.xml.base.util.DateUtils;
+import com.bkav.edoc.service.xml.ed.Ed;
+import com.bkav.edoc.service.xml.ed.header.MessageHeader;
+import com.bkav.edoc.service.xml.status.header.MessageStatus;
+import com.vpcp.services.model.SendEdocResult;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
+import org.apache.log4j.Logger;
+import org.apache.synapse.ManagedLifecycle;
+import org.apache.synapse.MessageContext;
+import org.apache.synapse.SynapseLog;
+import org.apache.synapse.core.SynapseEnvironment;
+import org.apache.synapse.core.axis2.Axis2MessageContext;
+import org.apache.synapse.mediators.AbstractMediator;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+
 @RestController
 public class PublicStatRestController {
+
+    private final Mapper mapper = new Mapper();
 
     @RequestMapping(value = "/public/-/stat/detail", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<EPublicStat> getStatDetail(@RequestParam(value = "fromDate", required = false) String fromDate,
@@ -40,6 +94,22 @@ public class PublicStatRestController {
         boolean isGetAllAgency = false;
         if (keyword == null) {
             if (fromDate == null || toDate == null) {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder buider = null;
+                File f = new File("/home/huynq/edoc_Minhtd/edoc-integrator/edoc-service/src/main/resources/edoc_new.edxml");
+                try {
+                    buider = factory.newDocumentBuilder();
+                    Document doc = buider.parse(f);
+
+                    System.out.println(doc.toString());
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                }
+
                 return EdocDailyCounterServiceUtil.getStatsDaily(null, null, null, isGetAllAgency);
             } else {
                 Date fromDateValue = DateUtils.parse(fromDate);

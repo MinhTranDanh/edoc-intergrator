@@ -16,6 +16,7 @@ package com.bkav.edoc.service.kernel.util;
 
 import java.util.Map;
 
+
 /**
  * Provides utility methods for escaping, rendering, replacing, and stripping
  * HTML text. This class uses XSS recommendations from <a

@@ -2,7 +2,7 @@ package com.bkav.edoc.service.commonutil;
 
 import com.bkav.edoc.service.xml.base.header.Organization;
 import org.apache.log4j.Logger;
-import sun.invoke.empty.Empty;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;

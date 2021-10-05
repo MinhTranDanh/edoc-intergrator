@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class DynamicRestContactController {
@@ -72,6 +69,29 @@ public class DynamicRestContactController {
         try {
             long organ_Id = Long.parseLong(organId);
             EdocDynamicContact organ = EdocDynamicContactServiceUtil.findDynamicContactById(organ_Id);
+            if (organ != null) {
+                return new ResponseEntity<>(organ, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(value = "/contact/-/document/searchcontacts", //
+            method = RequestMethod.GET, //
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ResponseBody
+    public ResponseEntity<List<OrganizationCacheEntry>> getAllOrgan(@RequestParam(value = "search_content", required = false) String search_content) {
+
+        try {
+            List<OrganizationCacheEntry> organ ;
+            if (search_content != null) {
+                organ = EdocDynamicContactServiceUtil.searchByName(search_content);
+            } else {
+                organ = EdocDynamicContactServiceUtil.getAllContacts();
+            }
+               organ = EdocDynamicContactServiceUtil.filterReportSearch(search_content , organ);
             if (organ != null) {
                 return new ResponseEntity<>(organ, HttpStatus.OK);
             }
@@ -179,15 +199,15 @@ public class DynamicRestContactController {
         Response response = null;
         try {
             if (validateUtil.checkExtensionFile(file)) {
-                if(validateUtil.checkHeaderExcelFileForOrgan(file)) {
-                    Map<String, Object>  map = ExcelUtil.importOrganFromExcel(file);
+                if (validateUtil.checkHeaderExcelFileForOrgan(file)) {
+                    Map<String, Object> map = ExcelUtil.importOrganFromExcel(file);
                     List<ImportExcelError> importExcelErrors = (List<ImportExcelError>) map.get("errors");
                     if (importExcelErrors.size() > 0) {
                         List<String> errors = messageSourceUtil.convertToMessage(importExcelErrors);
                         response = new Response(400, new ArrayList<>(), messageSourceUtil.getMessage("data.invalid", null));
                     } else {
                         List<EdocDynamicContact> organs = (List<EdocDynamicContact>) map.get("organs");
-                        for (EdocDynamicContact organ: organs) {
+                        for (EdocDynamicContact organ : organs) {
                             EdocDynamicContactServiceUtil.createContact(organ);
                         }
                         logger.info("Convert data from excel success with organ size " + organs.size() + "!!!!!!!!");

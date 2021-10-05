@@ -275,14 +275,11 @@
                     <label class="control-label"><spring:message code="edoc.search.fromOrgan"/></label>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12" style="padding-left: 0px;">
-                    <select class="form-control" multiple="multiple" id="fromOrganSearch">
-                        <%
-                            for (OrganizationCacheEntry organization : organizationCacheEntries) {
-                        %>
-                        <option value="<%=organization.getDomain()%>"><%=organization.getName()%></option><%
-                        }
-                    %>
+                    <select class="form-control" multiple="multiple" id="fromOrgan">
+                        <select class="form-control" multiple="multiple" id="fromOrganSearch">
+                        </select>
                     </select>
+
                 </div>
             </div>
             <br>
@@ -291,15 +288,17 @@
                     <label class="control-label"><spring:message code="edoc.search.toOrgan"/></label>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12" style="padding-left: 0px;">
-                    <select class="form-control" multiple="multiple" id="toOrganSearch">
-                        <%
-                            for (OrganizationCacheEntry organization : organizationCacheEntries) {
-                        %>
-                        <option value="<%=organization.getDomain()%>"><%=organization.getName()%>
-                        </option>
-                        <%
-                            }
-                        %>
+                    <select class="form-control" multiple="multiple" id="searchToOrgan">
+                        <select class="form-control" multiple="multiple" id="toOrganSearch">
+                            <%--<%
+                                for (OrganizationCacheEntry organization : organizationCacheEntries) {
+                            %>
+                            <option value="<%=organization.getDomain()%>"><%=organization.getName()%>
+                            </option>
+                            <%
+                                }
+                            %>--%>
+                        </select>
                     </select>
                 </div>
             </div>
@@ -320,7 +319,8 @@
                     <a href="javascript:void(0)" type="" class="btn btn-info" id="btn-searchFilter-reset">
                         <span><spring:message code="edoc.search.eraser"/></span>
                     </a>&nbsp;
-                    <a href="javascript:void(0)" class="btn btn-success" id="btn-searchFilter-confirm" style="text-align: center;">
+                    <a href="javascript:void(0)" class="btn btn-success" id="btn-searchFilter-confirm"
+                       style="text-align: center;">
                         <span><spring:message code="edoc.search.search"/></span>
                     </a>
                 </div>
@@ -366,3 +366,11 @@
         </li>
     </ul>
 </nav>
+<script src="<c:url value="/asset/js/jquery.min.js"/>"></script>
+<script src="<c:url value="/asset/js/select2.min.js"/>"></script>
+<script>
+
+
+
+
+</script>

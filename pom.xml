@@ -241,8 +241,14 @@
                 <artifactId>lombok</artifactId>
                 <version>${org.lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.interceptor</groupId>
+                <artifactId>javax.interceptor-api</artifactId>
+                <version>1.2.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -287,6 +293,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+
                             <!--This parameter disables doclint-->
                             <doclint>none</doclint>
                         </configuration>

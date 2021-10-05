@@ -34,12 +34,12 @@ public class EdocAttachmentService {
         return edocAttachment;
     }
 
-    /**
-     * get list edoc attachment
-     *
-     * @param docId
-     * @return
-     */
+//    /**
+//     * get list edoc attachment
+//     *
+//     * @param docId
+//     * @return
+//     */
     public List<EdocAttachment> getEdocAttachmentsByDocId(long docId) {
         return attachmentDaoImpl.getAttachmentsByDocumentId(docId);
     }
@@ -52,13 +52,13 @@ public class EdocAttachmentService {
         return attachmentDaoImpl.deleteAttachment(attachment);
     }
 
-    /**
-     * get list attachment
-     *
-     * @param documentId
-     * @return
-     * @throws IOException
-     */
+//    /**
+//     * get list attachment
+//     *
+//     * @param documentId
+//     * @return
+//     * @throws IOException
+//     */
     public List<Attachment> getAttachmentsByDocumentId(long documentId) throws IOException {
 
         List<EdocAttachment> attachments = attachmentDaoImpl.getAttachmentsByDocumentId(documentId);

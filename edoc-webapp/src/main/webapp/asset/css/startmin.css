@@ -2121,7 +2121,7 @@ button.btn-open {
 }
 
 .dialog_box {
-    width: 350px;
+    /*width: 350px;*/
     min-height: 250px;
     background: #ffffff;
     border-radius: 5px;
@@ -2129,7 +2129,7 @@ button.btn-open {
     position: fixed;
     /*top: 11.9%;*/
     top:110px;
-    left: 38.8%;
+    left: 717px;
     margin-top: -60px;
     margin-left: -150px;
     z-index: 2;

@@ -45,10 +45,11 @@ body{
 
 header.public-header {
     background: #576ACC;
+    width: 100%;
 }
 
 header.public-header h3 {
-    margin: 15px 0 !important;
+    margin: 15px 0 ;
     color: #ffffff;
 }
 
