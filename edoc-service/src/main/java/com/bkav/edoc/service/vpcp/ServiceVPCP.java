@@ -170,14 +170,16 @@ public class ServiceVPCP {
                                         LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                         // TayNinh integrator new domain
                                         if (isTayNinh) {
-                                            EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                            convertToOldFormatDomain(messageHeader);
+
+                                            /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                             if (contact == null) {
                                                 String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
                                                 LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                                 Organization oldOrganFormat = messageHeader.getFrom();
                                                 oldOrganFormat.setOrganId(oldDomain);
                                                 messageHeader.setFrom(oldOrganFormat);
-                                            }
+                                            }*/
                                         }
                                         //------------------------------------------------------
 
@@ -188,14 +190,16 @@ public class ServiceVPCP {
                                     LOGGER.info("--------- Prepare to save the document to the database ------ " + messageHeader.getDocumentId());
                                     // TayNinh integrator new domain
                                     if (isTayNinh) {
-                                        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+                                        convertToOldFormatDomain(messageHeader);
+
+                                        /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
                                         if (contact == null) {
                                             String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
                                             LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
                                             Organization oldOrganFormat = messageHeader.getFrom();
                                             oldOrganFormat.setOrganId(oldDomain);
                                             messageHeader.setFrom(oldOrganFormat);
-                                        }
+                                        }*/
                                     }
                                     //------------------------------------------------------
 
@@ -354,9 +358,20 @@ public class ServiceVPCP {
         return result;
     }
 
+    private void convertToOldFormatDomain(MessageHeader messageHeader) {
+        EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
+        if (contact == null) {
+            String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
+            LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
+            Organization oldOrganFormat = messageHeader.getFrom();
+            oldOrganFormat.setOrganId(oldDomain);
+            messageHeader.setFrom(oldOrganFormat);
+        }
+    }
+
     public void GetDocumentsTest() throws IOException, ParserException {
         // Get list documents sent from VPCP
-        String filePath = "/home/quangcv/backup-school/edoc-integrator/edoc-webapp/src/main/resources/e5f4e280-55b3-460f-be38-e57b80bc3b0d.edxml";
+        String filePath = "/home/edoc-integrator/edoc-webapp/src/main/resources/e5f4e280-55b3-460f-be38-e57b80bc3b0d.edxml";
         //parse data from edxml
         File file = new File(filePath);
         InputStream inputStream = new FileInputStream(file);

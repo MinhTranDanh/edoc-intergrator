@@ -62,7 +62,7 @@ public class ServiceVPCP {
         try {
             GetAgenciesResult getAgenciesResult = this.agencyService.getAgenciesList("{}");
             if (getAgenciesResult != null) {
-                LOGGER.info("--------------------------------------------------- " + "status:" + getAgenciesResult.getStatus());
+                LOGGER.info("--------------------------------------------------- " + "Status:" + getAgenciesResult.getStatus());
                 LOGGER.info("--------------------------------------------------- " + "Desc:" + getAgenciesResult.getErrorDesc());
                 LOGGER.info("--------------------------------------------------- " + "Size:" + getAgenciesResult.getAgencies().size());
                 List<Agency> agencies = getAgenciesResult.getAgencies();

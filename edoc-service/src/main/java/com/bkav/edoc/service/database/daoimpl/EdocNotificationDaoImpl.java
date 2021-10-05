@@ -68,7 +68,6 @@ public class EdocNotificationDaoImpl extends RootDaoImpl<EdocNotification, Long>
         } finally {
             closeCurrentSession(session);
         }
-
     }
 
     //MinhTDb
