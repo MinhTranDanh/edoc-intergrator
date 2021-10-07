@@ -36,7 +36,7 @@ public class EdocDailyCounterService {
     }
     //MinhTD
     //****** Using for Tay Ninh
-    /*public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+    public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
 
         vpubnd_sent = 0; vpubnd_received = 0;
 
@@ -150,7 +150,7 @@ public class EdocDailyCounterService {
         }
 
         return ePublicStats;
-    }*/
+    }
    /* public List<EPublicStat> getStatsDailyforScheduler(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
 
         List<EPublicStat> ePublicStats = new ArrayList<>();
@@ -301,7 +301,7 @@ public class EdocDailyCounterService {
 
 
     // Service using for Lam Dong.
-    public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
+    /*public List<EPublicStat> getStatsDetail(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {
         List<EPublicStat> ePublicStats = new ArrayList<>();
         vpubnd_sent = 0;
         vpubnd_received = 0;
@@ -380,7 +380,7 @@ public class EdocDailyCounterService {
             edocDailyCounterDao.closeCurrentSession(session);
         }
         return ePublicStats;
-    }
+    }*/
 
 
     public List<EPublicStat> getStatsDailyforScheduler(Date fromDate, Date toDate, String keyword, boolean isGetAllAgency) {

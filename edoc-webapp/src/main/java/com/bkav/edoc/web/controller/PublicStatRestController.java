@@ -94,23 +94,7 @@ public class PublicStatRestController {
         boolean isGetAllAgency = false;
         if (keyword == null) {
             if (fromDate == null || toDate == null) {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder buider = null;
-                File f = new File("/home/huynq/edoc_Minhtd/edoc-integrator/edoc-service/src/main/resources/edoc_new.edxml");
-                try {
-                    buider = factory.newDocumentBuilder();
-                    Document doc = buider.parse(f);
-
-                    System.out.println(doc.toString());
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                }
-
-                return EdocDailyCounterServiceUtil.getStatsDaily(null, null, null, isGetAllAgency);
+                return EdocDailyCounterServiceUtil.getStatsDetail(null, null, null, isGetAllAgency);
             } else {
                 Date fromDateValue = DateUtils.parse(fromDate);
                 Date toDateValue = DateUtils.parse(toDate);
@@ -118,7 +102,7 @@ public class PublicStatRestController {
             }
         } else {
             if (fromDate == null || toDate == null) {
-                return EdocDailyCounterServiceUtil.getStatsDaily(null, null, keyword, isGetAllAgency);
+                return EdocDailyCounterServiceUtil.getStatsDetail(null, null, keyword, isGetAllAgency);
             } else {
                 Date fromDateValue = DateUtils.parse(fromDate);
                 Date toDateValue = DateUtils.parse(toDate);
