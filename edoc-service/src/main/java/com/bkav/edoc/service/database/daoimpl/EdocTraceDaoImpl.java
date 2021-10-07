@@ -43,32 +43,13 @@ public class EdocTraceDaoImpl extends RootDaoImpl<EdocTrace, Long> implements Ed
                     if (fromTime != null) {
                         sql.append("SELECT et FROM EdocTrace et, EdocDynamicContact edc where et.toOrganDomain = edc.domain " +
                                 "and edc.integratorCenter = :integratorCenter and et.timeStamp >= :fromTime order by et.timeStamp DESC");
-                        /*sql.append("SELECT et FROM EdocTrace et where et.toOrganDomain like concat('%' ,:responseForOrganId, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId1, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId2, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId3, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId4, '%')" +
-                                " and et.timeStamp >= :fromTime order by et.timeStamp DESC");*/
                     } else {
                         sql.append("SELECT et FROM EdocTrace et, EdocDynamicContact edc where et.toOrganDomain = edc.domain " +
                                 "and edc.integratorCenter = :integratorCenter and et.enable=:enable order by et.timeStamp DESC");
-                        /*sql.append("SELECT et FROM EdocTrace et where et.toOrganDomain like concat('%' ,:responseForOrganId, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId1, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId2, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId3, '%')" +
-                                " or et.toOrganDomain like concat('%' ,:responseForOrganId4, '%')" +
-                                " and et.enable=:enable order by et.timeStamp DESC");*/
+
                     }
                     query = currentSession.createQuery(sql.toString(), EdocTrace.class);
                     query.setParameter("integratorCenter", true);
-                    /*String[] listOrgan = PropsUtil.get("edoc.integrator.center.lamdong").split("\\|");
-                    System.out.println(sql);
-                    query = currentSession.createQuery(sql.toString(), EdocTrace.class);
-                    query.setParameter("responseForOrganId", listOrgan[0]);
-                    query.setParameter("responseForOrganId1", listOrgan[1]);
-                    query.setParameter("responseForOrganId2", listOrgan[2]);
-                    query.setParameter("responseForOrganId3", listOrgan[3]);
-                    query.setParameter("responseForOrganId4", listOrgan[4]);*/
                 }
             } else {
                 if (fromTime != null) {
