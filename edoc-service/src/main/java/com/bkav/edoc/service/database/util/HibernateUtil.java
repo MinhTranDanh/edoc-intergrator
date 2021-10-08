@@ -72,7 +72,7 @@ public class HibernateUtil {
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/User.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/Counter.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/EdocDailyCounter.hbm.xml"));
-                configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/EdocStatDaily.hbm.xml"));
+//                configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/EdocStatDaily.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelUserHeader.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelOrganHeader.hbm.xml"));
                 configuration.addInputStream(HibernateUtil.class.getClassLoader().getResourceAsStream("entity/ExcelDailyCounterHeader.hbm.xml"));

@@ -228,7 +228,7 @@ public class Mapper {
             status.setDescription(trace.getComment());
             // check and add "0"
             String statusCode = "";
-            if (trace.getStatusCode() < 10 || trace.getStatusCode() >= 0) {
+            if (trace.getStatusCode() < 10 && trace.getStatusCode() >= 0) {
                 statusCode = "0" + String.valueOf(trace.getStatusCode());
             } else {
                 statusCode = String.valueOf(trace.getStatusCode());

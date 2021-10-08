@@ -68,6 +68,6 @@ public class TokenUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(getRandomNumber("000.06.22.H53", "TienQD1"));
+        System.out.println(getRandomNumber("000.02.20.Z36", "TienQD2"));
     }
 }
