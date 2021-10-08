@@ -36,23 +36,34 @@ let edocDocument = {
         let url = "/documents?mode=" + instance.appSetting.mode;
 
         // need to optimize.....
-        // if (fromOrgan !== null || toOrgan !== null || docCode !== null) {
-        //     if (fromOrgan !== null && toOrgan === null && docCode === null) {
-        //         url = url + "&fromOrgan=" + fromOrgan;
-        //     } else if (fromOrgan === null && toOrgan !== null && docCode === null) {
-        //         url = url + "&toOrgan=" + toOrgan;
-        //     } else if (fromOrgan === null && toOrgan === null && docCode !== null) {
-        //         url = url + "&docCode=" + docCode;
-        //     } else if (fromOrgan !== null && toOrgan !== null && docCode === null) {
-        //         url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan;
-        //     } else if (fromOrgan !== null && toOrgan === null && docCode !== null) {
-        //         url = url + "&fromOrgan=" + fromOrgan + "&docCode=" + docCode;
-        //     } else if (fromOrgan === null && toOrgan !== null && docCode !== null) {
-        //         url = url + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
-        //     } else {
-        //         url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
-        //     }
-        // }
+        /*if (fromOrgan !== null || toOrgan !== null || docCode !== null) {
+            if (fromOrgan !== null && toOrgan === null && docCode === null) {
+                url = url + "&fromOrgan=" + fromOrgan;
+            } else if (fromOrgan === null && toOrgan !== null && docCode === null) {
+                url = url + "&toOrgan=" + toOrgan;
+            } else if (fromOrgan === null && toOrgan === null && docCode !== null) {
+                url = url + "&docCode=" + docCode;
+            } else if (fromOrgan !== null && toOrgan !== null && docCode === null) {
+                url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan;
+            } else if (fromOrgan !== null && toOrgan === null && docCode !== null) {
+                url = url + "&fromOrgan=" + fromOrgan + "&docCode=" + docCode;
+            } else if (fromOrgan === null && toOrgan !== null && docCode !== null) {
+                url = url + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
+            } else {
+                url = url + "&fromOrgan=" + fromOrgan + "&toOrgan=" + toOrgan + "&docCode=" + docCode;
+            }
+        }*/
+
+        if(fromOrgan != null){
+            url = url + "&fromOrgan=" + fromOrgan;
+        }
+        if(toOrgan != null){
+            url = url + "&toOrgan=" + toOrgan;
+        }
+        if(docCode != null){
+            url = url + "&docCode=" + docCode;
+        }
+
         console.log(url);
         instance.appSetting.dataTable = $('#dataTables-edoc').DataTable({
             serverSide: true,
@@ -1029,7 +1040,7 @@ $(document).ready(function () {
         fromOrgan = ($("#fromOrgan").val() === "" ? null : $("#fromOrgan").val());
         toOrgan = ($("#toOrgan").val() === "" ? null : $("#toOrgan").val());
         docCode = ($("#docCodeSearch").val() === "" ? null : $("#docCodeSearch").val());
-
+        console.log(docCode);
 
         $("#searchFilter").toggle();
         edocDocument.appSetting.dataTable.clear();
