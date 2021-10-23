@@ -269,7 +269,7 @@ public class DocumentRestController {
         String userLog = new String(Base64.decode(userLogin), StandardCharsets.UTF_8);
         User user = new Gson().fromJson(userLog, User.class);
         String admin = user.getUsername();
-
+        System.out.println("..........."+toOrgan);
         DatatableRequest<DocumentCacheEntry> datatableRequest = new DatatableRequest<>(request);
         PaginationCriteria pagination = datatableRequest.getPaginationRequest();
         int totalCount;
