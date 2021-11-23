@@ -8,6 +8,7 @@ import com.bkav.edoc.service.database.util.EdocNotificationServiceUtil;
 import com.bkav.edoc.service.xml.base.util.DateUtils;
 import com.bkav.edoc.web.util.MessageSourceUtil;
 import com.bkav.edoc.web.util.PropsUtil;
+import com.bkav.edoc.web.util.SendMessageTelegramUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -46,12 +47,12 @@ public class SendMessageToTelegramBean {
             if (messageObject.size() == 0) {
                 LOGGER.info("ALL OF ORGANIZATION TAKEN DOCUMENT!!!!!!!");
                 warningMessage += messageSourceUtil.getMessage("edoc.title.all.taken", new Object[]{SIMPLE_DATE_FORMAT.format(today)});
-                sendTelegramMessage(warningMessage);
+                SendMessageTelegramUtil.sendMessage(false, warningMessage);
                 //System.out.println(warningMessage);
             } else {
                 warningMessage += messageSourceUtil.getMessage("edoc.title.telegram",
                         new Object[]{DateUtils.format(today, DateUtils.VN_DATE_FORMAT), messageObject.size()});
-                sendTelegramMessage(warningMessage);
+                SendMessageTelegramUtil.sendMessage(false, warningMessage);
                 //System.out.println(warningMessage);
 
                 String detailMessageOrgan = "";
@@ -68,14 +69,14 @@ public class SendMessageToTelegramBean {
                         String msg = messageSourceUtil.getMessage("edoc.telegram.detail.msg", new Object[]{sender, value});
                         detailMessageOrgan += msg;
                         if (detailMessageOrgan.length() > 3500) {
-                            sendTelegramMessage(detailMessageOrgan);
+                            SendMessageTelegramUtil.sendMessage(false, detailMessageOrgan);
                             //System.out.println(detailMessageOrgan);
                             detailMessageOrgan = "";
                         }
                         TimeUnit.SECONDS.sleep(1);
                         i++;
                 }
-                sendTelegramMessage(detailMessageOrgan);
+                SendMessageTelegramUtil.sendMessage(false, detailMessageOrgan);
                 //System.out.println(detailMessageOrgan);
             }
             TimeUnit.MINUTES.sleep(2);
@@ -85,7 +86,7 @@ public class SendMessageToTelegramBean {
         }
     }
 
-    private void sendTelegramMessage(String inputString) throws IOException {
+    /*private void sendTelegramMessage(String inputString) throws IOException {
         String urlString = "https://api.telegram.org/bot%s/sendMessage";
 
         String result = "";
@@ -128,7 +129,7 @@ public class SendMessageToTelegramBean {
         } finally {
             httpclient.close();
         }
-    }
+    }*/
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private final static Logger LOGGER = Logger.getLogger(SendMessageToTelegramBean.class);

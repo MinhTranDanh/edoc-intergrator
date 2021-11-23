@@ -144,6 +144,7 @@ public class ServiceVPCP {
                                 // create trace header list
                                 //Get trace header list
                                 TraceHeaderList traceHeaderList = ed.getHeader().getTraceHeaderList();
+                                LOGGER.info("---> Trace header list value is " + ed.getHeader().getTraceHeaderList());
                                 LOGGER.info("Get successfully TraceHeader from file " + getEdocResult.getFilePath());
                                 //Get attachment
                                 List<Attachment> attachments = ed.getAttachments();
@@ -157,11 +158,14 @@ public class ServiceVPCP {
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
                                 boolean isTayNinh = GetterUtil.getBoolean(PropsUtil.get("edoc.check.organ.is.tayninh"), false);
+                                LOGGER.info("Service run in TAYNINH "+ isTayNinh);
 
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {
                                     // check exist document
+                                    LOGGER.info("-------- Get toes Organ from MessageHeader ---------");
                                     String toesOrgan = CommonUtil.getToOrganDomain(messageHeader.getToes());
+                                    LOGGER.info("Toes Organ is " + toesOrgan);
                                     LOGGER.info("Starting check exist document in esb !!!");
                                     if (EdocDocumentServiceUtil.checkExistDocument(messageHeader.getDocumentId(), toesOrgan)) {
                                         LOGGER.info("Exist document with document id " + messageHeader.getDocumentId() + " and to organs " + messageHeader.getToes().toString() + " on Esb !!!!!");
@@ -171,15 +175,6 @@ public class ServiceVPCP {
                                         // TayNinh integrator new domain
                                         if (isTayNinh) {
                                             convertToOldFormatDomain(messageHeader);
-
-                                            /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
-                                            if (contact == null) {
-                                                String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
-                                                LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
-                                                Organization oldOrganFormat = messageHeader.getFrom();
-                                                oldOrganFormat.setOrganId(oldDomain);
-                                                messageHeader.setFrom(oldOrganFormat);
-                                            }*/
                                         }
                                         //------------------------------------------------------
 
@@ -191,15 +186,6 @@ public class ServiceVPCP {
                                     // TayNinh integrator new domain
                                     if (isTayNinh) {
                                         convertToOldFormatDomain(messageHeader);
-
-                                        /*EdocDynamicContact contact = EdocDynamicContactServiceUtil.findContactByDomain(messageHeader.getFrom().getOrganId());
-                                        if (contact == null) {
-                                            String oldDomain = converter.convertToOlaDomainFormat(messageHeader.getFrom().getOrganId());
-                                            LOGGER.info("-----> Convert new domain " + messageHeader.getFrom().getOrganId() + " to old domain " + oldDomain);
-                                            Organization oldOrganFormat = messageHeader.getFrom();
-                                            oldOrganFormat.setOrganId(oldDomain);
-                                            messageHeader.setFrom(oldOrganFormat);
-                                        }*/
                                     }
                                     //------------------------------------------------------
 

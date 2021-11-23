@@ -8,6 +8,7 @@ import com.bkav.edoc.service.database.util.EdocNotificationServiceUtil;
 import com.bkav.edoc.service.xml.base.util.DateUtils;
 import com.bkav.edoc.web.util.MessageSourceUtil;
 import com.bkav.edoc.web.util.PropsUtil;
+import com.bkav.edoc.web.util.SendMessageTelegramUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -43,12 +44,12 @@ public class DocumentNotSendVPCPBean {
             if (messageListNotSendVPCP.size() == 0) {
                 LOGGER.info("ALL OF DOCUMENT SEND TO VPCP SUCCESS !!!!!!!");
                 warningMessageVPCP += messageSourceUtil.getMessage("edoc.title.all.send.vpcp", new Object[]{SIMPLE_DATE_FORMAT.format(today)});
-                sendTelegramMessage(warningMessageVPCP);
+                SendMessageTelegramUtil.sendMessage(false, warningMessageVPCP);
                 //System.out.println(warningMessageVPCP);
             } else {
                 warningMessageVPCP += messageSourceUtil.getMessage("edoc.title.telegram.vpcp",
                         new Object[]{DateUtils.format(today, DateUtils.VN_DATE_FORMAT), messageListNotSendVPCP.size()});
-                sendTelegramMessage(warningMessageVPCP);
+                SendMessageTelegramUtil.sendMessage(false, warningMessageVPCP);
                 //System.out.println(warningMessageVPCP);
 
                 String detailMessageOrganVPCP = "";
@@ -65,14 +66,14 @@ public class DocumentNotSendVPCPBean {
                     String msg = messageSourceUtil.getMessage("edoc.telegram.vpcp.detail.msg", new Object[]{telegramMessageVPCP.getReceiverName(), transactionStatus});
                     detailMessageOrganVPCP += msg;
                     if (detailMessageOrganVPCP.length() > 3500) {
-                        sendTelegramMessage(detailMessageOrganVPCP);
+                        SendMessageTelegramUtil.sendMessage(false, detailMessageOrganVPCP);
                         //System.out.println(detailMessageOrganVPCP);
                         detailMessageOrganVPCP = "";
                     }
                     TimeUnit.SECONDS.sleep(2);
                     i++;
                 }
-                sendTelegramMessage(detailMessageOrganVPCP);
+                SendMessageTelegramUtil.sendMessage(false, detailMessageOrganVPCP);
                 //System.out.println(detailMessageOrganVPCP);
             }
         } catch (Exception e) {
@@ -80,7 +81,7 @@ public class DocumentNotSendVPCPBean {
         }
     }
 
-    private void sendTelegramMessage(String inputString) throws IOException {
+    /*private void sendTelegramMessage(String inputString) throws IOException {
         String urlString = "https://api.telegram.org/bot%s/sendMessage";
 
         String result = "";
@@ -123,7 +124,7 @@ public class DocumentNotSendVPCPBean {
         } finally {
             httpclient.close();
         }
-    }
+    }*/
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private final static Logger LOGGER = Logger.getLogger(DocumentNotSendVPCPBean.class);
