@@ -51,10 +51,10 @@ public class LoginController {
 
         if (code == null || session_state == null) {
             OAuthClientRequest authRequest = Oauth2Config.buildOauthRequest(request);
+            System.out.println(authRequest.getLocationUri());
             response.sendRedirect(authRequest.getLocationUri());
             return;
         }
-
         //String tokenSSO = CookieUtil.getValue(request, OAuth2Constants.TOKEN_SSO);
 
         String tokenSSO = getTokenSSO(request, response, code);

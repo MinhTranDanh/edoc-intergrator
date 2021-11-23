@@ -98,10 +98,14 @@
                                         <div class="staff-handler>
                                             <span><i class="fa fa-info-circle fa-fw"></i>${app_message.edoc_main_handler}</span> <span><b>${staffName}</b></span>
                                         </div>
+                                        <div class="staff-comment">
+                                            <span>${app_message.edoc_handler_comment}</span> <span class="comment-trace">${comment}</span>
+                                        </div>
                                     </div>
                                     <div class="col-md-5 col-xs-5 text-right" id="time-trace">
                                         <span><i class="fa fa-clock-o"></i> ${convertToDate(timeStamp).formatDate()} ${convertToDate(timeStamp).formatTime()}</span>
                                     </div>
+
                                 </div>
                             </div>
                         {{/each}}
