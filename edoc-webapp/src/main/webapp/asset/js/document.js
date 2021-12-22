@@ -1038,10 +1038,10 @@ $(document).ready(function () {
 
     $("#btn-searchFilter-confirm").on('click', function (e) {
         fromOrgan = ($("#fromOrgan").val() === "" ? null : $("#fromOrgan").val());
-        toOrgan = ($("#toOrgan").val() === "" ? null : $("#toOrgan").val());
+        toOrgan = ($("#searchToOrgan").val() === "" ? null : $("#searchToOrgan").val());
         docCode = ($("#docCodeSearch").val() === "" ? null : $("#docCodeSearch").val());
         console.log(docCode);
-
+        console.log(toOrgan)
         $("#searchFilter").toggle();
         edocDocument.appSetting.dataTable.clear();
         edocDocument.renderDatatable(fromOrgan, toOrgan, docCode);

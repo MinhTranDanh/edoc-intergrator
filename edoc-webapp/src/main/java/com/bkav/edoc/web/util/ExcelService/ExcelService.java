@@ -606,7 +606,7 @@ public class ExcelService {
 */
 
     public void ExportDailyCounterToExcel(HttpServletResponse response, Date fromDate, Date toDate, String keyword, List<Integer> arr) throws IOException {
-        List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel();
+        List<EPublicStat> eStats = EdocDailyCounterServiceUtil.getStatDetailForExcel(fromDate, toDate, keyword , false);
         List<EPublicStat> sortedListStat = eStats.stream().sorted(Comparator.comparing(EPublicStat::getTotal).reversed()).collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
