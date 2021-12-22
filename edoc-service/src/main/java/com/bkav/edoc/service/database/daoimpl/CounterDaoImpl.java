@@ -50,6 +50,7 @@ public class CounterDaoImpl extends RootDaoImpl<Counter, Long> implements Counte
         }
     }
 
+
     @Override
     public long increment(String name, int size) throws NoSuchCounterException {
         Session currentSession = openCurrentSession();

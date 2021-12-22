@@ -158,7 +158,6 @@ public class ServiceVPCP {
                                 List<Error> errors = new ArrayList<>();
                                 List<AttachmentCacheEntry> attachmentCacheEntries = new ArrayList<>();
                                 boolean isTayNinh = GetterUtil.getBoolean(PropsUtil.get("edoc.check.organ.is.tayninh"), false);
-                                LOGGER.info("Service run in TAYNINH "+ isTayNinh);
 
                                 // only check exist with new document
                                 if (EdocDocumentServiceUtil.checkNewDocument(traceHeaderList)) {

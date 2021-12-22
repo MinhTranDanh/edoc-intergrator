@@ -862,7 +862,9 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 LOGGER.info("---------------Start getDocument with organ: " + organId);
                 notifications = notificationService.getDocumentIdsByOrganId(organId);
 
+                LOGGER.info("getDocumentPending for organ " + organId + " has size: " + notifications.size());
             } catch (Exception e) {
+                LOGGER.error("getDocumentPending for organ " + organId + " error cause: " + e.getMessage());
                 log.error(e);
             }
         }
@@ -879,6 +881,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                     GetPendingDocumentIDResponse.class, response);
 
         } catch (Exception ex) {
+            LOGGER.error("convert response document pending for organ " + organId + " error cause: " + ex.getMessage());
             log.error(ex);
         }
 

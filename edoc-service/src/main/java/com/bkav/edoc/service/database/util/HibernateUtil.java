@@ -35,8 +35,8 @@ public class HibernateUtil {
                 //settings.put(Environment.POOL_SIZE, PropsUtil.get(Environment.POOL_SIZE));
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, PropsUtil.get(Environment.CURRENT_SESSION_CONTEXT_CLASS));
                 settings.put(Environment.AUTO_CLOSE_SESSION, PropsUtil.get(Environment.AUTO_CLOSE_SESSION));
-                
-                
+
+
                 // HikariCP settings
                 settings.put("hibernate.connection.provider_class", HikariCPConnectionProvider.class);
                 // Maximum waiting time for a connection from the pool
@@ -48,8 +48,8 @@ public class HibernateUtil {
                 settings.put("hibernate.hikari.maximumPoolSize", "50");
                 // Maximum time that a connection is allowed to sit ideal in the pool
                 settings.put("hibernate.hikari.idleTimeout", "30000");
-                
-                
+
+
                 // Enable second level cache (default value is true)
                 /*settings.put(Environment.USE_SECOND_LEVEL_CACHE, true);
                 // Enable Query cache
