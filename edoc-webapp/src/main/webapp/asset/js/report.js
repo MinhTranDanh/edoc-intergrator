@@ -94,8 +94,8 @@ let edocReport = {
         });
         if (fromDate !== "" && toDate !== "") {
             $("#filterLabel").html(app_message.edoc_report_filter + "<span class='time-filter'>" + fromDate + " - " + toDate + "</span>");
-            $("#fromDate").val("");
-            $("#toDate").val("");
+            $("#fromDate").val(fromDate);
+            $("#toDate").val(toDate);
         } else {
             let beginDate = new Date(new Date().getFullYear() , 0, 1).formatDate();
             let currentDate = new Date().formatDate();
@@ -106,7 +106,7 @@ let edocReport = {
         let url = "/public/-/stat/export/excel" + "?arr=" + arr;
         if (fromDate !== null && toDate !== null) {
             url = url + "&fromDate=" + fromDate + "&toDate=" + toDate;
-            console.log("have date");
+
         }
         $.ajax({
             type: "GET",
@@ -180,9 +180,10 @@ $(document).ready(function () {
         } else {
             localStorage.removeItem("fromDateReport");
             localStorage.removeItem("toDateReport");
+            edocReport.renderReportTable(fromDate, toDate, keyword);
             localStorage.setItem("fromDateReport", fromDate);
             localStorage.setItem("toDateReport", toDate);
-            edocReport.renderReportTable(fromDate, toDate, keyword);
+
         }
     });
 
@@ -196,24 +197,39 @@ $(document).ready(function () {
     });
     $(document).on('click', '#btn-choose-comfirm', function (e) {
         e.preventDefault();
-        let fromDate = localStorage.getItem("fromDateReport");
-        let toDate = localStorage.getItem("toDateReport");
-        $("#ExportDailyCounterToExcel").modal('toggle');
-        if ($("#name").prop('checked')) {
-            arr.push($("#name").val());
-            console.log("dsfgds");
+        // let fromDate = localStorage.getItem("fromDateReport");
+        // let toDate = localStorage.getItem("toDateReport");
+        let fromDate = $("#fromDate").val();
+        let toDate = $("#toDate").val();
+        keyword = ($("#searchToOrgan").val() === "" ? null : $("#searchToOrgan").val());
+        let fromDateValue = new Date(getDDMMYYY(fromDate));
+        let toDateValue = new Date(getDDMMYYY(toDate));
+        if (fromDateValue > toDateValue) {
+            $.notify(app_message.edoc_message_error_report_date, "error");
+        } else {
+            localStorage.removeItem("fromDateReport");
+            localStorage.removeItem("toDateReport");
+            $("#ExportDailyCounterToExcel").modal('toggle');
+            if ($("#name").prop('checked')) {
+                arr.push($("#name").val());
+
+            }
+            if ($("#send").prop('checked')) {
+                arr.push($("#send").val());
+            }
+            if ($("#receive").prop('checked')) {
+                arr.push($("#receive").val());
+            }
+            if ($("#count").prop('checked')) {
+                arr.push($("#count").val());
+            }
+
+            edocReport.exportExcel(fromDate, toDate, arr);
+            localStorage.setItem("fromDateReport", fromDate);
+            localStorage.setItem("toDateReport", toDate);
+
         }
-        if ($("#send").prop('checked')) {
-            arr.push($("#send").val());
-        }
-        if ($("#receive").prop('checked')) {
-            arr.push($("#receive").val());
-        }
-        if ($("#count").prop('checked')) {
-            arr.push($("#count").val());
-        }
-        console.log(arr);
-        edocReport.exportExcel(fromDate, toDate, arr);
+
     });
     $(document).on('click', '#btn-choose-cancel', function (e) {
         e.preventDefault();

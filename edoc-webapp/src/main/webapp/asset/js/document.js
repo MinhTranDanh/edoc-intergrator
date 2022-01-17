@@ -54,17 +54,17 @@ let edocDocument = {
             }
         }*/
 
-        if(fromOrgan != null){
+        if (fromOrgan != null) {
             url = url + "&fromOrgan=" + fromOrgan;
         }
-        if(toOrgan != null){
+        if (toOrgan != null) {
             url = url + "&toOrgan=" + toOrgan;
         }
-        if(docCode != null){
+        if (docCode != null) {
             url = url + "&docCode=" + docCode;
         }
 
-        console.log(url);
+
         instance.appSetting.dataTable = $('#dataTables-edoc').DataTable({
             serverSide: true,
             processing: true,
@@ -788,6 +788,25 @@ $(document).ready(function () {
                 } else {
                     toOrganNames.push(organ["name"]);
                 }
+                var subdata = [];
+                if (data.traces.length > 0) {
+                    var subtraces = [];
+                    for (let i = 0; i < data.traces.length; i++) {
+                        var sum = 0;
+                        for (let j = i; j >= 0; j --) {
+                            if (Number(data.traces[i].statusCode) == Number(data.traces[j].statusCode) && data.traces[i].staffName.toString() === data.traces[j].staffName.toString() && data.traces[i].fromOrgan.domain.toString() === data.traces[j].fromOrgan.domain.toString()) {
+                                sum++;
+                                //subdata.traces.shift(data.traces[j]);
+                            }
+                        }
+                        if (sum == 1) {
+                            //subdata.push
+                            subtraces.push(data.traces[i])
+
+                        }
+                    }
+                    data.traces = subtraces;
+                }
             });
             data.toOrganName = toOrganNames.join(", ");
             data.code = data.codeNumber + "/" + data.codeNotation;
@@ -1359,6 +1378,7 @@ function validateDocument(subject, toOrgan, codeNation, codeNumber, staffName, p
         return true;
     }
 };
+
 function formatResult(station) {
     var markup = "";
     if (station.name !== undefined) {
@@ -1383,7 +1403,7 @@ $("#fromOrgan").select2({
             return {search_content: params.term, selected_location_id: selectedLocationId}
         },
         processResults: function (data) {
-            if(data.length > 20){
+            if (data.length > 20) {
                 data.shift();
             }
             console.log(data)
@@ -1411,7 +1431,7 @@ $("#searchToOrgan").select2({
         },
 
         processResults: function (data) {
-            if(data.length > 20){
+            if (data.length > 20) {
                 data.shift();
             }
             return {

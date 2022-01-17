@@ -106,7 +106,8 @@
 
     <bean id="getOrganizationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="getOrganJobDetail"/>
-        <property name="cronExpression" value="0 */15 * ? * *"/>
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+       <!-- <property name="cronExpression" value="0 */15 * ? * *"/>-->
         <!--<property name="cronExpression" value="0 0 2 ? * *"/>-->
     </bean>
 

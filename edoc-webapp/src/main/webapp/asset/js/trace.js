@@ -31,6 +31,24 @@ let edocTrace = {
                 });
                 data.toOrganName = toOrganNames.join(", ");
                 data.code = data.codeNumber + "/" + data.codeNotation;
+                if (data.traces.length > 0) {
+                    var subtraces = [];
+                    for (let i = 0; i < data.traces.length; i++) {
+                        var sum = 0;
+                        for (let j = i; j >= 0; j --) {
+                            if (Number(data.traces[i].statusCode) == Number(data.traces[j].statusCode) && data.traces[i].staffName.toString() === data.traces[j].staffName.toString() && data.traces[i].fromOrgan.domain.toString() === data.traces[j].fromOrgan.domain.toString()) {
+                                sum++;
+                                //subdata.traces.shift(data.traces[j]);
+                            }
+                        }
+                        if (sum == 1) {
+                            //subdata.push
+                            subtraces.push(data.traces[i])
+
+                        }
+                    }
+                    data.traces = subtraces;
+                }
                 $("#publicTraceContent").empty();
                 $('#edocPublicTraceTmpl').tmpl(data).appendTo('#publicTraceContent');
             });

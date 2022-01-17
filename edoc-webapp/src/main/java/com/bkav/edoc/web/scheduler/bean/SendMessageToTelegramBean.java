@@ -68,12 +68,12 @@ public class SendMessageToTelegramBean {
                         String value = document.getDocumentId() + "," + doc_code + "(" + SIMPLE_DATE_FORMAT.format(telegramMessage.getCreateDate()) + ")";
                         String msg = messageSourceUtil.getMessage("edoc.telegram.detail.msg", new Object[]{sender, value});
                         detailMessageOrgan += msg;
-                        if (detailMessageOrgan.length() > 3500) {
+                        if (detailMessageOrgan.length() > 3000) {
                             SendMessageTelegramUtil.sendMessage(false, detailMessageOrgan);
                             //System.out.println(detailMessageOrgan);
                             detailMessageOrgan = "";
                         }
-                        TimeUnit.SECONDS.sleep(1);
+                        TimeUnit.SECONDS.sleep(3);
                         i++;
                 }
                 SendMessageTelegramUtil.sendMessage(false, detailMessageOrgan);

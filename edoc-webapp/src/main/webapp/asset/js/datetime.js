@@ -2,9 +2,11 @@ Date.prototype.formatDate = function () {
     let dd = this.getDate();
     let mm = this.getMonth();
     mm = mm + 1;
+
     return [(dd > 9 ? '' : '0') + dd,
         (mm > 9 ? '' : '0') + mm,
-        this.getUTCFullYear()
+        this.getUTCFullYear()   //lâm đồng
+       /* this.getFullYear()*/   // tây ninh
     ].join('/');
 };
 Date.prototype.formatTime = function () {
