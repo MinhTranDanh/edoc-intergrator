@@ -94,10 +94,16 @@
                                 </div>
                                 <div class="row">
                                     <div class="staff-comment col-md-7 col-xs-7" id="trace_${traceId}">
-                                        <span>${app_message.edoc_status}: <b>${getStatusOfTrace(statusCode)}</b></span>
+                                        <%--<span>${app_message.edoc_status}: <b>${getStatusOfTrace(statusCode)}</b></span>--%>
                                         <div class="staff-handler>
-                                            <span><i class="fa fa-info-circle fa-fw"></i>${app_message.edoc_main_handler}</span> <span><b>${staffName}</b></span>
+                                            <span><i class="<%--fa fa-info-circle fa-fw--%>"></i>${app_message.edoc_main_handler}</span> <span><b>${staffName}</b></span>
                                         </div>
+                                        <div class="staff-comment">
+                                            <span>${app_message.edoc_handler_comment}</span> <span class="comment-trace">${comment}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-6 col-xs-12 text-center">
+                                        ${getStatusOfTrace(statusCode)}
                                     </div>
                                     <div class="col-md-5 col-xs-5 text-right" id="time-trace">
                                         <span><i class="fa fa-clock-o"></i> ${convertToDate(timeStamp).formatDate()} ${convertToDate(timeStamp).formatTime()}</span>

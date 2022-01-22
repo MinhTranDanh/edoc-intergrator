@@ -127,10 +127,12 @@ let organManage = {
             url: "/contact/-/document/contact/token/" + organId,
             cache: false,
             success: function (response) {
+                $.notify(organ_message.token_edit_success, "success");
+                console.log(response)
                 $("#token").val(response.token);
             },
             error: function (error) {
-                $.notify(error.responseText, "error");
+                $.notify(organ_message.token_edit_fail, "error");
             }
         });
     },

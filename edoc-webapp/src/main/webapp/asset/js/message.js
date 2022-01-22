@@ -215,6 +215,8 @@ let organ_message = {
     "organ_add_new_fail": "Thêm mới đơn vị thất bại",
     "organ_edit_success": "Cập nhật đơn vị thành công",
     "organ_edit_fail": "Cập nhật đơn vị thất bại",
+    "token_edit_success": "Tạo token thành công",
+    "token_edit_fail": "Tạo token thất bại",
     "organ_btn_confirm": "Cập nhật",
     "organ_btn_cancel": "Hủy"
 };

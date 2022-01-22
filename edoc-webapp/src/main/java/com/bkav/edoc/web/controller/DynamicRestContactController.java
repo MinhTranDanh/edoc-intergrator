@@ -107,7 +107,7 @@ public class DynamicRestContactController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(value = "/contact/-/document/okencontact/token/{organId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/contact/-/document/contact/token/{organId}", method = RequestMethod.POST)
     public ResponseEntity<OrganizationCacheEntry> updateToken(@PathVariable("organId") String organId) {
         if (organId != null) {
             long contactId = Long.parseLong(organId);

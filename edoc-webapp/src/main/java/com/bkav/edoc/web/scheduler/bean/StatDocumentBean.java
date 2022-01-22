@@ -6,6 +6,7 @@ import com.bkav.edoc.service.database.entity.EdocDynamicContact;
 import com.bkav.edoc.service.database.util.EdocDailyCounterServiceUtil;
 import com.bkav.edoc.service.database.util.EdocDocumentServiceUtil;
 import com.bkav.edoc.service.database.util.EdocDynamicContactServiceUtil;
+import com.bkav.edoc.service.redis.RedisUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +63,11 @@ public class StatDocumentBean {
                 }*/
                 submitDatabase(dailyCounterMap);
                 LOGGER.info("Counter document in date " + _counterDate + " successfully!!");
+                try {
+                    this.clearCache();
+                }catch (Exception e){
+                    LOGGER.error("Error when clear cacahe " + e);
+                }
             }
         } catch (Exception e) {
             LOGGER.error("Error when run Scheduler Stat Document " + e);
@@ -121,6 +127,18 @@ public class StatDocumentBean {
             EdocDailyCounterServiceUtil.createDailyCounter(dailyCounter);
             LOGGER.info("Submit database success for organ domain " + dailyCounter.getOrganDomain());
         }
+    }
+
+    private void clearCache() {
+        try {
+            RedisUtil.getInstance().clearAllCache();
+
+        }catch (Exception e){
+            //e.printStackTrace();
+            LOGGER.error("---------ClearRedis fail !!!!!!!");
+        }
+
+
     }
 
     private Date _counterDate;
