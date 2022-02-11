@@ -103,7 +103,7 @@ public class AttachmentController {
                     File file = new File(filePath);
 
                     if (file.length() == 0) {
-                        filePath = fullPath + "/documents/envelo/" + specPath;
+                        filePath = fullPath + "/documents/envelop/" + specPath;
 
                         logger.info("Get file path for attachmentId " + attachmentId + ": " + filePath);
 

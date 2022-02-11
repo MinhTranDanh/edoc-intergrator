@@ -146,6 +146,7 @@ public class DynamicRestContactController {
                     organ.setModifiedDate(new Date());
                     organ.setIntegratorCenter(contactRequest.getIntegratorCenter());
 
+
                     int checkSendVPCPOnChange = Boolean.compare(sendToVPCP, contactRequest.getSendToVPCP());
                     if (checkSendVPCPOnChange == 0) {
                         if (!contactRequest.getTelephone().equals(""))

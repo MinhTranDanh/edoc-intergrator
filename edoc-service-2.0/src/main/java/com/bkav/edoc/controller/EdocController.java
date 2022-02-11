@@ -300,15 +300,6 @@ public class EdocController {
                                             pendingResult.setOrganId(toOrgan.getDomain());
                                             getPendingResults.add(pendingResult);
                                         }
-                                        /*String[] subDomain = toOrgan.getDomain().split("\\.");
-                                        String childDomain = subDomain[2] + "." + subDomain[3];
-                                        if (!toOrgan.equals(PropsUtil.get("edoc.exclude.center.lamdong"))) {
-                                            if (listParentDomain.stream().anyMatch(s -> s.contains(childDomain) || s.contains(toOrgan.getDomain()))) {
-                                                pendingResult.setDocId(documentCacheEntry.getDocumentId());
-                                                pendingResult.setOrganId(toOrgan.getDomain());
-                                                getPendingResults.add(pendingResult);
-                                            }
-                                        }*/
                                     } else {
                                         pendingResult.setDocId(documentCacheEntry.getDocumentId());
                                         pendingResult.setOrganId(toOrgan.getDomain());
@@ -344,17 +335,8 @@ public class EdocController {
                                         } else {
                                             LOGGER.error("------Error: Not found contact with domain " + toOrgan);
                                         }
-                                        /*String[] subDomain = toOrgan.split("\\.");
-                                        String childDomain = subDomain[2] + "." + subDomain[3];
-                                        if (!toOrgan.equals(PropsUtil.get("edoc.exclude.center.lamdong"))) {
-                                            if (listParentDomain.stream().anyMatch(s -> s.contains(childDomain) || s.contains(toOrgan))) {
-                                                result.setDocId(notification.getDocument().getDocumentId());
-                                                result.setOrganId(toOrgan);
-                                                getPendingResults.add(result);
-                                                LOGGER.info("-------- Get document pending by VNPT request with organ: " + toOrgan);
-                                            }
-                                        }*/
                                     } else {
+                                        LOGGER.info("--- Not request from VNPT " + toOrgan);
                                         result.setDocId(notification.getDocument().getDocumentId());
                                         result.setOrganId(toOrgan);
                                         getPendingResults.add(result);
