@@ -53,9 +53,11 @@ public class EdocTraceDaoImpl extends RootDaoImpl<EdocTrace, Long> implements Ed
                 }
             } else {
                 if (fromTime != null) {
+                    LOGGER.info("Query get traces Lam Dong with from time " );
                     sql.append("SELECT et FROM EdocTrace et where " +
                             "(et.toOrganDomain=:responseForOrganId) and et.timeStamp >= :fromTime order by et.timeStamp DESC");
                 } else {
+                    LOGGER.info("Query get traces Lam Dong not from time " );
                     sql.append("SELECT et FROM EdocTrace et where " +
                             "(et.toOrganDomain=:responseForOrganId) and et.enable=:enable order by et.timeStamp DESC");
                 }
@@ -68,7 +70,7 @@ public class EdocTraceDaoImpl extends RootDaoImpl<EdocTrace, Long> implements Ed
             } else {
                 query.setParameter("enable", true);
             }
-            LOGGER.info(query);
+            LOGGER.info("Query get traces have size: " + query.getResultList().size());
             return query.getResultList();
         } catch (Exception e) {
             LOGGER.error(e);

@@ -260,6 +260,8 @@ public class ExtractMime {
 
         Element checkPermissionNode = headerNode.getChild(elementName);
 
+        LOGGER.info("Get check permission with organ id " + CheckPermission.fromContent(checkPermissionNode).getOrganId());
+
         return CheckPermission.fromContent(checkPermissionNode);
     }
 

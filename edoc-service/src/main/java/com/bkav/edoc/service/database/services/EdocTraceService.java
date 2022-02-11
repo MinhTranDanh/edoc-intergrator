@@ -72,7 +72,7 @@ public class EdocTraceService {
                 edocDocument = documentDaoImpl.searchDocumentByOrganDomainAndCode(fromOrganDomain, toOrganDomain, code);
             }
             if (edocDocument == null) {
-                LOGGER.warn("Not found document with document code " + code + " to organ domain " + toOrganDomain + " !!!!!!!!!!!!!!!!!!");
+                LOGGER.warn("Not found document with document code " + code + " to organ domain " + toOrganDomain + " from organ domain "+ fromOrganDomain+ " !!!!!!!!!!!!!!!!!!");
                 errors.add(new Error("M.UpdateStatusDoc", "Not found document with document code "
                         + code + " to organ domain " + toOrganDomain + "!!!"));
                 return null;

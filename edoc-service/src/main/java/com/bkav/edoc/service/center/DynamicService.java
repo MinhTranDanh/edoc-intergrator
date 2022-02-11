@@ -106,12 +106,15 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                     map = getDocument(document);
                     break;
                 case EdXmlConstant.UPDATE_TRACE_ACTION:
+                    LOGGER.info("------------------------ Update traces -------------------");
                     map = updateTraces(document);
                     break;
                 case EdXmlConstant.GET_TRACE_ACTION:
+                    LOGGER.info("------------------------ Get traces -------------------");
                     map = getTraces(document);
                     break;
                 case EdXmlConstant.CONFIRM_RECEIVED_REQUEST:
+                    LOGGER.info("------------------------ Comfirm received -------------------");
                     map = confirmReceived(document);
                     break;
                 case EdXmlConstant.CHECK_PERMISSION:
@@ -233,9 +236,12 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
 
         Document bodyChildDocument;
         CheckPermission checkPermission;
+        LOGGER.info("--------------- Start get traces  ---------------");
+        LOGGER.info(envelop);
         try {
             checkPermission = extractMime.getCheckPermissionFromRq(envelop, EdXmlConstant.GET_TRACE);
             report = checker.checkPermission(checkPermission);
+            LOGGER.info("-----> Get traces permission");
             if (!report.isIsSuccess()) {
                 bodyChildDocument = xmlUtil.convertEntityToDocument(
                         Report.class, report);
@@ -243,7 +249,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 map.put(StringPool.CHILD_BODY_KEY, bodyChildDocument);
                 return map;
             }
-            updateReceivedNotify(report, checkPermission);
+            //updateReceivedNotify(report, checkPermission);
             String organId = extractMime.getOrganId(envelop, EdXmlConstant.GET_TRACE);
             Date fromDate = extractMime.getTimeStamp(envelop, EdXmlConstant.GET_TRACE);
             if (organId == null || organId.isEmpty()) {
@@ -411,11 +417,11 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
                 if (isExists) {
                     LOGGER.warn("Exist trace on esb with code " + status.getResponseFor().getCode() + " from_organ_domain "
                             + status.getFrom().getOrganId() + " to_organ_domain "
-                            + status.getResponseFor().getOrganId() + " status code " + status.getResponseFor().getCode());
+                            + status.getResponseFor().getOrganId() + " status code " + status.getStatusCode());
                     errorList.add(new Error("M.UpdateTraces", "Exist trace on esb with code "
                             + status.getResponseFor().getCode() + " from_organ_domain "
                             + status.getFrom().getOrganId() + " to_organ_domain "
-                            + status.getResponseFor().getOrganId() + " status code " + status.getResponseFor().getCode()));
+                            + status.getResponseFor().getOrganId() + " status code " + status.getStatusCode()));
 
                     report = new Report(false, new ErrorList(errorList));
 
@@ -833,7 +839,7 @@ public class DynamicService extends AbstractMediator implements ManagedLifecycle
         report = checker.checkPermission(checkPermission);
 
         if (!report.isIsSuccess()) {
-            LOGGER.warn("--------------- Get pending permission " + report.isIsSuccess());
+            LOGGER.warn("--------------- Get pending permission for organ "+ organId + "whith token "+ checkPermission.getToken() +" :" + report.isIsSuccess());
             Document bodyChildDocument = xmlUtil.convertEntityToDocument(
                     Report.class, report);
 

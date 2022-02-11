@@ -159,6 +159,7 @@ public class ArchiveMime {
                     reference.setAttachmentName(attachment.getName());
                     reference.setContentType(contentType);
                     reference.setDescription(attachment.getDescription());
+                    reference.setFullPath(attachment.getFullPath());
                     references.add(reference);
 
                 } else {

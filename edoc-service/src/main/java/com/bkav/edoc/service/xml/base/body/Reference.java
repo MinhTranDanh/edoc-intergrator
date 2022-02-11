@@ -14,6 +14,7 @@ public class Reference extends BaseElement {
     private String contentType;
     private String attachmentName;
     private String description;
+    private String fullPath;
 
     public Reference() {
     }
@@ -23,6 +24,18 @@ public class Reference extends BaseElement {
         this.contentType = contentType;
         this.attachmentName = attachmentName;
         this.description = description;
+    }
+
+    public Reference(String fullPath) {
+        this.fullPath = fullPath;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public String getContentId() {

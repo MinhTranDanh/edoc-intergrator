@@ -76,6 +76,7 @@ public class MemcachedUtil {
                 result = memcachedClient.get(finalKey);
             }
         } catch (Exception e) {
+            _log.error("Memcahe key:" + key);
             _log.error(e);
         }
 

@@ -202,6 +202,7 @@ public class ServiceVPCP {
                                     status = "done";
                                     headerChangeStatus.put("status", status);
                                 } else {
+                                    //status = "fail";
                                     LOGGER.error("Error save document from vpcp  with document code " + messageHeader.getCode());
                                     headerChangeStatus.put("status", status);
                                 }

@@ -524,7 +524,7 @@ public class EdocDailyCounterService {
                 contact.getDomain().equals(PropsUtil.get("edoc.domain.vpubnd.1"))) {
             vpubnd_sent += sent;
             vpubnd_received += received;
-            System.out.println("ddsfdishfjdhfkjgdfkljg");
+
             if (contact.getDomain().equals(PropsUtil.get("edoc.domain.vpubnd.1"))) {
                 vpubndName = contact.getName();
             }

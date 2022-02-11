@@ -6,6 +6,7 @@ package com.bkav.edoc.service.mineutil;
 import com.bkav.edoc.service.database.entity.*;
 import com.bkav.edoc.service.database.services.EdocDynamicContactService;
 import com.bkav.edoc.service.resource.StringPool;
+import com.bkav.edoc.service.util.PropsUtil;
 import com.bkav.edoc.service.xml.base.attachment.Attachment;
 import com.bkav.edoc.service.xml.base.header.*;
 import com.bkav.edoc.service.xml.ed.header.*;
@@ -196,6 +197,20 @@ public class Mapper {
 
         attachmentEntity.setDescription(attachment.getName());
 
+        String specPath = attachment.getFullPath();
+
+        String fullPath = PropsUtil.get("edxml.attachment.dir");
+
+        String filePath = fullPath + "/attachment/" + specPath;
+
+        File file_check = new File(filePath);
+
+        if (file_check.length() == 0) {
+            filePath = fullPath + "/documents/envelop/" + specPath;
+        }
+
+        attachmentEntity.setFullPath(filePath);
+
         return attachmentEntity;
     }
 
@@ -269,4 +284,5 @@ public class Mapper {
 
     private static final ArchiveUtil archiveUtil = new ArchiveUtil();
     private static final Logger LOGGER = Logger.getLogger(Mapper.class);
+
 }

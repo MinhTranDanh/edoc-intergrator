@@ -25,6 +25,7 @@ public class Attachment {
     private File content;
     private InputStream inputStream;
     private String format;
+    private String fullPath;
 
     public Attachment() {
     }
@@ -89,6 +90,14 @@ public class Attachment {
 
     public void setContent(File paramFile) {
         this.content = paramFile;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public InputStream getInputStreamFromFile() throws IOException {

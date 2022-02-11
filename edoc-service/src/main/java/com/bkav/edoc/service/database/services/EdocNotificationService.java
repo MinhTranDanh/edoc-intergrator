@@ -46,10 +46,12 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(currentSession);
         }
     }
+
     //MinhTDb
     public EdocNotification getNotifiByIdandReceiveId(long documentId, String ReceiveId) {
         return notificationDaoImpl.getEdocNotifyByDocumentIdandReceiveId(documentId, ReceiveId);
     }
+
     /**
      * remove pending document
      *
@@ -78,8 +80,12 @@ public class EdocNotificationService {
         if (obj != null) {
             List<Long> oldDocumentIds = CommonUtil.convertToListLong(obj);
             LOGGER.info("--------------------- Before remove document in cache list of document in cache" + oldDocumentIds);
-            oldDocumentIds.remove(documentId);
+            if (oldDocumentIds.contains(documentId)) {
+                oldDocumentIds.remove(documentId);
+            }
             LOGGER.info("--------------------- Remove pending document in cache for document " + documentId + " organ domain " + domain + " " + oldDocumentIds);
+            RedisUtil.getInstance().delete(RedisKey.getKey(domain,
+                    RedisKey.GET_PENDING_KEY));
             RedisUtil.getInstance().set(RedisKey.getKey(domain,
                     RedisKey.GET_PENDING_KEY), oldDocumentIds);
         }
@@ -185,19 +191,23 @@ public class EdocNotificationService {
             notificationDaoImpl.closeCurrentSession(session);
         }
     }
+
     //MinhTDb
     public void comfirmReceive(EdocNotification en) {
 
         this.notificationDaoImpl.setNotificationtaken(en);
     }
+
     public List<EdocNotification> getNotifiById(long documentId) {
         return notificationDaoImpl.getEdocNotifyByDocumentId(documentId);
     }
+
     //MinhTDb
     public void resendDocument(EdocNotification en) {
 
         this.notificationDaoImpl.setNotificationtaken(en);
     }
+
     public List<TelegramMessage> getTelegramMessages() {
         List<TelegramMessage> telegramMessages = new ArrayList<>();
         try {

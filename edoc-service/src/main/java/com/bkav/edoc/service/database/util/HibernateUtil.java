@@ -40,7 +40,7 @@ public class HibernateUtil {
                 // HikariCP settings
                 settings.put("hibernate.connection.provider_class", HikariCPConnectionProvider.class);
                 // Maximum waiting time for a connection from the pool
-                settings.put("hibernate.hikari.connectionTimeout", "30000");
+                settings.put("hibernate.hikari.connectionTimeout", "60000");
                 // Minimum number of ideal connections in the pool
                 settings.put("hibernate.hikari.minimumIdle", "20");
                 settings.put("hibernate.proc.param_null_passing", true);

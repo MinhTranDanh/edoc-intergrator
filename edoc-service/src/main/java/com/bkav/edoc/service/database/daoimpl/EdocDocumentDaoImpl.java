@@ -190,7 +190,7 @@ public class EdocDocumentDaoImpl extends RootDaoImpl<EdocDocument, Long> impleme
                 } else {
                     for (EdocDocument doc : result) {
                         String toOrganDoc = doc.getToOrganDomain();
-                        if (fromOrganDomain.equals(toOrganDoc)) {
+                        if (fromOrganDomain.equals(toOrganDoc) || toOrganDoc.contains(fromOrganDomain)) {
                             document = doc;
                             break;
                         }
